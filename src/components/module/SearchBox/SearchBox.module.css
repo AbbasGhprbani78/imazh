@@ -1,0 +1,36 @@
+.searchBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 38px;
+    padding: 0 15px;
+    border-radius: 50px;
+    background-color: #5d5e5f;
+    color: #9f9f9f;
+    width: 380px;
+    max-width: 380px;
+    margin-top: 2.5rem;
+}
+
+.input_search {
+    background-color: transparent;
+    width: 100%;
+    font-size: .9rem;
+    color: #fff;
+    border: none;
+    outline: none;
+    font-family: 'vazir';
+}
+
+.input_search::placeholder {
+    font-size: .9rem;
+    color: #9f9f9f;
+    font-family: 'vazir';
+}
+
+.wrap_icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}

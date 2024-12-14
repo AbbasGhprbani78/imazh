@@ -1,0 +1,55 @@
+.camera_container {
+    height: 100%;
+    background-color: red;
+    position: relative;
+}
+
+.icon_top_wrapper {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon_top_wrapper>img {}
+
+.icons_bottom_wrapper {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translate(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+}
+
+.icon_camera,
+.icon_refresh {
+    cursor: pointer;
+    color: #fff;
+}
+
+.wrap_camera {
+    width: 30px;
+    height: 30px;
+    background-color: var(--color-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.icon_camera {}
+
+.icon_refresh {}

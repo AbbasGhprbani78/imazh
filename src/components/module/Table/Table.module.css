@@ -1,0 +1,32 @@
+.table_container {
+    margin-top: 1.5rem;
+}
+
+.table_container {
+    direction: "rtl";
+
+}
+
+.table_content {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow: -moz-scrollbars-none;
+}
+
+.table_content::-webkit-scrollbar {
+    display: none;
+}
+
+.css-1c5o7vy-MuiPagination-ul{
+    display: flex !important;
+    justify-content: center !important;
+}
+
+
+.pagination{
+    position: absolute;
+    bottom: 0px;
+    left:50%;
+    transform: translate(-50%);
+}

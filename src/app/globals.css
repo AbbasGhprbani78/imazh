@@ -1,42 +1,77 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+
+@font-face {
+    font-family: 'vazir';
+    font-weight: 600;
+    src: url('/fonts/Vazir-Bold.eot') format('eot'),
+        url('/fonts/Vazir-Bold.woff') format('woff'),
+        url('/fonts/Vazir-Bold.woff2') format('woff2'),
+        url('/fonts/Vazir-Bold.ttf') format('ttf'),
+}
+
+
+@font-face {
+    font-family: 'vazir';
+    font-weight: 400;
+    src: url('/fonts/Vazir-Regular.eot') format('eot'),
+        url('/fonts/Vazir-Regular.woff') format('woff'),
+        url('/fonts/Vazir-Regular.woff2') format('woff2'),
+        url('/fonts/Vazir-Regular.ttf') format('ttf'),
+}
+
+
+:root {
+    --color-1: #1b1b1b;
+    --color-2: #2a2a2a;
+    --color-3: #292d32;
+    --color-4: #53a7f3;
+    --color-5: #d9d9d9;
+    --color-6: #5796e3;
+    --color-7: #667085;
+    --radius-1: 8px;
 }
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
+    direction: rtl;
+    font-family: 'vazir';
+    font-weight: 400;
+    background-color: #1b1b1b;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+
+.container {
+    direction: rtl;
+    position: relative;
+    height: calc(100dvh - 20px);
+    display: flex;
+    flex-direction: column;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+.wrapper {
+    margin: 20px 20px 0 20px;
+    height: 100%;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #fff;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+
+.error {
+    display: inline-block;
+    color: #D32F2F;
+    font-size: .85rem;
+    margin-top: 5px;
+}
+
+.list-offcanvas a.active {
+    background-color: #535353;
 }

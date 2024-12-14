@@ -1,0 +1,28 @@
+
+.offcanvas_container {
+    display:none;
+}
+
+.link_item {
+    margin-bottom: 2rem;
+}
+
+.link_offcanvas {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #fff;
+    width: 100%;
+    padding: 7px 20px 7px 0;
+}
+
+.icon_item {
+    font-size: 2rem;
+}
+
+@media (max-width:900px) {
+    .offcanvas_container{
+        display:block;
+    }
+}

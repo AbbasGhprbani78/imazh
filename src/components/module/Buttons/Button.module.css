@@ -1,0 +1,43 @@
+.icon {
+    color: #000;
+}
+
+.icon,
+.icon2 {
+    z-index: 11;
+}
+
+
+.button,.button2 {
+    position: relative !important;
+    overflow: hidden;
+}
+
+.text_btn {
+    position: relative;
+    z-index: 11;
+}
+
+.button::before {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 250px;
+    background-color: var(--color-6);
+    border-radius: 50%;
+    top: 11px;
+    right: -157px;
+}
+
+
+.button2::before {
+    content: '';
+    position: absolute;
+    width: 56px;
+    height: 43px;
+    background-color: var(--color-6);
+    border-radius: 50%;
+    top: 15px;
+    right: -15px;
+}
+
