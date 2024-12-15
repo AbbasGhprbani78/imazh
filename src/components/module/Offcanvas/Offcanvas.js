@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import styles from "./Offcanvas.module.css";
 import { Drawer, List, ListItemButton, IconButton } from "@mui/material";

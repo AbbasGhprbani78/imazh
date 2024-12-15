@@ -1,3 +1,4 @@
+"use client"
 import { useState } from "react";
 import styles from "./SearchBox.module.css";
 import SearchIcon from "@mui/icons-material/Search";

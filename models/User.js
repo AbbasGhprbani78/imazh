@@ -1,12 +1,11 @@
 const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
-
-  userName: {
+  username: {
     type: String,
     required: true,
   },
-  
+
   password: {
     type: String,
     required: true,
@@ -15,6 +14,7 @@ const schema = new mongoose.Schema({
   role: {
     type: String,
     required: true,
+    enum: ["d", "s", "a"],
   },
 
   resetCode: {
@@ -24,7 +24,7 @@ const schema = new mongoose.Schema({
   resetCodeExpiration: {
     type: Date,
   },
-  
+
   refreshToken: String,
 });
 

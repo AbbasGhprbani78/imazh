@@ -1,3 +1,4 @@
+"use client"
 import Button from "@mui/material/Button";
 import styles from "./Button.module.css";
 import { styled } from "@mui/material/styles";
@@ -12,17 +13,26 @@ const CustomButton = styled(Button)(() => ({
   position: "relative",
   background: "#53a7f3",
   width: "100%",
+  "&:disabled": {
+    cursor: "not-allowed",
+    background: "#264e73",
+  },
 }));
 
-export default function Button1({ text, icon: Icon, type }) {
+export default function Button1({ text, icon: Icon, type,disable }) {
   return (
     <CustomButton
       startIcon={Icon ? <Icon className={styles.icon} /> : null}
       dir="ltr"
       className={styles.button}
       type={type}
+      disabled={disable}
     >
-      <span className={styles.text_btn}>{text}</span>
+      {disable ? (
+        <span className={styles.loader}></span>
+      ) : (
+        <span className={styles.text_btn}>{text}</span>
+      )}
     </CustomButton>
   );
 }
