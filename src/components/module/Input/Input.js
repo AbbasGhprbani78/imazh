@@ -34,9 +34,17 @@ const StyledTextField = styled(TextField)(() => ({
       borderColor: "#d9d9d9",
     },
   },
+  "& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button":
+    {
+      WebkitAppearance: "none",
+      margin: 0,
+    },
+  "& input[type=number]": {
+    MozAppearance: "textfield",
+  },
 }));
 
-export default function Input({ label, value, name, onChange }) {
+export default function Input({ label, value, name, onChange,type }) {
   const cacheRtl = createCache({
     key: "muirtl",
     stylisPlugins: [prefixer, rtlPlugin],
@@ -53,6 +61,7 @@ export default function Input({ label, value, name, onChange }) {
         onChange={onChange}
         className={styles.input}
         autoComplete="off"
+        type={type}
       />
     </CacheProvider>
   );

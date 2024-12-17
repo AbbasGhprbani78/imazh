@@ -2,6 +2,7 @@
     height: 100%;
     background-color: red;
     position: relative;
+    transition: all 0.3s ease-in-out;
 }
 
 .icon_top_wrapper {
@@ -53,3 +54,15 @@
 .icon_camera {}
 
 .icon_refresh {}
+
+
+
+.full_screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: red;
+    z-index: 1000;
+}

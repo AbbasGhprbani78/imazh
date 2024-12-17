@@ -1,99 +1,108 @@
 "use client";
-import rtlPlugin from "stylis-plugin-rtl";
-import { prefixer } from "stylis";
-import createCache from "@emotion/cache";
-import { CacheProvider } from "@emotion/react";
-import { styled } from "@mui/material/styles";
-import { Autocomplete, TextField } from "@mui/material";
+
+import { useEffect, useRef, useState } from "react";
 import styles from "./DropDown.module.css";
 
-const StyledAutocomplete = styled(Autocomplete)(() => ({
-  "& .MuiOutlinedInput-root": {
-    fontFamily: "vazir",
-    borderRadius: "8px",
-    color: "#fff",
-    fontSize: ".9rem",
-    "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#fff",
-    },
-    "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#fff",
-    },
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#fff",
-    },
-  },
-  "& .MuiInputLabel-root": {
-    fontFamily: "vazir",
-    color: "#fff",
-    fontSize: ".9rem",
-    "&.Mui-focused": {
-      color: "#fff",
-      fontSize: ".9rem",
-    },
-  },
-  "& .MuiAutocomplete-listbox": {
-    backgroundColor: "#2e2e2e",
-    color: "#fff",
-    fontFamily: "vazir",
-    fontSize: ".9rem",
-  },
-  "& .MuiAutocomplete-option": {
-    backgroundColor: "#2e2e2e",
-    fontFamily: "vazir",
-    fontSize: ".9rem",
-    "&:hover": {
-      backgroundColor: "#424242",
-    },
-    "&[aria-selected='true']": {
-      backgroundColor: "#424242",
-    },
-  },
-  "& .MuiAutocomplete-input": {
-    color: "#fff",
-    fontFamily: "vazir",
-  },
-  "& .MuiAutocomplete-popupIndicator": {
-    color: "#fff",
-  },
-}));
-
 export default function DropDownSearch({
-  firstoption,
-  onFirstOptionClick,
+  firstoptiontext,
+  firstoptionclick,
+  items,
   title,
+  name,
+  onChange,
+  getOptionLabelProp
 }) {
-  const cacheRtl = createCache({
-    key: "muirtl",
-    stylisPlugins: [prefixer, rtlPlugin],
-  });
+  const [searchValue, setSearchValue] = useState("");
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const dropdownRef = useRef(null); 
 
-  const options = [
-    ...(firstoption ? [{ label: firstoption, isFirstOption: true }] : []),
-    { label: "عباس قربانی" },
-    { label: "علیرضا قربانی" },
-    { label: "احمد اسماعیل زاده" },
-  ];
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearchValue(value);
+    setFilteredItems(
+      items.filter((item) =>
+        item.label.toLowerCase().includes(value.toLowerCase())
+      )
+    );
+  };
 
-  const handleChange = (event, value) => {
-    if (value?.isFirstOption && onFirstOptionClick) {
-      onFirstOptionClick();
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  const handleSelectItem = (item) => {
+    setSearchValue(item[getOptionLabelProp]);
+    setIsOpen(false);
+    if (onChange) {
+      onChange({ target: { name, value: item._id } });
     }
   };
 
+  const toggleDropdown = () => {
+    setIsOpen((prev) => !prev);
+  };
+
+  const handleFocus = () => setIsFocused(true);
+  const handleBlur = () => setIsFocused(false);
+  useEffect(() => {
+    setFilteredItems(items);
+  }, [items]);
+
   return (
-    <CacheProvider value={cacheRtl}>
-      <StyledAutocomplete
-        disablePortal
-        id="searchable-dropdown"
-        options={options}
-        getOptionLabel={(option) => option.label}
-        renderInput={(params) => <TextField {...params} label={title} />}
-        className={styles.dropDown_wrapper}
-        disableClearable
-        noOptionsText="گزینه‌ای وجود ندارد"
-        onChange={handleChange}
-      />
-    </CacheProvider>
+    <div className={styles.wrapDropSearch} ref={dropdownRef}>
+      <div
+        className={`${styles.wrapInputData} ${
+          isFocused || isOpen ? styles.focused : ""
+        }`}
+        onClick={toggleDropdown}
+      >
+        <input
+          type="text"
+          value={searchValue}
+          placeholder=""
+          onChange={handleInputChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          className={styles.inputField}
+          name={name}
+          autoComplete="off"
+        />
+        <label className={styles.floatingLabel}>{title}</label>
+      </div>
+      {isOpen && (
+        <div className={styles.dropdownMenu}>
+          {firstoptiontext && (
+            <div className={styles.dropdownItem} onClick={firstoptionclick}>
+              {firstoptiontext}
+            </div>
+          )}
+          {filteredItems?.length > 0 ? (
+            filteredItems.map((item) => (
+              <div
+                key={item._id}
+                className={styles.dropdownItem}
+                onClick={() => handleSelectItem(item)}
+              >
+                {item[getOptionLabelProp]}
+              </div>
+            ))
+          ) : (
+            <div className={styles.noOptions}>گزینه‌ای وجود ندارد</div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

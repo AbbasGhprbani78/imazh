@@ -33,14 +33,7 @@
     color: var(--color-7);
 }
 
-.wrap_input {
-    margin-top: 2.5rem;
-}
 
-.wrap_button {
-    margin-top: 3rem;
-    padding-bottom: 2rem;
-}
 .wrap_right{
     display: flex;
     align-items: center;

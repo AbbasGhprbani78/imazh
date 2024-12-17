@@ -4,15 +4,17 @@ export const isRequired = (value) => {
 
 export const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email) ? null : "Invalid email address";
+  return emailRegex.test(email) ? true : false;
 };
 
 export const validateNationalCode = (code) => {
   if (!/^\d{10}$/.test(code)) {
-    return 'National code must be exactly 10 digits';
+    return false;
+  } else {
+    true;
   }
 
-  const digits = code.split('').map(Number);
+  const digits = code.split("").map(Number);
   const controlDigit = digits[9];
 
   let sum = 0;
@@ -22,20 +24,22 @@ export const validateNationalCode = (code) => {
 
   const remainder = sum % 11;
 
-  if ((remainder < 2 && controlDigit === remainder) || (remainder >= 2 && controlDigit === 11 - remainder)) {
-    return null; 
+  if (
+    (remainder < 2 && controlDigit === remainder) ||
+    (remainder >= 2 && controlDigit === 11 - remainder)
+  ) {
+    return true;
   }
 
-  return 'Invalid national code';
+  return false
 };
-
 
 export const validateIranianPhoneNumber = (phone) => {
   const iranPhoneRegex = /^09[0-3][0-9]{8}$/;
 
   if (!iranPhoneRegex.test(phone)) {
-    return 'Invalid phone number. It should be 11 digits and start with 09.';
+    return false;
   }
 
-  return null;
+  return true;
 };

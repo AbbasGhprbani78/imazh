@@ -5,7 +5,7 @@
     padding: 10px 10px 30px 20px;
     border-radius: 5px;
     min-width: 400px;
-    z-index: 9999;
+    z-index: 99999999999;
     overflow: hidden;
     transform: translateY(calc(100% + 30px));
     transition: all 0.5s cubic-bezier(0.68, -0.55, 0.25, 1.35);

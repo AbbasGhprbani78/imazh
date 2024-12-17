@@ -1,7 +1,91 @@
-/* .menu_item {
-    font-family: "vazir" !important;
-    font-size: .9rem !important;
-    direction: rtl;
-    color: #fff;
-} */
+.wrapDropSearch {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    font-family: "vazir", sans-serif;
+}
 
+.wrapInputData {
+    position: relative;
+    border: 1px solid #fff;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    height: 53.6px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    transition: border-color 0.3s ease;
+}
+
+.wrapInputData.focused {
+    border-width: 2px;
+}
+
+.floatingLabel {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    color: #fff;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.wrapInputData.focused .floatingLabel,
+.wrapInputData:not(.focused) input:not(:placeholder-shown)+.floatingLabel {
+    top: -2px;
+    right: 12px;
+    font-size: 0.75rem;
+    background-color: var(--color-2);
+    padding: 0 3px 0 5px;
+    width: max-content;
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #2e2e2e;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 8px;
+}
+
+.dropdownItem {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dropdownItem:hover {
+    background-color: #424242;
+}
+
+.noOptions {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    color: #aaa;
+    text-align: center;
+}
+
+.inputField {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 1rem;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    color: #fff;
+    caret-color: #fff;
+    font-family: "vazir";
+}

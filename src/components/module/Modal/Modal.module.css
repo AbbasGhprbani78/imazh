@@ -37,7 +37,7 @@
     border-radius: 20px;
     background-color: var(--color-2);
     z-index: 9999;
-    min-width: 35vw;
+    width: 35vw;
 }
 
 .top_modal {
@@ -56,6 +56,11 @@
     align-items: center;
 }
 
-.icon_close{
+.icon_close {
     cursor: pointer;
 }
+
+/* .bottom_modal{
+    max-width: 470px;
+    overflow-y: auto;
+} */

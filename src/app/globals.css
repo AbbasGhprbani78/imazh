@@ -70,8 +70,18 @@ body {
     color: #D32F2F;
     font-size: .85rem;
     margin-top: 5px;
+    width: 100%
 }
 
 .list-offcanvas a.active {
     background-color: #535353;
+}
+
+.no-scrollbar {
+    scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+
 }

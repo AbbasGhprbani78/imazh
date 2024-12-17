@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState } from "react";
 import styles from "./InputData.module.css";
 import DatePicker from "react-multi-date-picker";
@@ -6,8 +6,7 @@ import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import TimePicker from "react-multi-date-picker/plugins/time_picker";
 
-export default function InputData({ label }) {
-  const [value, setValue] = useState("");
+export default function InputData({ label, value, onChange, name }) {
   const [focused, setFocused] = useState(false);
 
   return (
@@ -18,11 +17,12 @@ export default function InputData({ label }) {
     >
       <label className={styles.floatingLabel}>{label}</label>
       <DatePicker
+        name={name}
         calendar={persian}
         locale={persian_fa}
         calendarPosition="bottom-right"
         value={value}
-        onChange={setValue}
+        onChange={onChange}
         format="YYYY/MM/DD HH:mm"
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
