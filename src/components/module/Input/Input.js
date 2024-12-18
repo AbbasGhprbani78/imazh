@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { TextField } from "@mui/material";
 import rtlPlugin from "stylis-plugin-rtl";
 import { prefixer } from "stylis";
@@ -13,6 +13,10 @@ const StyledTextField = styled(TextField)(() => ({
     fontFamily: "vazir, sans-serif",
     fontSize: ".9rem",
     borderRadius: "8px",
+    "&.Mui-disabled": {
+      backgroundColor: "#333", 
+      color: "#ّّfff",
+    },
   },
   "& .MuiInputLabel-root": {
     color: "#fff",
@@ -20,6 +24,9 @@ const StyledTextField = styled(TextField)(() => ({
     fontSize: ".9rem",
     "&.Mui-focused": {
       color: "#fff",
+    },
+    "&.Mui-disabled": {
+      color: "#888", 
     },
   },
   "& .MuiOutlinedInput-root": {
@@ -33,6 +40,9 @@ const StyledTextField = styled(TextField)(() => ({
     "&.Mui-focused fieldset": {
       borderColor: "#d9d9d9",
     },
+    "&.Mui-disabled fieldset": {
+      borderColor: "#555",
+    },
   },
   "& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button":
     {
@@ -44,7 +54,7 @@ const StyledTextField = styled(TextField)(() => ({
   },
 }));
 
-export default function Input({ label, value, name, onChange,type }) {
+export default function Input({ label, value, name, onChange, type, disable }) {
   const cacheRtl = createCache({
     key: "muirtl",
     stylisPlugins: [prefixer, rtlPlugin],
@@ -62,6 +72,7 @@ export default function Input({ label, value, name, onChange,type }) {
         className={styles.input}
         autoComplete="off"
         type={type}
+        disabled={disable}
       />
     </CacheProvider>
   );

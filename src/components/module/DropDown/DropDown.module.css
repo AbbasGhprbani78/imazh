@@ -65,6 +65,9 @@
     color: #fff;
     cursor: pointer;
     transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .dropdownItem:hover {
@@ -88,4 +91,8 @@
     color: #fff;
     caret-color: #fff;
     font-family: "vazir";
+}
+
+.icon_edit {
+    cursor: pointer;
 }

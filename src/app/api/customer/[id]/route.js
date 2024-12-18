@@ -40,8 +40,7 @@ function validateCustomerData(data) {
     typeof data.fullname !== "string" ||
     data.fullname.trim().length < 3
   ) {
-    errors.fullname =
-      "نام کامل مشتری الزامی است";
+    errors.fullname = "نام کامل مشتری الزامی است";
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -80,8 +79,7 @@ function validateCustomerData(data) {
     typeof data.filenumber !== "string" ||
     data.filenumber.trim().length < 3
   ) {
-    errors.filenumber =
-      "شماره پرونده الزامی است";
+    errors.filenumber = "شماره پرونده الزامی است";
   }
 
   return errors;
@@ -110,7 +108,7 @@ export async function PUT(req, { params }) {
       id,
       updatedData,
       {
-        new: true, 
+        new: true,
         runValidators: true,
       }
     );
@@ -129,3 +127,26 @@ export async function PUT(req, { params }) {
     });
   }
 }
+
+export async function GET(req, { params }) {
+  await connectToDB();
+
+  const { id } = params;
+
+  if (!id) {
+    return new Response(JSON.stringify({ error: "ID is required" }), {
+      status: 400,
+    });
+  }
+
+  const customer = await CustomerModel.findById({ _id: id });
+
+  if (!customer) {
+    return new Response(JSON.stringify({ error: "مشتری پیدا نشد" }), {
+      status: 404,
+    });
+  }
+
+  return new Response(JSON.stringify(customer), { status: 200 });
+}
+

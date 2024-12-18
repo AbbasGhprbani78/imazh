@@ -1,5 +1,8 @@
 import { hashPassword } from "@/utils/auth";
-import connectToDB from "../../../../../configs/db";
+import { verifyAccessToken } from "@/utils/auth";
+import UserModel from "../../../../../../models/User";
+import { cookies } from "next/headers";
+import connectToDB from "../../../../../../configs/db";
 
 export async function PUT(req) {
   try {
@@ -11,24 +14,26 @@ export async function PUT(req) {
     }
 
     const tokenPayload = verifyAccessToken(token.value);
-    if (!tokenPayload || !tokenPayload._id) {
+    if (!tokenPayload) {
       return Response.json({ message: "توکن نامعتبر است" }, { status: 403 });
     }
 
     const body = await req.json();
     const { password } = body;
 
-    if (!password || password.length < 6) {
+    if (!password || password.length < 3) {
       return Response.json(
-        { message: "رمز عبور باید حداقل ۶ کاراکتر باشد" },
+        { message: "رمز عبور باید حداقل 3 کاراکتر باشد" },
         { status: 400 }
       );
     }
 
     const hashedPassword = await hashPassword(password);
 
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      tokenPayload._id,
+    const username = tokenPayload.username;
+
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { username: username },
       { password: hashedPassword },
       { new: true, select: "-password -refreshToken -__v" }
     );

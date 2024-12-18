@@ -136,6 +136,7 @@
     border-radius: 50%;
     overflow: hidden;
     margin-bottom: 2rem;
+    position: relative;
 }
 
 .wrap_image_profile>img {

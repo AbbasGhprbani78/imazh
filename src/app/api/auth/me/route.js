@@ -1,4 +1,8 @@
-import { verifyAccessToken } from "@/utils/auth";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyAccessToken,
+} from "@/utils/auth";
 import connectToDB from "../../../../../configs/db";
 import { cookies } from "next/headers";
 import UserModel from "../../../../../models/User";
@@ -8,7 +12,7 @@ import crypto from "crypto";
 
 export async function GET(req) {
   connectToDB();
-  const token = cookies().get("token");
+  const token = await cookies().get("token");
   let user = null;
 
   if (token) {
@@ -41,9 +45,13 @@ export async function PUT(req) {
     }
 
     const tokenPayload = verifyAccessToken(token.value);
-    if (!tokenPayload || !tokenPayload._id) {
+    if (!tokenPayload) {
       return Response.json({ message: "توکن نامعتبر است" }, { status: 403 });
     }
+
+    const formData = await req.formData();
+    const username = formData.get("username");
+    const img = formData.get("img");
 
     if (username && typeof username !== "string") {
       return Response.json(
@@ -51,11 +59,6 @@ export async function PUT(req) {
         { status: 400 }
       );
     }
-
-
-    const formData = await req.formData();
-    const username = formData.get("username");
-    const img = formData.get("img");
 
     let imgUrl;
     if (img) {
@@ -75,8 +78,8 @@ export async function PUT(req) {
       ...(imgUrl && { img: imgUrl }),
     };
 
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      tokenPayload._id,
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { username: tokenPayload.username },
       updateData,
       { new: true, select: "-password -refreshToken -__v" }
     );
@@ -85,10 +88,44 @@ export async function PUT(req) {
       return Response.json({ message: "کاربر یافت نشد" }, { status: 404 });
     }
 
-    return Response.json({
-      message: "اطلاعات کاربر با موفقیت به‌روزرسانی شد",
-      data: updatedUser,
+    const accessToken = generateAccessToken({ username: updatedUser.username });
+    const refreshToken = generateRefreshToken({
+      username: updatedUser.username,
     });
+
+    await UserModel.findOneAndUpdate(
+      { username: updatedUser.username },
+      {
+        $set: {
+          refreshToken,
+        },
+      }
+    );
+
+    const headers = new Headers();
+    const tokenMaxAge = 60 * 60 * 24 * 15;
+    const refreshMaxAge = 60 * 60 * 24 * 30;
+
+    headers.append(
+      "Set-Cookie",
+      `token=${accessToken};path=/;httpOnly=true;Max-Age=${tokenMaxAge}`
+    );
+
+    headers.append(
+      "Set-Cookie",
+      `refresh-token=${refreshToken};path=/;httpOnly=true;Max-Age=${refreshMaxAge}`
+    );
+
+    return Response.json(
+      {
+        message: "اطلاعات کاربر با موفقیت به‌روزرسانی شد",
+        data: updatedUser,
+      },
+      {
+        status: 200,
+        headers,
+      }
+    );
   } catch (error) {
     console.error("Error updating user:", error);
     return Response.json({ message: "خطای سرور رخ داد" }, { status: 500 });

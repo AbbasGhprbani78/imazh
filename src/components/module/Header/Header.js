@@ -25,6 +25,7 @@ export default function Header() {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [typeModal, setTypeModal] = useState(1);
+  const [imageProfile, setImageProfile] = useState("");
   const [password, setPassword] = useState("");
   const [profile, setProfile] = useState({
     img: "",
@@ -42,11 +43,24 @@ export default function Header() {
     username: "",
   });
 
-  const handleChangeProfile = (e) => {
-    const { name, value } = e.target;
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      [name]: value,
+  const handleChangeProfileInput = (e) => {
+    const { name, value, files } = e.target;
+
+    if (files && files[0]) {
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        [name]: files[0],
+      }));
+    } else {
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        [name]: value,
+      }));
+    }
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
     }));
   };
 
@@ -55,7 +69,6 @@ export default function Header() {
       try {
         const response = await axios.get("http://localhost:3000/api/auth/me");
         if (response.status === 200) {
-          console.log(response.data);
           setMe(response.data);
           profile.username = response.data.username;
         }
@@ -94,21 +107,73 @@ export default function Header() {
     } else {
       try {
         setLoading(true);
-        const response = await axios.patch("");
+        const response = await axios.put(
+          "http://localhost:3000/api/auth/me/changepassword",
+          { password }
+        );
         if (response.status === 200) {
           setPassword("");
           setShowModal(false);
           setShowToast(true);
+          setToastInfo({
+            type: "success",
+            title: "عملیات موفقیت امیز",
+            message: response?.data?.message,
+          });
         }
       } catch (error) {
         console.log(error);
+        setToastInfo({
+          type: "error",
+          title: "خطا در تغییر زمزعبور",
+          message:
+            error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
+        });
       } finally {
-        setLoading(true);
+        setLoading(false);
       }
     }
   };
 
-  const changeProfileHandler = async () => {};
+  const chnageProfile = async () => {
+    let formErrors = {};
+    if (!isRequired(profile.username)) {
+      formErrors.username = "نام کاربری الزامی است";
+    }
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+    } else {
+      setLoading(true)
+      const formData = new FormData();
+      formData.append("username", profile.username);
+      formData.append("img", profile.img);
+      try {
+        const response = await axios.put(
+          "http://localhost:3000/api/auth/me",
+          formData
+        );
+        if (response.status === 200) {
+          setShowModal(false);
+          setShowToast(true);
+          setToastInfo({
+            type: "success",
+            title: "عملیات موفقیت امیز",
+            message: response?.data?.message,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        setToastInfo({
+          type: "error",
+          title: "خطا در تغییر پروفایل",
+          message:
+            error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
+        });
+      }finally{
+        setLoading(false)
+      }
+    }
+  };
 
   return (
     <>
@@ -181,7 +246,7 @@ export default function Header() {
           </ul>
         </nav>
         <div className={styles.profile_image_wrapper}>
-          <img src="/images/5.svg" alt="profile" />
+          <img src={me.img ? me.img : "/images/5.svg"} alt="profile" />
           <div className={styles.wrap_useraction}>
             <ul className={styles.list_useraction}>
               <li
@@ -234,26 +299,56 @@ export default function Header() {
         {typeModal === 1 ? (
           <>
             <div className={styles.wrap_image_profile}>
-              <img src="/images/5.svg" alt="profile" />
+              <img
+                src={
+                  imageProfile
+                    ? imageProfile
+                    : me?.img
+                    ? me.img
+                    : "/images.5.svg"
+                }
+                alt="profile"
+              />
               <label
                 htmlFor="file"
-                style={{ width: "100%", height: "100%" }}
+                style={{
+                  display: "inline-block",
+                  width: "100%",
+                  height: "100%",
+                  position: "absolute",
+                  top: "0",
+                  left: "0",
+                }}
               ></label>
               <input
+                name="img"
                 type="file"
                 id="file"
-                value={profile.img}
-                onChange={handleChangeProfile}
                 style={{ display: "none" }}
+                accept="image/*"
+                disabled={!isEdit}
+                onChange={(e) => {
+                  handleChangeProfileInput(e);
+                  if (e.target.files && e.target.files[0]) {
+                    const file = e.target.files[0];
+                    setImageProfile(URL.createObjectURL(file));
+                  } else {
+                    console.error("No file selected");
+                  }
+                }}
               />
             </div>
             <div className={styles.wrap_input}>
               <Input
                 value={profile.username}
-                onChange={handleChangeProfile}
+                onChange={handleChangeProfileInput}
                 name={"username"}
                 label={"نام کاربری"}
+                disable={!isEdit}
               />
+              {errors.username && (
+                <span className="error">{errors.username}</span>
+              )}
             </div>
             <Input
               value={
@@ -273,13 +368,9 @@ export default function Header() {
               <Button1
                 disable={loading}
                 text={"تایید"}
-                Onclick={changeProfileHandler}
+                Onclick={chnageProfile}
               />
-              <Button1
-                disable={loading}
-                text={"ویرایش"}
-                Onclick={() => setIsEdit(true)}
-              />
+              <Button1 text={"ویرایش"} Onclick={() => setIsEdit(true)} />
             </div>
           </>
         ) : typeModal === 2 ? (
@@ -318,7 +409,13 @@ export default function Header() {
           </>
         )}
       </Modal>
-      <Toast />
+      <Toast
+        type={toastInfo.type}
+        title={toastInfo.title}
+        message={toastInfo.message}
+        showToast={showToast}
+        setShowToast={setShowToast}
+      />
     </>
   );
 }

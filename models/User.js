@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+require("./Color");
 
 const schema = new mongoose.Schema(
   {
@@ -28,6 +29,10 @@ const schema = new mongoose.Schema(
     },
     img: {
       type: String,
+    },
+    themecolor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Color",
     },
 
     refreshToken: String,

@@ -4,8 +4,9 @@ import { authUser } from "@/utils/serverHelpers";
 
 const Layout = async ({ children }) => {
   const user = await authUser();
+
   if (user) {
-    if (user.role !=="a") {
+    if (user.role !== "a") {
       return redirect("/login");
     }
   } else {

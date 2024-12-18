@@ -25,6 +25,7 @@ export default function Home() {
   const [typeModal, setTypeModal] = useState(1);
   const [dataBirthdaty, setDataBirthdaty] = useState("");
   const [operation, setOperation] = useState("");
+  const [idUser, setIdUser] = useState("");
   const [customerData, setCustomerData] = useState({
     fullname: "",
     email: "",
@@ -167,7 +168,6 @@ export default function Home() {
     try {
       const response = await axios.get("http://localhost:3000/api/customer");
       if (response.status === 200) {
-        console.log(response.data);
         setAllCustomer(response.data);
       }
     } catch (error) {
@@ -211,6 +211,53 @@ export default function Home() {
             error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
         });
       }
+    }
+  };
+
+  const openEditModal = async (id) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/customer/${id}`
+      );
+      if (response.status === 200) {
+        console.log(response.data);
+        customerData.fullname = response.data.fullname;
+        customerData.email = response.data.email;
+        customerData.phonenumber = response.data.phonenumber;
+        customerData.nationalcode = response.data.nationalcode;
+        customerData.datereference = response.data.datereference;
+        customerData.birthday = new Date(response.data.birthday);
+        console.log(customerData.birthday);
+        customerData.filenumber = response.data.filenumber;
+        customerData.gender = response.data.gender;
+        setIdUser(id);
+        setTypeModal(3);
+        setShowModal(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateCustomer = async () => {
+    try {
+      const response = await axios.put(`http://localhost:3000/customer/${idUser}`);
+      if (response.status === 200) {
+        console.log(response.data);
+        setShowModal(false);
+        setShowToast(true);
+        setToastInfo({
+          type: "success",
+          title: "عملیات موفقیت آمیز",
+          message: "بیمار با موفقیت اضافه شد",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      setToastInfo({
+        type: "error",
+        title: "خطا در اضافه کردن عملیات",
+        message:error.response?.data?.message || "مشکلی در سمت سرور رخ داده است"});
     }
   };
 
@@ -261,6 +308,8 @@ export default function Home() {
                   title="بیمار"
                   getOptionLabelProp="fullname"
                   name={"customer"}
+                  isEdit={"edit"}
+                  openEditModal={openEditModal}
                 />
               </div>
               <div className={styles.wrapdrop}>
@@ -295,6 +344,8 @@ export default function Home() {
             ? "افزودن بیمار"
             : typeModal === 2
             ? "افزودن عملیات"
+            : typeModal === 3
+            ? "تغییراطلاعات کاربر"
             : "افزودن  تنظیمات"
         }
         onClick={() => setShowModal(false)}
@@ -443,6 +494,125 @@ export default function Home() {
               />
             </div>
           </form>
+        ) : typeModal === 3 ? (
+          <>
+            <form onSubmit={updateCustomer} style={{ width: "100%" }}>
+              <Box sx={{ flexGrow: 1, width: "100%" }}>
+                <Grid container spacing={2} className={styles.row_modal}>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Input
+                      label="نام و نام خانوادگی"
+                      value={customerData.fullname}
+                      onChange={changeHandler}
+                      name={"fullname"}
+                    />
+                    {errors.fullname && (
+                      <span className="error">{errors.fullname}</span>
+                    )}
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Input
+                      label="ایمیل"
+                      value={customerData.email}
+                      onChange={changeHandler}
+                      name={"email"}
+                    />
+                    {errors.email && (
+                      <span className="error">{errors.email}</span>
+                    )}
+                  </Grid>
+                </Grid>
+              </Box>
+              <Box sx={{ flexGrow: 1, width: "100%" }}>
+                <Grid container spacing={2} className={styles.row_modal}>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Input
+                      label="شماره تلفن"
+                      value={customerData.phonenumber}
+                      onChange={changeHandler}
+                      name={"phonenumber"}
+                      type={"number"}
+                    />
+                    {errors.phonenumber && (
+                      <span className="error">{errors.phonenumber}</span>
+                    )}
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <DropDownSearch
+                      title="جنسیت"
+                      value={customerData.gender}
+                      onChange={changeHandler}
+                      items={[
+                        { lable: "مرد", _id: "men" },
+                        { lable: "زن", _id: "women" },
+                      ]}
+                      getOptionLabelProp="lable"
+                      name={"gender"}
+                    />
+                    {errors.gender && (
+                      <span className="error">{errors.gender}</span>
+                    )}
+                  </Grid>
+                </Grid>
+              </Box>
+              <Box sx={{ flexGrow: 1, width: "100%" }}>
+                <Grid container spacing={2} className={styles.row_modal}>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Input
+                      label="شماره پرونده"
+                      value={customerData.filenumber}
+                      onChange={changeHandler}
+                      name={"filenumber"}
+                    />
+                    {errors.filenumber && (
+                      <span className="error">{errors.filenumber}</span>
+                    )}
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Input
+                      label="کدملی"
+                      value={customerData.nationalcode}
+                      onChange={changeHandler}
+                      name={"nationalcode"}
+                      type={"number"}
+                    />
+                    {errors.nationalcode && (
+                      <span className="error">{errors.nationalcode}</span>
+                    )}
+                  </Grid>
+                </Grid>
+              </Box>
+              <Box sx={{ flexGrow: 1, width: "100%" }}>
+                <Grid container spacing={2} className={styles.row_modal}>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <InputData
+                      label="تاریخ مراجعه"
+                      value={customerData?.datereference}
+                      onChange={setDateReferenceValue}
+                      name={"datereference"}
+                    />
+                    {errors.datereference && (
+                      <span className="error">{errors.datereference}</span>
+                    )}
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <InputData
+                      label="تاریخ تولد"
+                      value={customerData?.birthday}
+                      onChange={setDataBirthdaty}
+                      name={"birthday"}
+                    />
+                    {errors.birthday && (
+                      <span className="error">{errors.birthday}</span>
+                    )}
+                  </Grid>
+                </Grid>
+              </Box>
+              <div className={styles.wrap_btn}>
+                <Button1 text={"ذخیره"} icon={DoneIcon} type={"submit"} />
+              </div>
+            </form>
+          </>
         ) : null}
       </Modal>
       <Toast

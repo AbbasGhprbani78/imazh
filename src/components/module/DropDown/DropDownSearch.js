@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./DropDown.module.css";
+import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 
 export default function DropDownSearch({
   firstoptiontext,
@@ -10,23 +11,39 @@ export default function DropDownSearch({
   title,
   name,
   onChange,
-  getOptionLabelProp
+  getOptionLabelProp,
+  isEdit,
+  openEditModal,
 }) {
   const [searchValue, setSearchValue] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const dropdownRef = useRef(null); 
+  const dropdownRef = useRef(null);
 
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchValue(value);
     setFilteredItems(
       items.filter((item) =>
-        item.label.toLowerCase().includes(value.toLowerCase())
+        item?.label?.toLowerCase().includes(value.toLowerCase())
       )
     );
   };
+
+  const handleSelectItem = (item) => {
+    setSearchValue(item[getOptionLabelProp]);
+    setIsOpen(false);
+    if (onChange) {
+      onChange({ target: { name, value: item._id } });
+    }
+  };
+
+  const toggleDropdown = () => {
+    setIsOpen((prev) => !prev);
+  };
+  const handleFocus = () => setIsFocused(true);
+  const handleBlur = () => setIsFocused(false);
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -42,20 +59,6 @@ export default function DropDownSearch({
     };
   }, []);
 
-  const handleSelectItem = (item) => {
-    setSearchValue(item[getOptionLabelProp]);
-    setIsOpen(false);
-    if (onChange) {
-      onChange({ target: { name, value: item._id } });
-    }
-  };
-
-  const toggleDropdown = () => {
-    setIsOpen((prev) => !prev);
-  };
-
-  const handleFocus = () => setIsFocused(true);
-  const handleBlur = () => setIsFocused(false);
   useEffect(() => {
     setFilteredItems(items);
   }, [items]);
@@ -71,7 +74,6 @@ export default function DropDownSearch({
         <input
           type="text"
           value={searchValue}
-          placeholder=""
           onChange={handleInputChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -96,6 +98,12 @@ export default function DropDownSearch({
                 onClick={() => handleSelectItem(item)}
               >
                 {item[getOptionLabelProp]}
+                {isEdit && (
+                  <ModeEditOutlinedIcon
+                    className={styles.icon_edit}
+                    onClick={() => openEditModal(item._id)}
+                  />
+                )}
               </div>
             ))
           ) : (

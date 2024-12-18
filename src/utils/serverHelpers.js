@@ -1,11 +1,11 @@
 import { cookies } from "next/headers";
-import UserModel from '../../models/User'
+import UserModel from "../../models/User";
 import connectToDB from "../../configs/db";
 import { verifyAccessToken } from "./auth";
 
 const authUser = async () => {
   connectToDB();
-  const token = cookies().get("token");
+  const token =await cookies().get("token");
   let user = null;
 
   if (token) {
@@ -37,7 +37,6 @@ const authAdmin = async () => {
   } else {
     return null;
   }
-
 };
 
 export { authUser, authAdmin };
