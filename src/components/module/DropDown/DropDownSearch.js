@@ -15,6 +15,7 @@ export default function DropDownSearch({
   isEdit,
   openEditModal,
 }) {
+  
   const [searchValue, setSearchValue] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -80,6 +81,7 @@ export default function DropDownSearch({
           className={styles.inputField}
           name={name}
           autoComplete="off"
+          placeholder=""
         />
         <label className={styles.floatingLabel}>{title}</label>
       </div>
@@ -93,7 +95,7 @@ export default function DropDownSearch({
           {filteredItems?.length > 0 ? (
             filteredItems.map((item) => (
               <div
-                key={item._id}
+                key={item.id}
                 className={styles.dropdownItem}
                 onClick={() => handleSelectItem(item)}
               >
@@ -101,7 +103,7 @@ export default function DropDownSearch({
                 {isEdit && (
                   <ModeEditOutlinedIcon
                     className={styles.icon_edit}
-                    onClick={() => openEditModal(item._id)}
+                    onClick={() => openEditModal(item.id)}
                   />
                 )}
               </div>

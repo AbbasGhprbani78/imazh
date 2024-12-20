@@ -1,40 +1,51 @@
 import { cookies } from "next/headers";
-import UserModel from "../../models/User";
-import connectToDB from "../../configs/db";
+import { PrismaClient } from "@prisma/client";
 import { verifyAccessToken } from "./auth";
 
-const authUser = async () => {
-  connectToDB();
-  const token =await cookies().get("token");
-  let user = null;
+const prisma = new PrismaClient();
 
-  if (token) {
-    const tokenPayload = verifyAccessToken(token.value);
-    if (tokenPayload) {
-      user = await UserModel.findOne({ username: tokenPayload.username });
-    }
+const getUserFromToken = async () => {
+  try {
+    const cookieStore =await cookies();
+    const cookieToken = cookieStore.get("token");
+
+    if (!cookieToken) return null;
+
+    const tokenPayload = verifyAccessToken(cookieToken.value);
+    if (!tokenPayload) return null;
+
+    const user = await prisma.user.findUnique({
+      where: {
+        username: tokenPayload.username,
+      },
+    });
+
+    return user;
+  } catch (error) {
+    console.error("Error in getUserFromToken:", error);
+    return null;
   }
-  return user;
+};
+
+const authUser = async () => {
+  try {
+    const user = await getUserFromToken();
+    return user;
+  } catch (error) {
+    console.error("Error in authUser:", error);
+    return null;
+  }
 };
 
 const authAdmin = async () => {
-  connectToDB();
-  const token = cookies().get("token");
-  let user = null;
-
-  if (token) {
-    const tokenPayload = verifyAccessToken(token.value);
-    if (tokenPayload) {
-      user = await UserModel.findOne({ username: tokenPayload.username });
-      if (user.role === "a") {
-        return user;
-      } else {
-        return null;
-      }
-    } else {
-      return null;
+  try {
+    const user = await getUserFromToken();
+    if (user && user.role === "a") {
+      return user;
     }
-  } else {
+    return null;
+  } catch (error) {
+    console.error("Error in authAdmin:", error);
     return null;
   }
 };

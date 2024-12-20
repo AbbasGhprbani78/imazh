@@ -48,7 +48,7 @@
 /* Toast Header */
 .toast_header {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     color: #fff;
     margin-bottom: 0.5rem;
 }
@@ -60,7 +60,7 @@
 /* Toast Content */
 .toast_content {
     display: flex;
-    align-items: start;
+    align-items:flex-start;
 }
 
 .done_icon,

@@ -1,6 +1,12 @@
 import { cookies } from "next/headers";
 
 export async function POST() {
-  cookies().delete("token");
-  return Response.json({ message: "Logout is done" }, { status: 200 });
+  const cookieStore = cookies();
+
+  cookieStore.delete("token");
+  cookieStore.delete("refresh-token");
+
+  return new Response(JSON.stringify({ message: "با موفقیت از حساب خارج شدید" }), {
+    status: 200,
+  });
 }

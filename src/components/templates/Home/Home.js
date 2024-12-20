@@ -178,7 +178,7 @@ export default function Home() {
   const addOperationHandler = async (e) => {
     e.preventDefault();
     let formErrors = {};
-    if (!isRequired(customerData.operation)) {
+    if (!isRequired(operation)) {
       formErrors.operation = "وارد کردن نام عملیات الزامی است";
     }
     if (Object.keys(formErrors).length > 0) {
@@ -204,6 +204,7 @@ export default function Home() {
         }
       } catch (error) {
         console.log(error);
+        setShowToast(true);
         setToastInfo({
           type: "error",
           title: "خطا در اضافه کردن عملیات",
@@ -239,25 +240,31 @@ export default function Home() {
     }
   };
 
-  const updateCustomer = async () => {
+  const updateCustomer = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.put(`http://localhost:3000/customer/${idUser}`);
+      const response = await axios.put(
+        `http://localhost:3000/api/customer/${idUser}`,
+        customerData
+      );
       if (response.status === 200) {
-        console.log(response.data);
-        setShowModal(false);
         setShowToast(true);
         setToastInfo({
           type: "success",
           title: "عملیات موفقیت آمیز",
-          message: "بیمار با موفقیت اضافه شد",
+          message: "اطلاعات با موفقیت تغییر کرد",
         });
+        setShowModal(false);
       }
     } catch (error) {
       console.log(error);
+      setShowToast(true);
       setToastInfo({
         type: "error",
         title: "خطا در اضافه کردن عملیات",
-        message:error.response?.data?.message || "مشکلی در سمت سرور رخ داده است"});
+        message:
+          error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
+      });
     }
   };
 

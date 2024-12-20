@@ -1,52 +1,76 @@
 import {
+  verifyAccessToken,
   generateAccessToken,
   generateRefreshToken,
-  verifyAccessToken,
 } from "@/utils/auth";
-import connectToDB from "../../../../../configs/db";
+import { PrismaClient } from "@prisma/client";
 import { cookies } from "next/headers";
-import UserModel from "../../../../../models/User";
 import { writeFile } from "fs/promises";
 import path from "path";
 import crypto from "crypto";
 
-export async function GET(req) {
-  connectToDB();
-  const token = await cookies().get("token");
-  let user = null;
+const prisma = new PrismaClient();
 
-  if (token) {
-    const tokenPayload = verifyAccessToken(token.value);
-    if (tokenPayload) {
-      user = await UserModel.findOne(
-        { username: tokenPayload.username },
-        "-password -refreshToken -__v"
+export async function GET(req) {
+  try {
+      const cookieStore =await cookies(); 
+      const token = cookieStore.get("token");
+    if (!token) {
+      return new Response(
+        JSON.stringify({ data: null, message: "دسترسی مجاز نیست" }),
+        { status: 401 }
       );
     }
-    return Response.json(user);
-  } else {
-    return Response.json(
-      {
-        data: null,
-        message: "دسترسی مجاز نیست",
+
+    const tokenPayload = verifyAccessToken(token.value);
+    if (!tokenPayload) {
+      return new Response(
+        JSON.stringify({ data: null, message: "توکن نامعتبر است" }),
+        { status: 403 }
+      );
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { username: tokenPayload.username },
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        img: true, 
       },
-      { status: 401 }
-    );
+    });
+
+    if (!user) {
+      return new Response(
+        JSON.stringify({ data: null, message: "کاربر یافت نشد" }),
+        { status: 404 }
+      );
+    }
+
+    return new Response(JSON.stringify(user), { status: 200 });
+  } catch (error) {
+    console.error("Error in GET:", error);
+    return new Response(JSON.stringify({ message: "خطای سرور رخ داد" }), {
+      status: 500,
+    });
   }
 }
 
 export async function PUT(req) {
   try {
-    await connectToDB();
-
-    const token = cookies().get("token");
+     const cookieStore =await cookies();
+     const token = cookieStore.get("token");
     if (!token) {
-      return Response.json({ message: "دسترسی مجاز نیست" }, { status: 401 });
+      return new Response(JSON.stringify({ message: "دسترسی مجاز نیست" }), {
+        status: 401,
+      });
     }
 
     const tokenPayload = verifyAccessToken(token.value);
     if (!tokenPayload) {
-      return Response.json({ message: "توکن نامعتبر است" }, { status: 403 });
+      return new Response(JSON.stringify({ message: "توکن نامعتبر است" }), {
+        status: 403,
+      });
     }
 
     const formData = await req.formData();
@@ -54,8 +78,8 @@ export async function PUT(req) {
     const img = formData.get("img");
 
     if (username && typeof username !== "string") {
-      return Response.json(
-        { message: "نام کاربری نامعتبر است" },
+      return new Response(
+        JSON.stringify({ message: "نام کاربری نامعتبر است" }),
         { status: 400 }
       );
     }
@@ -78,56 +102,40 @@ export async function PUT(req) {
       ...(imgUrl && { img: imgUrl }),
     };
 
-    const updatedUser = await UserModel.findOneAndUpdate(
-      { username: tokenPayload.username },
-      updateData,
-      { new: true, select: "-password -refreshToken -__v" }
-    );
-
-    if (!updatedUser) {
-      return Response.json({ message: "کاربر یافت نشد" }, { status: 404 });
-    }
+    const updatedUser = await prisma.user.update({
+      where: { username: tokenPayload.username },
+      data: updateData,
+    });
 
     const accessToken = generateAccessToken({ username: updatedUser.username });
     const refreshToken = generateRefreshToken({
       username: updatedUser.username,
     });
 
-    await UserModel.findOneAndUpdate(
-      { username: updatedUser.username },
-      {
-        $set: {
-          refreshToken,
-        },
-      }
-    );
+    const tokenMaxAge = 60 * 60 * 24 * 15; // 15 days
+    const refreshMaxAge = 60 * 60 * 24 * 30; // 30 days
 
     const headers = new Headers();
-    const tokenMaxAge = 60 * 60 * 24 * 15;
-    const refreshMaxAge = 60 * 60 * 24 * 30;
-
     headers.append(
       "Set-Cookie",
       `token=${accessToken};path=/;httpOnly=true;Max-Age=${tokenMaxAge}`
     );
-
     headers.append(
       "Set-Cookie",
       `refresh-token=${refreshToken};path=/;httpOnly=true;Max-Age=${refreshMaxAge}`
     );
 
-    return Response.json(
-      {
+    return new Response(
+      JSON.stringify({
         message: "اطلاعات کاربر با موفقیت به‌روزرسانی شد",
         data: updatedUser,
-      },
-      {
-        status: 200,
-        headers,
-      }
+      }),
+      { status: 200, headers }
     );
   } catch (error) {
     console.error("Error updating user:", error);
-    return Response.json({ message: "خطای سرور رخ داد" }, { status: 500 });
+    return new Response(JSON.stringify({ message: "خطای سرور رخ داد" }), {
+      status: 500,
+    });
   }
 }

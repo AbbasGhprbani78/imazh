@@ -64,21 +64,17 @@ export default function Header() {
     }));
   };
 
-  useEffect(() => {
-    const getMe = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/api/auth/me");
-        if (response.status === 200) {
-          setMe(response.data);
-          profile.username = response.data.username;
-        }
-      } catch (error) {
-        console.log(error);
+  const getMe = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/auth/me");
+      if (response.status === 200) {
+        setMe(response.data);
+        profile.username = response.data.username;
       }
-    };
-
-    getMe();
-  }, []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const logOutHnadler = async () => {
     try {
@@ -143,7 +139,7 @@ export default function Header() {
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
     } else {
-      setLoading(true)
+      setLoading(true);
       const formData = new FormData();
       formData.append("username", profile.username);
       formData.append("img", profile.img);
@@ -160,6 +156,8 @@ export default function Header() {
             title: "عملیات موفقیت امیز",
             message: response?.data?.message,
           });
+          setIsEdit(false);
+          getMe();
         }
       } catch (error) {
         console.log(error);
@@ -169,11 +167,15 @@ export default function Header() {
           message:
             error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
         });
-      }finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     }
   };
+
+  useEffect(() => {
+    getMe();
+  }, []);
 
   return (
     <>
@@ -305,7 +307,7 @@ export default function Header() {
                     ? imageProfile
                     : me?.img
                     ? me.img
-                    : "/images.5.svg"
+                    : "/images/5.svg"
                 }
                 alt="profile"
               />

@@ -1,5 +1,5 @@
 export const isRequired = (value) => {
-  return value ? true : false;
+  return value && value.trim().length > 0;
 };
 
 export const validateEmail = (email) => {
@@ -31,7 +31,7 @@ export const validateNationalCode = (code) => {
     return true;
   }
 
-  return false
+  return false;
 };
 
 export const validateIranianPhoneNumber = (phone) => {

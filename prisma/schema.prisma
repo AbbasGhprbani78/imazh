@@ -1,0 +1,103 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model Archive {
+  id          Int       @id @default(autoincrement())
+  operationId Int
+  settingId   Int
+  customerId  Int
+  status      Int
+  date1       DateTime
+  date2       DateTime
+
+  customer    Customer  @relation(fields: [customerId], references: [id])
+  operation   Operation @relation(fields: [operationId], references: [id])
+  setting     Setting   @relation(fields: [settingId], references: [id])
+  photos1     Photo[]   @relation("ArchivePhotos1")
+  photos2     Photo[]   @relation("ArchivePhotos2")
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+ 
+}
+
+model Photo {
+  id          Int       @id @default(autoincrement())
+  url         String
+  archiveId   Int
+  archive     Archive   @relation("ArchivePhotos1", fields: [archiveId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  archive2    Archive   @relation("ArchivePhotos2", fields: [archiveId], references: [id])
+}
+
+
+model Customer {
+  id            Int       @id @default(autoincrement())
+  fullname      String
+  email         String    @unique
+  phonenumber   String    @unique
+  nationalcode  String    @unique
+  datereference DateTime
+  birthday      DateTime
+  filenumber    String    @unique
+  gender        String    @default("men")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  archives      Archive[] // رابطه معکوس به مدل Archive
+}
+
+model Operation {
+  id        Int       @id @default(autoincrement())
+  operation String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  archives  Archive[] // رابطه معکوس به مدل Archive
+}
+
+model Setting {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?   
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  archives    Archive[] // رابطه معکوس به مدل Archive
+}
+
+model User {
+  id                 Int       @id @default(autoincrement())
+  username           String    @unique
+  password           String
+  role               String   
+  resetCode          String?   // nullable
+  resetCodeExpiration DateTime? // nullable
+  img                String?   // nullable
+  themecolor         Color?    @relation(fields: [themecolorId], references: [id])
+  themecolorId       Int?      // optional field for relation to Color model
+  refreshToken       String?   // nullable
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+}
+
+
+model Color {
+  id        Int      @id @default(autoincrement())
+  color     String  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users     User[]   // رابطه معکوس به مدل User
+}
