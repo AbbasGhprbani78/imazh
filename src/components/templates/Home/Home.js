@@ -17,15 +17,26 @@ import { isRequired, validateNationalCode } from "@/utils/validate";
 import { valiadteEmail, valiadtePhone } from "@/utils/auth";
 
 export default function Home() {
+  const [customerInfo, setCustomerInfo] = useState({
+    customerId: "",
+    operationId: "",
+    settingId: "",
+    operationDateId: "",
+  });
   const [showModal, setShowModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [operationsData, setAllOperationsData] = useState([]);
   const [allCustomer, setAllCustomer] = useState();
+  const [allSettings, setAllSettings] = useState();
   const [dateReferenceValue, setDateReferenceValue] = useState("");
   const [typeModal, setTypeModal] = useState(1);
   const [dataBirthdaty, setDataBirthdaty] = useState("");
   const [operation, setOperation] = useState("");
   const [idUser, setIdUser] = useState("");
+  const [isNewOperation, setIsNewOperation] = useState(true);
+  const [photos, setPhotos] = useState([]);
+  const [historyOperation, setHistoryOperation] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [customerData, setCustomerData] = useState({
     fullname: "",
     email: "",
@@ -64,6 +75,34 @@ export default function Home() {
       ...prevErrors,
       [name]: "",
     }));
+  };
+
+  const ChangeCustomerInfoHandler = (e) => {
+    const { name, value } = e.target;
+    setCustomerInfo((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
+  };
+
+  const showAddCustomerModal = () => {
+    setCustomerData({
+      fullname: "",
+      email: "",
+      phonenumber: "",
+      nationalcode: "",
+      datereference: "",
+      birthday: "",
+      filenumber: "",
+      gender: "",
+    });
+    setTypeModal(1);
+    setShowModal(true);
   };
 
   const handlerAddCustomer = async (e) => {
@@ -107,9 +146,9 @@ export default function Home() {
     if (!valiadteEmail(customerData.email)) {
       formErrors.email = "فرمت ایمیل معتبر نیست";
     }
-    // if (!validateNationalCode(customerData.nationalcode)) {
-    //   formErrors.nationalcode = "فرمت کدملی معتبرنیست";
-    // }
+    if (!validateNationalCode(customerData.nationalcode)) {
+      formErrors.nationalcode = "فرمت کدملی معتبرنیست";
+    }
     if (!valiadtePhone(customerData.phonenumber)) {
       formErrors.phonenumber = "فرمت شماره تلفن معتبر نیست";
     }
@@ -131,14 +170,16 @@ export default function Home() {
             message: "بیمار با موفقیت اضافه شد",
           });
 
-          customerData.fullname = "";
-          customerData.email = "";
-          customerData.phonenumber = "";
-          customerData.nationalcode = "";
-          customerData.datereference = "";
-          customerData.birthday = "";
-          customerData.filenumber = "";
-          customerData.gender = "";
+          setCustomerData({
+            fullname: "",
+            email: "",
+            phonenumber: "",
+            nationalcode: "",
+            datereference: "",
+            birthday: "",
+            filenumber: "",
+            gender: "",
+          });
         }
       } catch (error) {
         console.log(error);
@@ -169,6 +210,17 @@ export default function Home() {
       const response = await axios.get("http://localhost:3000/api/customer");
       if (response.status === 200) {
         setAllCustomer(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getAllSetting = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/setting");
+      if (response.status === 200) {
+        setAllSettings(response.data);
       }
     } catch (error) {
       console.log(error);
@@ -221,14 +273,12 @@ export default function Home() {
         `http://localhost:3000/api/customer/${id}`
       );
       if (response.status === 200) {
-        console.log(response.data);
         customerData.fullname = response.data.fullname;
         customerData.email = response.data.email;
         customerData.phonenumber = response.data.phonenumber;
         customerData.nationalcode = response.data.nationalcode;
         customerData.datereference = response.data.datereference;
         customerData.birthday = new Date(response.data.birthday);
-        console.log(customerData.birthday);
         customerData.filenumber = response.data.filenumber;
         customerData.gender = response.data.gender;
         setIdUser(id);
@@ -268,9 +318,84 @@ export default function Home() {
     }
   };
 
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    setPhotos(Array.from(files));
+  };
+
+  const saveCustomerInfo = async () => {
+    if (isNewOperation) {
+      const formData = new FormData();
+      formData.append("operationId", customerInfo.operationId);
+      formData.append("settingId", customerInfo.settingId);
+      formData.append("customerId", customerInfo.customerId);
+      photos.forEach((photo) => {
+        formData.append("photos", photo);
+      });
+      try {
+        setLoading(true);
+        const response = await axios.post(
+          "http://localhost:3000/api/archive",
+          formData
+        );
+
+        if (response.status === 201) {
+          setPhotos([]);
+          setShowToast(true);
+          setToastInfo({
+            type: "success",
+            title: "عملیات موفقیت آمیز",
+            message: "ارشیو بیمار با موفقیت اضافه شد",
+          });
+        }
+      } catch (error) {
+        setShowToast(true);
+        setToastInfo({
+          type: "error",
+          title: "خطا دراضافه کردن ارشیو",
+          message:
+            error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
+        });
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      const formData = new FormData();
+      formData.append("archiveId", customerInfo.operationDateId);
+      photos.forEach((photo) => {
+        formData.append("photos", photo);
+      });
+      try {
+        setLoading(true);
+        const response = await axios.post(
+          "http://localhost:3000/api/archive/updatearchive",
+          formData
+        );
+        if (response.status === 200) {
+          setShowToast(true);
+          setToastInfo({
+            type: "success",
+            title: "عملیات موفقیت آمیز",
+            message: "ارشیو بیمار با موفقیت اضافه شد",
+          });
+        }
+      } catch (error) {
+        setToastInfo({
+          type: "error",
+          title: "خطا دراضافه کردن ارشیو",
+          message:
+            error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   useEffect(() => {
     getAllOperation();
     getAllCustomer();
+    getAllSetting();
   }, []);
 
   useEffect(() => {
@@ -288,6 +413,32 @@ export default function Home() {
       birthday: dataBirthdaty ? new Date(dataBirthdaty).toISOString() : "",
     }));
   }, [dataBirthdaty]);
+
+  useEffect(() => {
+    const { customerId, operationId } = customerInfo;
+
+    if (customerId && operationId) {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(
+            "http://localhost:3000/api/archive/operationsdate",
+            {
+              params: { customerId, operationId },
+            }
+          );
+          if (response.status === 200) {
+            setHistoryOperation(response.data);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [customerInfo.customerId, customerInfo.operationId]);
+
+
 
   return (
     <div className={`wrapper`}>
@@ -307,16 +458,15 @@ export default function Home() {
               <div className={styles.wrapdrop}>
                 <DropDownSearch
                   firstoptiontext="افزودن بیمار"
-                  firstoptionclick={() => {
-                    setTypeModal(1);
-                    setShowModal(true);
-                  }}
+                  firstoptionclick={showAddCustomerModal}
                   items={allCustomer}
                   title="بیمار"
                   getOptionLabelProp="fullname"
-                  name={"customer"}
+                  name={"customerId"}
                   isEdit={"edit"}
                   openEditModal={openEditModal}
+                  onChange={ChangeCustomerInfoHandler}
+                  value={customerInfo.customerId}
                 />
               </div>
               <div className={styles.wrapdrop}>
@@ -328,20 +478,46 @@ export default function Home() {
                     setShowModal(true);
                   }}
                   items={operationsData}
-                  name={"operation"}
+                  name={"operationId"}
                   getOptionLabelProp="operation"
+                  onChange={ChangeCustomerInfoHandler}
+                  value={customerInfo.operationId}
+                />
+              </div>
+              <div className={styles.wrapdrop}>
+                <DropDownSearch
+                  title={"تاریخ عملیات"}
+                  firstoptiontext="عملیات جدید"
+                  firstoptionclick={() => setIsNewOperation(true)}
+                  items={historyOperation}
+                  name={"operationDateId"}
+                  getOptionLabelProp="date1"
+                  onChange={ChangeCustomerInfoHandler}
+                  value={customerInfo.operationDateId}
+                  setIsNewOperation={setIsNewOperation}
                 />
               </div>
               <div className={styles.wrapdrop}>
                 <DropDownSearch
                   title={"حالت ضبط"}
                   firstoptiontext="افزودن حالت ضبط"
+                  items={allSettings}
+                  name={"settingId"}
+                  getOptionLabelProp="name"
+                  onChange={ChangeCustomerInfoHandler}
+                  value={customerInfo.settingId}
                 />
               </div>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleFileChange}
+              />
             </RightSection>
           </Grid>
           <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
-            <LeftSection />
+            <LeftSection saveItem={saveCustomerInfo} loading={loading}/>
           </Grid>
         </Grid>
       </Box>
@@ -406,8 +582,8 @@ export default function Home() {
                     value={customerData.gender}
                     onChange={changeHandler}
                     items={[
-                      { lable: "مرد", _id: "men" },
-                      { lable: "زن", _id: "women" },
+                      { lable: "مرد", id: "men" },
+                      { lable: "زن", id: "women" },
                     ]}
                     getOptionLabelProp="lable"
                     name={"gender"}
@@ -550,8 +726,8 @@ export default function Home() {
                       value={customerData.gender}
                       onChange={changeHandler}
                       items={[
-                        { lable: "مرد", _id: "men" },
-                        { lable: "زن", _id: "women" },
+                        { lable: "مرد", id: "men" },
+                        { lable: "زن", id: "women" },
                       ]}
                       getOptionLabelProp="lable"
                       name={"gender"}
@@ -632,3 +808,8 @@ export default function Home() {
     </div>
   );
 }
+
+// const [ids, setIds] = useState({
+//   customerId: "",
+//   operationId: "",
+// });

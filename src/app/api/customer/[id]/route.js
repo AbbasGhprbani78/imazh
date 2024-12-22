@@ -195,6 +195,10 @@ function validateCustomerData(data) {
     errors.filenumber = "شماره پرونده الزامی است";
   }
 
+  if (data.gender !== "men" && data.gender !== "women") {
+    errors.gender = "جنسیت باید 'مرد' یا 'زن' باشد";
+  }
+
   return errors;
 }
 
@@ -230,7 +234,7 @@ export async function GET(req, { params }) {
 export async function PUT(req, context) {
   try {
     const { params } = context;
-    const { id } = await params; 
+    const { id } = await params;
 
     if (!id) {
       return new Response(JSON.stringify({ error: "ایدی مشتری لازم است" }), {
@@ -258,7 +262,6 @@ export async function PUT(req, context) {
     });
   }
 }
-
 
 export async function DELETE(req, { params }) {
   try {

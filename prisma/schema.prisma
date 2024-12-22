@@ -1,6 +1,6 @@
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = "file:./dev.db?connection_limit=1&timeout=30000" 
 }
 
 generator client {
@@ -13,31 +13,36 @@ model Archive {
   operationId Int
   settingId   Int
   customerId  Int
-  status      Int
-  date1       DateTime
-  date2       DateTime
+  status      Int       @default(1)
+  date1       DateTime  @default(now())
+  date2      DateTime? // Nullable field
 
   customer    Customer  @relation(fields: [customerId], references: [id])
   operation   Operation @relation(fields: [operationId], references: [id])
   setting     Setting   @relation(fields: [settingId], references: [id])
-  photos1     Photo[]   @relation("ArchivePhotos1")
-  photos2     Photo[]   @relation("ArchivePhotos2")
+  photos      Photo[]   // Relation to Photo model
   
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
 
- 
+model Operation {
+  id        Int       @id @default(autoincrement())
+  operation String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  archives  Archive[] // رابطه معکوس به مدل Archive
 }
 
 model Photo {
   id          Int       @id @default(autoincrement())
   url         String
   archiveId   Int
-  archive     Archive   @relation("ArchivePhotos1", fields: [archiveId], references: [id])
+  group       Int       // 1 for photos1, 2 for photos2
+  archive     Archive   @relation(fields: [archiveId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
-  archive2    Archive   @relation("ArchivePhotos2", fields: [archiveId], references: [id])
 }
 
 
@@ -57,14 +62,7 @@ model Customer {
   archives      Archive[] // رابطه معکوس به مدل Archive
 }
 
-model Operation {
-  id        Int       @id @default(autoincrement())
-  operation String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
 
-  archives  Archive[] // رابطه معکوس به مدل Archive
-}
 
 model Setting {
   id          Int      @id @default(autoincrement())
@@ -98,6 +96,5 @@ model Color {
   color     String  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   users     User[]   // رابطه معکوس به مدل User
 }

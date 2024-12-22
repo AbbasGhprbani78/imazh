@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./DropDown.module.css";
 import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
+import { convertToPersianDate } from "@/utils/helper";
 
 export default function DropDownSearch({
   firstoptiontext,
@@ -14,8 +15,9 @@ export default function DropDownSearch({
   getOptionLabelProp,
   isEdit,
   openEditModal,
+  value,
+  setIsNewOperation,
 }) {
-  
   const [searchValue, setSearchValue] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +38,7 @@ export default function DropDownSearch({
     setSearchValue(item[getOptionLabelProp]);
     setIsOpen(false);
     if (onChange) {
-      onChange({ target: { name, value: item._id } });
+      onChange({ target: { name, value: item.id } });
     }
   };
 
@@ -64,6 +66,12 @@ export default function DropDownSearch({
     setFilteredItems(items);
   }, [items]);
 
+  useEffect(() => {
+    if (name === "gender" && value !== "") {
+      setSearchValue(value === "men" ? "مرد" : "زن");
+    }
+  }, [value]);
+
   return (
     <div className={styles.wrapDropSearch} ref={dropdownRef}>
       <div
@@ -88,7 +96,14 @@ export default function DropDownSearch({
       {isOpen && (
         <div className={styles.dropdownMenu}>
           {firstoptiontext && (
-            <div className={styles.dropdownItem} onClick={firstoptionclick}>
+            <div
+              className={styles.dropdownItem}
+              onClick={() => {
+                name === "operationDateId" && setSearchValue("عملیات جدید");
+                firstoptionclick();
+                setIsOpen(false);
+              }}
+            >
               {firstoptiontext}
             </div>
           )}
@@ -97,9 +112,17 @@ export default function DropDownSearch({
               <div
                 key={item.id}
                 className={styles.dropdownItem}
-                onClick={() => handleSelectItem(item)}
+                onClick={() => {
+                  handleSelectItem(item);
+                   if (setIsNewOperation) {
+                     setIsNewOperation(false);
+                   }
+                }}
               >
-                {item[getOptionLabelProp]}
+                {name === "operationDateId"
+                  ? convertToPersianDate(item[getOptionLabelProp])
+                  : item[getOptionLabelProp]}
+
                 {isEdit && (
                   <ModeEditOutlinedIcon
                     className={styles.icon_edit}
@@ -116,3 +139,4 @@ export default function DropDownSearch({
     </div>
   );
 }
+ 

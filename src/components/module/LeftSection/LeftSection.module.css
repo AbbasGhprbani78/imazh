@@ -66,3 +66,19 @@
     background-color: red;
     z-index: 1000;
 }
+
+.wrap_save_icon {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+}
+
+.button_save {
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.btn_save_disable {
+    cursor: not-allowed;
+}
