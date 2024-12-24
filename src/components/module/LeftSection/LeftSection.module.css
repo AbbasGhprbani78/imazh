@@ -81,4 +81,5 @@
 
 .btn_save_disable {
     cursor: not-allowed;
+    opacity: .5;
 }

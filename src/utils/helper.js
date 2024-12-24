@@ -3,6 +3,12 @@ export const convertToFarsiDigits = (number) => {
   return number?.toString().replace(/\d/g, (digit) => farsiDigits[digit]);
 };
 
+export function toEnglishNumber(number) {
+  return number
+    ?.toString()
+    .replace(/[۰-۹]/g, (d) => "0123456789"["۰۱۲۳۴۵۶۷۸۹".indexOf(d)]);
+}
+
 export const convertToPersianDate = (isoDate) => {
   const date = new Date(isoDate);
   return new Intl.DateTimeFormat("fa-IR", {
@@ -10,3 +16,20 @@ export const convertToPersianDate = (isoDate) => {
     timeStyle: "short",
   }).format(date);
 };
+
+export function calculateAge(birthDateString) {
+  const birthDate = new Date(birthDateString);
+  const today = new Date();
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDifference = today.getMonth() - birthDate.getMonth();
+
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+
+  return age;
+}

@@ -267,6 +267,25 @@ export default function Home() {
     }
   };
 
+  const fetchData = async () => {
+    const { customerId, operationId } = customerInfo;
+    if (customerId && operationId) {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/archive/operationsdate",
+          {
+            params: { customerId, operationId },
+          }
+        );
+        if (response.status === 200) {
+          setHistoryOperation(response.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   const openEditModal = async (id) => {
     try {
       const response = await axios.get(
@@ -342,6 +361,7 @@ export default function Home() {
         if (response.status === 201) {
           setPhotos([]);
           setShowToast(true);
+          fetchData();
           setToastInfo({
             type: "success",
             title: "عملیات موفقیت آمیز",
@@ -415,30 +435,8 @@ export default function Home() {
   }, [dataBirthdaty]);
 
   useEffect(() => {
-    const { customerId, operationId } = customerInfo;
-
-    if (customerId && operationId) {
-      const fetchData = async () => {
-        try {
-          const response = await axios.get(
-            "http://localhost:3000/api/archive/operationsdate",
-            {
-              params: { customerId, operationId },
-            }
-          );
-          if (response.status === 200) {
-            setHistoryOperation(response.data);
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      };
-
-      fetchData();
-    }
+    fetchData();
   }, [customerInfo.customerId, customerInfo.operationId]);
-
-
 
   return (
     <div className={`wrapper`}>
@@ -517,7 +515,7 @@ export default function Home() {
             </RightSection>
           </Grid>
           <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
-            <LeftSection saveItem={saveCustomerInfo} loading={loading}/>
+            <LeftSection saveItem={saveCustomerInfo} loading={loading} />
           </Grid>
         </Grid>
       </Box>

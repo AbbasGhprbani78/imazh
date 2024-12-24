@@ -26,20 +26,22 @@ export default function LeftSection({ saveItem, loading }) {
           <CameraOutlinedIcon className={styles.icon_camera} />
         </div>
         <div className={styles.wrap_save_icon}>
-          <button
-            className={`${styles.button_save} ${
-              loading && styles.btn_save_disable
-            }`}
-            onClick={saveItem}
-            disabled
-            style={{
-              border: "none",
-              outline: "none",
-              background: "transparent",
-            }}
-          >
-            <SaveAltIcon className={styles.icon_camera} />
-          </button>
+          {saveItem && (
+            <button
+              className={`${styles.button_save} ${
+                loading && styles.btn_save_disable
+              }`}
+              onClick={saveItem}
+              disabled={loading}
+              style={{
+                border: "none",
+                outline: "none",
+                background: "transparent",
+              }}
+            >
+              <SaveAltIcon className={styles.icon_camera} />
+            </button>
+          )}
         </div>
       </div>
     </div>

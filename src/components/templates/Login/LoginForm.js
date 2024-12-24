@@ -58,18 +58,15 @@ export default function LoginForm() {
          try {
            setLoading(true);
            const response = await axios.post(
-             "http://localhost:3000/api/auth/login",
-             formData
-           );
+             "http://localhost:3000/api/auth/login",formData);
            if (response.status === 200) {
              if (response.data.role === "a" || response.data.role === "d") {
-               router.replace("/");
+               router.push("/");
              } else if (response.data.role === "s") {
-               router.replace("archive");
+               router.push("archive");
              }
            }
          } catch (error) {
-           console.log(error);
            setShowToast(true);
            setToastInfo({
              type: "error",

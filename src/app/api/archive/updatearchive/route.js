@@ -9,7 +9,7 @@ export async function POST(req) {
     const archiveId = formData.get("archiveId");
     const photos = formData.getAll("photos");
 
-    if (!archiveId || photos.length === 0) {
+    if (!archiveId || photos?.length === 0) {
       return new Response(
         JSON.stringify({ message: "لطفاً تمام فیلدهای الزامی را وارد کنید." }),
         { status: 400 }

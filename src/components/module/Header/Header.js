@@ -84,7 +84,7 @@ export default function Header() {
         {}
       );
       if (response.status === 200) {
-        router.replace("/login");
+        router.push("/login");
       }
     } catch (error) {
       console.log(error);
