@@ -20,7 +20,13 @@ import { isRequired } from "@/utils/validate";
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const isActive = (href) => pathname === href;
+const isActive = (href) => {
+  if (href === "/") {
+    return pathname === href;
+  }
+  return pathname.startsWith(href);
+};
+
   const [me, setMe] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);

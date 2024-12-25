@@ -4,6 +4,8 @@ import Button2 from "../Buttons/Button2";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Pagination from "@mui/material/Pagination";
+import { useRouter } from "next/navigation";
+
 import {
   Table,
   TableBody,
@@ -22,8 +24,11 @@ export default function TableUser({
   setShowModal,
   setArchiveId,
 }) {
-
-
+  const router = useRouter();
+  const goToArchiveCustomer = (name, id) => {
+    const formattedName = name.replace(/ /g, "-");
+    router.push(`/archive/${formattedName}?id=${id}`);
+  };
 
   return (
     <div className={styles.table_container}>
@@ -194,12 +199,20 @@ export default function TableUser({
                       justifyContent: "center",
                     }}
                   >
-                    <Button2 icon={VisibilityIcon} onClick={""} />
+                    <Button2
+                      icon={VisibilityIcon}
+                      onClick={() =>
+                        goToArchiveCustomer(
+                          row?.customer?.fullname,
+                          row?.id
+                        )
+                      }
+                    />
                     <Button2
                       icon={DeleteOutlineIcon}
                       onClick={() => {
                         setShowModal(true);
-                        setArchiveId(row?.id)
+                        setArchiveId(row?.id);
                       }}
                     />
                   </TableCell>

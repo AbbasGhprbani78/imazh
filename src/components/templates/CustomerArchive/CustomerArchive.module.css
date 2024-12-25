@@ -1,0 +1,17 @@
+.content_right {
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.wrap_display {
+    margin-top: 3rem;
+}
+
+
+.wrap_actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #fff;
+    padding-top: 20px;
+}

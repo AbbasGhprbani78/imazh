@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node server.js",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production node server.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -22,7 +22,10 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-multi-date-picker": "^4.5.2",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "stylis": "^4.3.4",
-    "stylis-plugin-rtl": "^2.1.1"
+    "stylis-plugin-rtl": "^2.1.1",
+    "ws": "^8.18.0"
   }
 }

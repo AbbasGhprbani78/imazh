@@ -15,8 +15,16 @@ import axios from "axios";
 import Toast from "@/components/module/Toast/Toast";
 import { isRequired, validateNationalCode } from "@/utils/validate";
 import { valiadteEmail, valiadtePhone } from "@/utils/auth";
+import CameraOutlinedIcon from "@mui/icons-material/CameraOutlined";
+import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
+import Webcam from "@/components/module/Webcam/Webcam";
+import io from "socket.io-client";
+
+let socket;
 
 export default function Home() {
+  const [data, setData] = useState([]);
   const [customerInfo, setCustomerInfo] = useState({
     customerId: "",
     operationId: "",
@@ -37,6 +45,7 @@ export default function Home() {
   const [photos, setPhotos] = useState([]);
   const [historyOperation, setHistoryOperation] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [customerData, setCustomerData] = useState({
     fullname: "",
     email: "",
@@ -412,6 +421,35 @@ export default function Home() {
     }
   };
 
+  const toggleExpand = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
+  const fetchDataFromServer = () => {
+    socket.emit("fetchData");
+    console.log("fetchData event emitted to backend");
+  };
+
+  useEffect(() => {
+    socket = io("http://localhost:3000");
+    socket.on("connect", () => {
+      console.log("Connected to server");
+    });
+
+    socket.on("serverData", (receivedData) => {
+      console.log("Data received from backend:", receivedData);
+      setData(receivedData);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   useEffect(() => {
     getAllOperation();
     getAllCustomer();
@@ -515,7 +553,37 @@ export default function Home() {
             </RightSection>
           </Grid>
           <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
-            <LeftSection saveItem={saveCustomerInfo} loading={loading} />
+            <LeftSection isExpanded={isExpanded}>
+              <Webcam />
+              <div className={styles.icon_top_wrapper} onClick={toggleExpand}>
+                <img src="/images/4.svg" alt="icon" />
+              </div>
+              <div className={styles.icons_bottom_wrapper}>
+                <ReplayOutlinedIcon className={styles.icon_refresh} />
+                <div
+                  className={styles.wrap_camera}
+                  onClick={fetchDataFromServer}
+                >
+                  <CameraOutlinedIcon className={styles.icon_camera} />
+                </div>
+                <div className={styles.wrap_save_icon}>
+                  <button
+                    className={`${styles.button_save} ${
+                      loading && styles.btn_save_disable
+                    }`}
+                    onClick={saveCustomerInfo}
+                    disabled={loading}
+                    style={{
+                      border: "none",
+                      outline: "none",
+                      background: "transparent",
+                    }}
+                  >
+                    <SaveAltIcon className={styles.icon_camera} />
+                  </button>
+                </div>
+              </div>
+            </LeftSection>
           </Grid>
         </Grid>
       </Box>
@@ -807,7 +875,3 @@ export default function Home() {
   );
 }
 
-// const [ids, setIds] = useState({
-//   customerId: "",
-//   operationId: "",
-// });
