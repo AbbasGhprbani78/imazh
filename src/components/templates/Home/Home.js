@@ -21,10 +21,10 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import Webcam from "@/components/module/Webcam/Webcam";
 import io from "socket.io-client";
 
-let socket;
-
 export default function Home() {
   const [data, setData] = useState([]);
+  const [setting, setSetting] = useState("");
+  const [socket, setSocket] = useState(null);
   const [customerInfo, setCustomerInfo] = useState({
     customerId: "",
     operationId: "",
@@ -61,6 +61,7 @@ export default function Home() {
     title: "",
     message: "",
   });
+
   const [errors, setErrors] = useState({
     fullname: "",
     email: "",
@@ -72,7 +73,51 @@ export default function Home() {
     age: "",
     filenumber: "",
     gender: "",
+    setting: "",
   });
+
+  const validateCustomerInfo = () => {
+    if (!isRequired(customerInfo.customerId)) {
+      setShowToast(true);
+      setToastInfo({
+        type: "error",
+        title: "خطا",
+        message: "بیمار باید مشخص گردد",
+      });
+      console.log(isRequired());
+      return false;
+    }
+
+    if (!isRequired(customerInfo.operationId)) {
+      setShowToast(true);
+      setToastInfo({
+        type: "error",
+        title: "خطا",
+        message: "عملیات باید مشخص گردد",
+      });
+      return false;
+    }
+    if (!isRequired(customerInfo.settingId)) {
+      setShowToast(true);
+      setToastInfo({
+        type: "error",
+        title: "خطا",
+        message: "تنظیمات باید مشخص گردد",
+      });
+      return false;
+    }
+
+    if (photos.length === 0) {
+      setShowToast(true);
+      setToastInfo({
+        type: "error",
+        title: "خطا",
+        message: "عکس باید انتخاب شود",
+      });
+      return false;
+    }
+    return true;
+  };
 
   const changeHandler = (e) => {
     const { name, value } = e.target;
@@ -196,8 +241,7 @@ export default function Home() {
         setToastInfo({
           type: "error",
           title: "خطا در اضافه کردن بیمار",
-          message:
-            error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
+          message: "",
         });
       }
     }
@@ -269,6 +313,43 @@ export default function Home() {
         setToastInfo({
           type: "error",
           title: "خطا در اضافه کردن عملیات",
+          message:
+            error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
+        });
+      }
+    }
+  };
+
+  const addSettingHandler = async (e) => {
+    e.preventDefault();
+    let formErrors = {};
+    if (!isRequired(setting)) {
+      formErrors.setting = "وارد کردن تنظیمات عملیات الزامی است";
+    }
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+    } else {
+      try {
+        const response = await axios.post("http://localhost:3000/api/setting", {
+          name: setting,
+        });
+        if (response.status === 201) {
+          getAllSetting();
+          setShowModal(false);
+          setSetting("");
+          setShowToast(true);
+          setToastInfo({
+            type: "success",
+            title: "عملیات موفقیت آمیز",
+            message: "تنظیمات با موفقیت اضافه شد",
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        setShowToast(true);
+        setToastInfo({
+          type: "error",
+          title: "خطا در اضافه کردن تنظیمات",
           message:
             error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
         });
@@ -352,6 +433,7 @@ export default function Home() {
   };
 
   const saveCustomerInfo = async () => {
+    if (!validateCustomerInfo()) return;
     if (isNewOperation) {
       const formData = new FormData();
       formData.append("operationId", customerInfo.operationId);
@@ -426,29 +508,31 @@ export default function Home() {
   };
 
   const fetchDataFromServer = () => {
-    socket.emit("fetchData");
-    console.log("fetchData event emitted to backend");
-  };
+    if (socket) {
+      console.log("Disconnecting the previous socket...");
+      socket.disconnect();
+    }
 
-  useEffect(() => {
-    socket = io("http://localhost:3000");
-    socket.on("connect", () => {
+    const newSocket = io("http://localhost:3000");
+
+    newSocket.on("connect", () => {
       console.log("Connected to server");
     });
 
-    socket.on("serverData", (receivedData) => {
+    newSocket.on("serverData", (receivedData) => {
       console.log("Data received from backend:", receivedData);
       setData(receivedData);
     });
 
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+    newSocket.on("disconnect", () => {
+      console.log("Socket disconnected");
+    });
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+    setSocket(newSocket);
+
+    console.log("fetchData event emitted to backend");
+    newSocket.emit("fetchData", { setting });
+  };
 
   useEffect(() => {
     getAllOperation();
@@ -475,6 +559,10 @@ export default function Home() {
   useEffect(() => {
     fetchData();
   }, [customerInfo.customerId, customerInfo.operationId]);
+
+  useEffect(() => {
+    console.log(photos);
+  }, [photos]);
 
   return (
     <div className={`wrapper`}>
@@ -537,11 +625,16 @@ export default function Home() {
                 <DropDownSearch
                   title={"حالت ضبط"}
                   firstoptiontext="افزودن حالت ضبط"
+                  firstoptionclick={() => {
+                    setTypeModal(4);
+                    setShowModal(true);
+                  }}
                   items={allSettings}
                   name={"settingId"}
                   getOptionLabelProp="name"
                   onChange={ChangeCustomerInfoHandler}
                   value={customerInfo.settingId}
+                  setSetting={setSetting}
                 />
               </div>
               <input
@@ -554,7 +647,7 @@ export default function Home() {
           </Grid>
           <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
             <LeftSection isExpanded={isExpanded}>
-              <Webcam />
+              <Webcam setting={setting} data={data} setPhotos={setPhotos} />
               <div className={styles.icon_top_wrapper} onClick={toggleExpand}>
                 <img src="/images/4.svg" alt="icon" />
               </div>
@@ -587,6 +680,23 @@ export default function Home() {
           </Grid>
         </Grid>
       </Box>
+      <div className={styles.video_box_wrapper}>
+        {photos.length > 0 &&
+          photos.map((videoURL, index) => (
+            <div key={index} className={styles.video_box}>
+              <video
+                src={videoURL}
+                controls
+                className={styles.video_preview}
+                style={{
+                  width: "200px",
+                  height: "200px",
+                  objectFit: "cover",
+                }}
+              ></video>
+            </div>
+          ))}
+      </div>
       <Modal
         title={
           typeModal === 1
@@ -862,7 +972,35 @@ export default function Home() {
               </div>
             </form>
           </>
-        ) : null}
+        ) : (
+          <>
+            <form onSubmit={addSettingHandler} style={{ width: "100%" }}>
+              <Box sx={{ flexGrow: 1, width: "100%" }}>
+                <Grid container spacing={2} className={styles.row_modal}>
+                  <Grid size={{ xs: 12 }}>
+                    <Input
+                      label="تنظیمات"
+                      value={setting}
+                      onChange={(e) => setSetting(e.target.value)}
+                      name={"setting"}
+                    />
+                    {errors.setting && (
+                      <span className="error">{errors.setting}</span>
+                    )}
+                  </Grid>
+                </Grid>
+              </Box>
+              <div className={styles.wrap_btn}>
+                <Button1
+                  text={"ذخیره"}
+                  icon={DoneIcon}
+                  disable={""}
+                  type={"submit"}
+                />
+              </div>
+            </form>
+          </>
+        )}
       </Modal>
       <Toast
         type={toastInfo.type}
@@ -874,4 +1012,3 @@ export default function Home() {
     </div>
   );
 }
-

@@ -112,8 +112,8 @@ export async function PUT(req) {
       username: updatedUser.username,
     });
 
-    const tokenMaxAge = 60 * 60 * 24 * 15; // 15 days
-    const refreshMaxAge = 60 * 60 * 24 * 30; // 30 days
+    const tokenMaxAge = 60 * 60 * 24 * 15;
+    const refreshMaxAge = 60 * 60 * 24 * 30; 
 
     const headers = new Headers();
     headers.append(

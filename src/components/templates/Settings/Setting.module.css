@@ -1,0 +1,45 @@
+.record_list {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    margin-bottom: 7px;
+    background: #303030;
+    transition: all .3s ease;
+}
+
+.record_item {
+    background: #303030;
+    padding: 8px 16px;
+    margin-bottom: 7px;
+    color: #fff;
+    cursor: pointer;
+    transition: all .3s ease;
+}
+
+
+.hover_class:hover {
+    background-color: var(--color-3);
+}
+
+.item_setting {
+    color: #fff;
+    margin-top: 1rem;
+    transition: all .3s ease;
+}
+
+.title_Tab {
+    margin-top: 1rem;
+    padding: 0 20px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 2rem;
+}
+
+.active_Tab {
+    background: var(--color-3);
+}
+
+.setting_content {
+   
+}

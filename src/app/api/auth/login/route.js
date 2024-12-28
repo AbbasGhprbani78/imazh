@@ -119,8 +119,8 @@ export async function POST(req) {
     });
 
     const headers = new Headers();
-    const tokenMaxAge = 60 * 60 * 24 * 15; // 15 روز
-    const refreshMaxAge = 60 * 60 * 24 * 30; // 30 روز
+    const tokenMaxAge = 60 * 60 * 24 * 15; 
+    const refreshMaxAge = 60 * 60 * 24 * 30;
 
     headers.append(
       "Set-Cookie",

@@ -6,6 +6,14 @@
     font-family: "vazir", sans-serif;
 }
 
+.dropsetting {
+    max-width: 100%;
+}
+
+.dropimage {
+    margin: 0;
+}
+
 .wrapInputData {
     position: relative;
     border: 1px solid #fff;
@@ -45,6 +53,11 @@
     width: max-content;
 }
 
+.wrapInputData.focused .background,
+.wrapInputData:not(.focused) input:not(:placeholder-shown)+.background {
+    background-color: var(--color-1);
+}
+
 .dropdownMenu {
     position: absolute;
     top: 100%;
@@ -57,6 +70,21 @@
     max-height: 200px;
     overflow-y: auto;
     margin-top: 8px;
+}
+
+.dropdownMenu::-webkit-scrollbar {
+    width: 6px;
+    border-radius: 10px;
+}
+
+.dropdownMenu::-webkit-scrollbar-thumb {
+    background-color: #ffffff;
+    border-radius: 4px;
+}
+
+.dropdownMenu {
+    scrollbar-width: thin;
+    scrollbar-color: #ffffff #2e2e2e;
 }
 
 .dropdownItem {

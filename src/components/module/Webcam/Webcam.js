@@ -2,10 +2,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./Webcam.module.css";
 
-export default function Webcam() {
+export default function Webcam({ setting, data, setPhotos }) {
   const videoRef = useRef(null);
-  const [isCameraActive, setIsCameraActive] = useState(false);
-  const [devices, setDevices] = useState([]);
+  const mediaRecorderRef = useRef(null);
+  const [isRecording, setIsRecording] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(null);
 
   useEffect(() => {
@@ -16,12 +16,12 @@ export default function Webcam() {
           (device) => device.kind === "videoinput"
         );
 
-        const sonyCamera = videoDevices.find(
-          (device) => device.label.toLowerCase().includes("sony") 
+        const sonyCamera = videoDevices.find((device) =>
+          device.label.toLowerCase().includes("sony")
         );
 
         if (sonyCamera) {
-          setSelectedDevice(sonyCamera.deviceId); 
+          setSelectedDevice(sonyCamera.deviceId);
         } else if (videoDevices.length > 0) {
           setSelectedDevice(videoDevices[0].deviceId);
         }
@@ -33,40 +33,67 @@ export default function Webcam() {
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
           }
-          setIsCameraActive(true);
-        } else if (videoDevices.length > 0) {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { deviceId: { exact: videoDevices[0].deviceId } },
-          });
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-          }
-          setIsCameraActive(true);
+          startRecording(stream);
         }
       } catch (error) {
         console.error("Error accessing webcam:", error);
       }
     };
 
-    startCamera();
-
-    return () => {
+    const stopCamera = () => {
       if (videoRef.current && videoRef.current.srcObject) {
         const stream = videoRef.current.srcObject;
         const tracks = stream.getTracks();
         tracks.forEach((track) => track.stop());
+        videoRef.current.srcObject = null;
       }
     };
-  }, [selectedDevice]);
 
+    const startRecording = (stream) => {
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      const chunks = [];
+
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+
+      mediaRecorderRef.current.onstop = () => {
+        const blob = new Blob(chunks, { type: "video/mp4" });
+        const videoURL = URL.createObjectURL(blob);
+        setPhotos((prevPhotos) => [...prevPhotos, videoURL]); 
+      };
+
+      mediaRecorderRef.current.start();
+    };
+
+    const stopRecording = () => {
+      if (mediaRecorderRef.current && isRecording) {
+        mediaRecorderRef.current.stop();
+        setIsRecording(false);
+      }
+    };
+
+    if (setting && data === "AG2" && !isRecording) {
+      startCamera();
+    } else if (data === "AG9") {
+      stopRecording();
+      stopCamera();
+    }
+
+    return () => {
+      if (isRecording) {
+        stopRecording();
+        stopCamera();
+      }
+    };
+  }, [data, selectedDevice, setting, setPhotos, isRecording]);
 
   return (
     <div className={styles.container}>
-      {isCameraActive ? (
-        <video ref={videoRef} autoPlay className={styles.video} />
-      ) : (
-        <p>Loading webcam...</p>
-      )}
+      <video ref={videoRef} autoPlay className={styles.video} />
+      {!isRecording && <p>Waiting to start recording...</p>}
     </div>
   );
 }

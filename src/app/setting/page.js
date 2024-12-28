@@ -1,6 +1,14 @@
-import styles from "./Setting.module.css";
+
 import LevelOneLayout from "../../components/layout/LevelOneLayout";
 import Header from "@/components/module/Header/Header";
-export default function Setting() {
-  return <Header />;
+import Settings from "@/components/templates/Settings/Settings";
+export default function () {
+  return (
+    <LevelOneLayout>
+      <div className="container">
+        <Header />
+        <Settings/>
+      </div>
+    </LevelOneLayout>
+  );
 }

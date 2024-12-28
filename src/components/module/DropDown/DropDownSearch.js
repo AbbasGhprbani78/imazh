@@ -17,6 +17,9 @@ export default function DropDownSearch({
   openEditModal,
   value,
   setIsNewOperation,
+  style1,
+  style2,
+  setSetting,
 }) {
   const [searchValue, setSearchValue] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
@@ -36,6 +39,9 @@ export default function DropDownSearch({
 
   const handleSelectItem = (item) => {
     setSearchValue(item[getOptionLabelProp]);
+    if (setSetting) {
+      setSetting(item[getOptionLabelProp])
+    }
     setIsOpen(false);
     if (onChange) {
       onChange({ target: { name, value: item.id } });
@@ -73,7 +79,10 @@ export default function DropDownSearch({
   }, [value]);
 
   return (
-    <div className={styles.wrapDropSearch} ref={dropdownRef}>
+    <div
+      className={`${styles.wrapDropSearch} ${styles[style1]}`}
+      ref={dropdownRef}
+    >
       <div
         className={`${styles.wrapInputData} ${
           isFocused || isOpen ? styles.focused : ""
@@ -91,7 +100,9 @@ export default function DropDownSearch({
           autoComplete="off"
           placeholder=""
         />
-        <label className={styles.floatingLabel}>{title}</label>
+        <label className={`${styles.floatingLabel} ${styles[style2]}`}>
+          {title}
+        </label>
       </div>
       {isOpen && (
         <div className={styles.dropdownMenu}>
@@ -114,9 +125,9 @@ export default function DropDownSearch({
                 className={styles.dropdownItem}
                 onClick={() => {
                   handleSelectItem(item);
-                   if (setIsNewOperation) {
-                     setIsNewOperation(false);
-                   }
+                  if (setIsNewOperation) {
+                    setIsNewOperation(false);
+                  }
                 }}
               >
                 {name === "operationDateId"
@@ -139,4 +150,3 @@ export default function DropDownSearch({
     </div>
   );
 }
- 
