@@ -22,6 +22,7 @@ export default function DropDownSearch({
   setSetting,
 }) {
   const [searchValue, setSearchValue] = useState("");
+  const [selectedValue, setSelectedValue] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -30,17 +31,24 @@ export default function DropDownSearch({
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchValue(value);
-    setFilteredItems(
-      items.filter((item) =>
-        item?.label?.toLowerCase().includes(value.toLowerCase())
-      )
-    );
+
+    if (value.trim() === "") {
+      setFilteredItems(items); 
+    } else {
+      setFilteredItems(
+        items.filter((item) =>
+          item[getOptionLabelProp].toLowerCase().includes(value.toLowerCase())
+        )
+      );
+    }
   };
 
   const handleSelectItem = (item) => {
-    setSearchValue(item[getOptionLabelProp]);
+    const selectedLabel = item[getOptionLabelProp];
+    setSearchValue(selectedLabel); 
+    setSelectedValue(selectedLabel);
     if (setSetting) {
-      setSetting(item[getOptionLabelProp])
+      setSetting(selectedLabel);
     }
     setIsOpen(false);
     if (onChange) {
@@ -51,8 +59,18 @@ export default function DropDownSearch({
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
   };
+
   const handleFocus = () => setIsFocused(true);
-  const handleBlur = () => setIsFocused(false);
+
+  const handleBlur = () => {
+    setIsFocused(false);
+ 
+    if (
+      !filteredItems.some((item) => item[getOptionLabelProp] === searchValue)
+    ) {
+      setSearchValue("");
+    }
+  };
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -74,7 +92,9 @@ export default function DropDownSearch({
 
   useEffect(() => {
     if (name === "gender" && value !== "") {
-      setSearchValue(value === "men" ? "مرد" : "زن");
+      const genderLabel = value === "men" ? "مرد" : "زن";
+      setSearchValue(genderLabel);
+      setSelectedValue(genderLabel); 
     }
   }, [value]);
 
@@ -110,7 +130,10 @@ export default function DropDownSearch({
             <div
               className={styles.dropdownItem}
               onClick={() => {
-                name === "operationDateId" && setSearchValue("عملیات جدید");
+                if (name === "operationDateId") {
+                  setSearchValue("عملیات جدید");
+                  setSelectedValue("عملیات جدید"); 
+                }
                 firstoptionclick();
                 setIsOpen(false);
               }}

@@ -5,10 +5,8 @@ import Settings from "@/components/templates/Settings/Settings";
 export default function () {
   return (
     <LevelOneLayout>
-      <div className="container">
         <Header />
         <Settings/>
-      </div>
     </LevelOneLayout>
   );
 }

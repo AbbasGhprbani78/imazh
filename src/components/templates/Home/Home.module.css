@@ -26,7 +26,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 91;
 }
 
 .icon_top_wrapper>img {}

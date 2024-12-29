@@ -428,6 +428,22 @@ export default function Home() {
     }
   };
 
+  const convertBlobToFile = async (blobUrl, fileName) => {
+    const response = await fetch(blobUrl);
+    const blob = await response.blob();
+    return new File([blob], fileName, { type: blob.type });
+  };
+  const dataURItoBlob = (dataURI) => {
+    const byteString = atob(dataURI.split(",")[1]);
+    const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const uintArray = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      uintArray[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([uintArray], { type: mimeString });
+  };
+
   const saveCustomerInfo = async () => {
     if (!validateCustomerInfo()) return;
 
@@ -437,41 +453,18 @@ export default function Home() {
     formData.append("customerId", customerInfo.customerId);
 
     for (const photo of photos) {
-      try {
-        let file;
-
-        if (typeof photo === "string" && photo.startsWith("data:")) {
-          const mimeType = photo.match(/data:(.*?);base64,/)?.[1];
-          if (!mimeType) {
-            console.error("Invalid Base64 format:", photo);
-            continue;
-          }
-
-          const base64Data = photo.split(",")[1];
-          const binaryData = atob(base64Data);
-          const arrayBuffer = new Uint8Array(binaryData.length);
-
-          for (let i = 0; i < binaryData.length; i++) {
-            arrayBuffer[i] = binaryData.charCodeAt(i);
-          }
-
-          file = new Blob([arrayBuffer], { type: mimeType });
-        }
-        else if (photo instanceof Blob || photo instanceof File) {
-          file = photo;
-        }
-        else {
-          console.error("Invalid photo format:", photo);
-          continue;
-        }
-
-        const extension = file.type.startsWith("image/") ? "jpg" : "mp4";
-        const fileName = `${Date.now()}.${extension}`;
-
-        const finalFile = new File([file], fileName, { type: file.type });
-        formData.append("photos", finalFile);
-      } catch (error) {
-        console.error("Error processing photo:", photo, error);
+      if (photo.startsWith("data:image")) {
+        const imageBlob = dataURItoBlob(photo);
+        const uniqueFileName = `${Date.now()}-${Math.random()
+          .toString(36)
+          .substr(2, 9)}.png`;
+        formData.append("photos", imageBlob, uniqueFileName);
+      } else {
+        const uniqueFileName = `${Date.now()}-${Math.random()
+          .toString(36)
+          .substr(2, 9)}.mp4`;
+        const file = await convertBlobToFile(photo, uniqueFileName);
+        formData.append("photos", file);
       }
     }
 
@@ -570,12 +563,6 @@ export default function Home() {
   useEffect(() => {
     fetchData();
   }, [customerInfo.customerId, customerInfo.operationId]);
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
-  console.log(photos);
 
   return (
     <div className={`wrapper`}>
@@ -699,17 +686,17 @@ export default function Home() {
                 </div>
               </div>
             </LeftSection>
-            <Grid
-              container
-              spacing={2.5}
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                marginTop: "20px",
-              }}
-            >
-              {photos.length > 0 &&
-                photos.map((file, index) => {
+            {photos.length > 0 && (
+              <Grid
+                container
+                spacing={2.5}
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  marginTop: "20px",
+                }}
+              >
+                {photos.map((file, index) => {
                   const isImage =
                     file.endsWith(".jpeg") ||
                     file.endsWith(".jpg") ||
@@ -747,7 +734,8 @@ export default function Home() {
                     </div>
                   );
                 })}
-            </Grid>
+              </Grid>
+            )}
           </Grid>
         </Grid>
       </Box>

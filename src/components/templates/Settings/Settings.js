@@ -25,12 +25,18 @@ export default function Settings() {
           spacing={2.5}
           sx={{
             display: "flex",
-            alignItems: "start",
+            alignItems: "stretch",
             flexWrap: "wrap",
             height: "100%",
           }}
         >
-          <Grid size={{ xs: 12, md: 4, lg: 3 }} sx={{ height: "100%" }}>
+          <Grid
+            size={{ xs: 12, md: 4, lg: 3 }}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <RightSection style={"setting"}>
               <List>
                 <ListItemButton
@@ -89,7 +95,7 @@ export default function Settings() {
               </List>
             </RightSection>
           </Grid>
-          <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
+          <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "86dvh" }}>
             <div className={styles.setting_wrapper}>
               <p className={styles.title_Tab}>
                 {tab === 1

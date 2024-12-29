@@ -1,5 +1,5 @@
 .camera_container {
-    min-height: 86dvh;
+    height: 86dvh;
     position: relative;
     transition: all 0.3s ease-in-out;
 }
@@ -9,6 +9,6 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     z-index: 1000;
 }

@@ -1,3 +1,9 @@
+.setting_wrapper {
+    /* height: 86dvh;
+    position: relative;
+    transition: all 0.3s ease-in-out; */
+}
+
 .record_list {
     display: flex;
     align-items: center;
@@ -40,6 +46,4 @@
     background: var(--color-3);
 }
 
-.setting_content {
-   
-}
+.setting_content {}

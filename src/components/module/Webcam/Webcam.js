@@ -12,6 +12,7 @@ export default function Webcam({
   const videoRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const canvasRef = useRef(null);
+  const streamRef = useRef(null);
   const [isRecording, setIsRecording] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(null);
 
@@ -37,6 +38,7 @@ export default function Webcam({
           const stream = await navigator.mediaDevices.getUserMedia({
             video: { deviceId: { exact: selectedDevice } },
           });
+          streamRef.current = stream;
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
           }
@@ -57,11 +59,18 @@ export default function Webcam({
         canvasRef.current.height = height;
         context.drawImage(videoRef.current, 0, 0, width, height);
         const imageUrl = canvasRef.current.toDataURL("image/png");
+        console.log("hello");
         setPhotos((prevPhotos) => [...prevPhotos, imageUrl]);
       }
     };
 
-    const startRecording = (stream) => {
+    const startRecording = () => {
+      const stream = streamRef.current;
+      if (!stream) {
+        console.error("No MediaStream available for recording.");
+        return;
+      }
+
       mediaRecorderRef.current = new MediaRecorder(stream);
       const chunks = [];
 
@@ -78,6 +87,7 @@ export default function Webcam({
       };
 
       mediaRecorderRef.current.start();
+      setIsRecording(true);
     };
 
     const stopRecording = () => {
@@ -92,18 +102,23 @@ export default function Webcam({
         startRecording();
       } else if (data === "AE1") {
         stopRecording();
-        socket.disconnect();
-        setSocket(null);
+        if (socket) {
+          socket.disconnect();
+          setSocket(null);
+        }
       }
     }
 
     if (setting === "#MKE01$A11*") {
-      if (data === "AG5" && !isRecording) {
+      if (data === "AG2" && !isRecording) {
+        //AG5
         startRecording();
       } else if (data === "AG6") {
         stopRecording();
-        socket.disconnect();
-        setSocket(null);
+        if (socket) {
+          socket.disconnect();
+          setSocket(null);
+        }
       }
     }
 
@@ -111,8 +126,10 @@ export default function Webcam({
       if (data === "AF1" && !isRecording) {
         captureImage();
       } else if (data === "AJ5") {
-        socket.disconnect();
-        setSocket(null);
+        if (socket) {
+          socket.disconnect();
+          setSocket(null);
+        }
       }
     }
 
@@ -120,23 +137,25 @@ export default function Webcam({
       if (data === "AF1" && !isRecording) {
         captureImage();
       } else if (data === "AF9") {
-        socket.disconnect();
-        setSocket(null);
+        if (socket) {
+          socket.disconnect();
+          setSocket(null);
+        }
       }
     }
 
     return () => {
       if (isRecording) {
         stopRecording();
+        setSocket(null);
       }
     };
   }, [data, selectedDevice, setting, setPhotos, isRecording]);
 
   return (
-    <div className={styles.container}>
+    <>
       <video ref={videoRef} autoPlay className={styles.video} />
       <canvas ref={canvasRef} style={{ display: "none" }} />
-      {!isRecording && <p>Waiting to start recording...</p>}
-    </div>
+    </>
   );
 }

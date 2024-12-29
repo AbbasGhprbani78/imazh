@@ -48,6 +48,7 @@
     padding-top: 9px;
     cursor: pointer;
     position: relative;
+    z-index: 1000;
 }
 
 
@@ -78,11 +79,13 @@
     opacity: 0;
     visibility: hidden;
     transition: all .3s ease;
+    z-index: 1000;
 }
 
 .profile_image_wrapper:hover .wrap_useraction {
     opacity: 1;
     visibility: visible;
+    z-index: 1000;
 }
 
 .list_useraction {
