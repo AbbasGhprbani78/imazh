@@ -427,79 +427,55 @@ export default function Home() {
     }
   };
 
-  const handleFileChange = (e) => {
-    const files = e.target.files;
-    setPhotos(Array.from(files));
+  const convertBlobToFile = async (blobUrl, fileName) => {
+    const response = await fetch(blobUrl);
+    const blob = await response.blob();
+    return new File([blob], fileName, { type: blob.type });
   };
 
   const saveCustomerInfo = async () => {
     if (!validateCustomerInfo()) return;
-    if (isNewOperation) {
-      const formData = new FormData();
-      formData.append("operationId", customerInfo.operationId);
-      formData.append("settingId", customerInfo.settingId);
-      formData.append("customerId", customerInfo.customerId);
-      photos.forEach((photo) => {
-        formData.append("photos", photo);
-      });
-      try {
-        setLoading(true);
-        const response = await axios.post(
-          "http://localhost:3000/api/archive",
-          formData
-        );
 
-        if (response.status === 201) {
-          setPhotos([]);
-          setShowToast(true);
-          fetchData();
-          setToastInfo({
-            type: "success",
-            title: "عملیات موفقیت آمیز",
-            message: "ارشیو بیمار با موفقیت اضافه شد",
-          });
-        }
-      } catch (error) {
+    const formData = new FormData();
+    formData.append("operationId", customerInfo.operationId);
+    formData.append("settingId", customerInfo.settingId);
+    formData.append("customerId", customerInfo.customerId);
+
+    for (const photo of photos) {
+      const mimeType = photo.type;
+      const extension = mimeType.startsWith("image/") ? "jpg" : "mp4";
+
+      const file = await convertBlobToFile(photo, `${Date.now()}.${extension}`);
+      formData.append("photos", file);
+    }
+
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        "http://localhost:3000/api/archive",
+        formData
+      );
+
+      if (response.status === 201) {
+        setPhotos([]);
         setShowToast(true);
+        fetchData();
         setToastInfo({
-          type: "error",
-          title: "خطا دراضافه کردن ارشیو",
-          message:
-            error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
+          type: "success",
+          title: "عملیات موفقیت آمیز",
+          message: "آرشیو بیمار با موفقیت اضافه شد",
         });
-      } finally {
-        setLoading(false);
       }
-    } else {
-      const formData = new FormData();
-      formData.append("archiveId", customerInfo.operationDateId);
-      photos.forEach((photo) => {
-        formData.append("photos", photo);
+    } catch (error) {
+      setShowToast(true);
+      setToastInfo({
+        type: "error",
+        title: "خطا در اضافه کردن آرشیو",
+        message:
+          error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
       });
-      try {
-        setLoading(true);
-        const response = await axios.post(
-          "http://localhost:3000/api/archive/updatearchive",
-          formData
-        );
-        if (response.status === 200) {
-          setShowToast(true);
-          setToastInfo({
-            type: "success",
-            title: "عملیات موفقیت آمیز",
-            message: "ارشیو بیمار با موفقیت اضافه شد",
-          });
-        }
-      } catch (error) {
-        setToastInfo({
-          type: "error",
-          title: "خطا دراضافه کردن ارشیو",
-          message:
-            error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
-        });
-      } finally {
-        setLoading(false);
-      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -508,6 +484,15 @@ export default function Home() {
   };
 
   const fetchDataFromServer = () => {
+    if (!setting) {
+      setShowToast(true);
+      setToastInfo({
+        type: "error",
+        title: "خطا",
+        message: "تنظیمات باید انتخاب شود",
+      });
+      return;
+    }
     if (socket) {
       console.log("Disconnecting the previous socket...");
       socket.disconnect();
@@ -560,9 +545,7 @@ export default function Home() {
     fetchData();
   }, [customerInfo.customerId, customerInfo.operationId]);
 
-  useEffect(() => {
-    console.log(photos);
-  }, [photos]);
+  console.log(photos);
 
   return (
     <div className={`wrapper`}>
@@ -572,12 +555,18 @@ export default function Home() {
           spacing={2.5}
           sx={{
             display: "flex",
-            alignItems: "start",
+            alignItems: "stretch",
             flexWrap: "wrap",
             height: "100%",
           }}
         >
-          <Grid size={{ xs: 12, md: 4, lg: 3 }} sx={{ height: "100%" }}>
+          <Grid
+            size={{ xs: 12, md: 4, lg: 3 }}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <RightSection>
               <div className={styles.wrapdrop}>
                 <DropDownSearch
@@ -637,17 +626,17 @@ export default function Home() {
                   setSetting={setSetting}
                 />
               </div>
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleFileChange}
-              />
             </RightSection>
           </Grid>
           <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
             <LeftSection isExpanded={isExpanded}>
-              <Webcam setting={setting} data={data} setPhotos={setPhotos} />
+              <Webcam
+                setting={setting}
+                data={data}
+                setPhotos={setPhotos}
+                socket={socket}
+                setSocket={setSocket}
+              />
               <div className={styles.icon_top_wrapper} onClick={toggleExpand}>
                 <img src="/images/4.svg" alt="icon" />
               </div>
@@ -677,26 +666,26 @@ export default function Home() {
                 </div>
               </div>
             </LeftSection>
+            <div className={styles.video_box_wrapper}>
+              {photos.length > 0 &&
+                photos.map((videoURL, index) => (
+                  <div key={index} className={styles.video_box}>
+                    <video
+                      src={videoURL}
+                      controls
+                      className={styles.video_preview}
+                      style={{
+                        width: "200px",
+                        height: "200px",
+                        objectFit: "cover",
+                      }}
+                    ></video>
+                  </div>
+                ))}
+            </div> 
           </Grid>
         </Grid>
       </Box>
-      <div className={styles.video_box_wrapper}>
-        {photos.length > 0 &&
-          photos.map((videoURL, index) => (
-            <div key={index} className={styles.video_box}>
-              <video
-                src={videoURL}
-                controls
-                className={styles.video_preview}
-                style={{
-                  width: "200px",
-                  height: "200px",
-                  objectFit: "cover",
-                }}
-              ></video>
-            </div>
-          ))}
-      </div>
       <Modal
         title={
           typeModal === 1

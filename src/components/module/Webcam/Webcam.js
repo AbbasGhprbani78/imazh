@@ -2,9 +2,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./Webcam.module.css";
 
-export default function Webcam({ setting, data, setPhotos }) {
+export default function Webcam({
+  setting,
+  data,
+  setPhotos,
+  socket,
+  setSocket,
+}) {
   const videoRef = useRef(null);
   const mediaRecorderRef = useRef(null);
+  const canvasRef = useRef(null);
   const [isRecording, setIsRecording] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(null);
 
@@ -33,19 +40,24 @@ export default function Webcam({ setting, data, setPhotos }) {
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
           }
-          startRecording(stream);
         }
       } catch (error) {
         console.error("Error accessing webcam:", error);
       }
     };
 
-    const stopCamera = () => {
-      if (videoRef.current && videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject;
-        const tracks = stream.getTracks();
-        tracks.forEach((track) => track.stop());
-        videoRef.current.srcObject = null;
+    startCamera();
+
+    const captureImage = () => {
+      if (videoRef.current && canvasRef.current) {
+        const context = canvasRef.current.getContext("2d");
+        const width = videoRef.current.videoWidth;
+        const height = videoRef.current.videoHeight;
+        canvasRef.current.width = width;
+        canvasRef.current.height = height;
+        context.drawImage(videoRef.current, 0, 0, width, height);
+        const imageUrl = canvasRef.current.toDataURL("image/png");
+        setPhotos((prevPhotos) => [...prevPhotos, imageUrl]);
       }
     };
 
@@ -62,7 +74,7 @@ export default function Webcam({ setting, data, setPhotos }) {
       mediaRecorderRef.current.onstop = () => {
         const blob = new Blob(chunks, { type: "video/mp4" });
         const videoURL = URL.createObjectURL(blob);
-        setPhotos((prevPhotos) => [...prevPhotos, videoURL]); 
+        setPhotos((prevPhotos) => [...prevPhotos, videoURL]);
       };
 
       mediaRecorderRef.current.start();
@@ -75,17 +87,49 @@ export default function Webcam({ setting, data, setPhotos }) {
       }
     };
 
-    if (setting && data === "AG2" && !isRecording) {
-      startCamera();
-    } else if (data === "AG9") {
-      stopRecording();
-      stopCamera();
+    if (setting === "#MKE02$A22*") {
+      if (data === "AD7" && !isRecording) {
+        const stream = videoRef.current?.srcObject;
+        if (stream) startRecording(stream);
+      } else if (data === "AE1") {
+        stopRecording();
+        socket.disconnect();
+        setSocket(null);
+      }
+    }
+
+    if (setting === "#MKE01$A11*") {
+      if (data === "AG5" && !isRecording) {
+        const stream = videoRef.current?.srcObject;
+        if (stream) startRecording(stream);
+      } else if (data === "AG6") {
+        stopRecording();
+        socket.disconnect();
+        setSocket(null);
+      }
+    }
+
+    if (setting === "#MKE03$A33*") {
+      if (data === "AF1" && !isRecording) {
+        captureImage();
+      } else if (data === "AJ5") {
+        socket.disconnect();
+        setSocket(null);
+      }
+    }
+
+    if (setting === "#MKE04$A44*") {
+      if (data === "AF1" && !isRecording) {
+        captureImage();
+      } else if (data === "AF9") {
+        socket.disconnect();
+        setSocket(null);
+      }
     }
 
     return () => {
       if (isRecording) {
         stopRecording();
-        stopCamera();
       }
     };
   }, [data, selectedDevice, setting, setPhotos, isRecording]);
@@ -93,6 +137,7 @@ export default function Webcam({ setting, data, setPhotos }) {
   return (
     <div className={styles.container}>
       <video ref={videoRef} autoPlay className={styles.video} />
+      <canvas ref={canvasRef} style={{ display: "none" }} />
       {!isRecording && <p>Waiting to start recording...</p>}
     </div>
   );
