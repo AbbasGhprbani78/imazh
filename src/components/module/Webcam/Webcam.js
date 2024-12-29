@@ -89,8 +89,7 @@ export default function Webcam({
 
     if (setting === "#MKE02$A22*") {
       if (data === "AD7" && !isRecording) {
-        const stream = videoRef.current?.srcObject;
-        if (stream) startRecording(stream);
+        startRecording();
       } else if (data === "AE1") {
         stopRecording();
         socket.disconnect();
@@ -100,8 +99,7 @@ export default function Webcam({
 
     if (setting === "#MKE01$A11*") {
       if (data === "AG5" && !isRecording) {
-        const stream = videoRef.current?.srcObject;
-        if (stream) startRecording(stream);
+        startRecording();
       } else if (data === "AG6") {
         stopRecording();
         socket.disconnect();

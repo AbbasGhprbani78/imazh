@@ -20,6 +20,7 @@ import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import Webcam from "@/components/module/Webcam/Webcam";
 import io from "socket.io-client";
+import Image from "next/image";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -427,12 +428,6 @@ export default function Home() {
     }
   };
 
-  const convertBlobToFile = async (blobUrl, fileName) => {
-    const response = await fetch(blobUrl);
-    const blob = await response.blob();
-    return new File([blob], fileName, { type: blob.type });
-  };
-
   const saveCustomerInfo = async () => {
     if (!validateCustomerInfo()) return;
 
@@ -442,11 +437,42 @@ export default function Home() {
     formData.append("customerId", customerInfo.customerId);
 
     for (const photo of photos) {
-      const mimeType = photo.type;
-      const extension = mimeType.startsWith("image/") ? "jpg" : "mp4";
+      try {
+        let file;
 
-      const file = await convertBlobToFile(photo, `${Date.now()}.${extension}`);
-      formData.append("photos", file);
+        if (typeof photo === "string" && photo.startsWith("data:")) {
+          const mimeType = photo.match(/data:(.*?);base64,/)?.[1];
+          if (!mimeType) {
+            console.error("Invalid Base64 format:", photo);
+            continue;
+          }
+
+          const base64Data = photo.split(",")[1];
+          const binaryData = atob(base64Data);
+          const arrayBuffer = new Uint8Array(binaryData.length);
+
+          for (let i = 0; i < binaryData.length; i++) {
+            arrayBuffer[i] = binaryData.charCodeAt(i);
+          }
+
+          file = new Blob([arrayBuffer], { type: mimeType });
+        }
+        else if (photo instanceof Blob || photo instanceof File) {
+          file = photo;
+        }
+        else {
+          console.error("Invalid photo format:", photo);
+          continue;
+        }
+
+        const extension = file.type.startsWith("image/") ? "jpg" : "mp4";
+        const fileName = `${Date.now()}.${extension}`;
+
+        const finalFile = new File([file], fileName, { type: file.type });
+        formData.append("photos", finalFile);
+      } catch (error) {
+        console.error("Error processing photo:", photo, error);
+      }
     }
 
     try {
@@ -545,6 +571,10 @@ export default function Home() {
     fetchData();
   }, [customerInfo.customerId, customerInfo.operationId]);
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   console.log(photos);
 
   return (
@@ -641,7 +671,10 @@ export default function Home() {
                 <img src="/images/4.svg" alt="icon" />
               </div>
               <div className={styles.icons_bottom_wrapper}>
-                <ReplayOutlinedIcon className={styles.icon_refresh} />
+                <ReplayOutlinedIcon
+                  className={styles.icon_refresh}
+                  onClick={() => setPhotos([])}
+                />
                 <div
                   className={styles.wrap_camera}
                   onClick={fetchDataFromServer}
@@ -666,23 +699,55 @@ export default function Home() {
                 </div>
               </div>
             </LeftSection>
-            <div className={styles.video_box_wrapper}>
+            <Grid
+              container
+              spacing={2.5}
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                marginTop: "20px",
+              }}
+            >
               {photos.length > 0 &&
-                photos.map((videoURL, index) => (
-                  <div key={index} className={styles.video_box}>
-                    <video
-                      src={videoURL}
-                      controls
-                      className={styles.video_preview}
-                      style={{
-                        width: "200px",
-                        height: "200px",
-                        objectFit: "cover",
+                photos.map((file, index) => {
+                  const isImage =
+                    file.endsWith(".jpeg") ||
+                    file.endsWith(".jpg") ||
+                    file.endsWith(".webp") ||
+                    file.endsWith(".png") ||
+                    file.startsWith("data:image");
+                  return isImage ? (
+                    <Grid
+                      size={{ xs: 12, md: 3 }}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
                       }}
-                    ></video>
-                  </div>
-                ))}
-            </div> 
+                    >
+                      <Image
+                        src={file}
+                        alt={`uploaded file ${index}`}
+                        className={styles.image_preview}
+                        height={210}
+                        width={210}
+                      />
+                    </Grid>
+                  ) : (
+                    <div key={index} className={styles.media_box}>
+                      <video
+                        src={file}
+                        controls
+                        className={styles.video_preview}
+                        style={{
+                          width: "200px",
+                          height: "200px",
+                          objectFit: "cover",
+                        }}
+                      ></video>
+                    </div>
+                  );
+                })}
+            </Grid>
           </Grid>
         </Grid>
       </Box>

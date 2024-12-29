@@ -82,9 +82,18 @@
     opacity: .5;
 }
 
-.video_box_wrapper {
+.media_box {
+    position: relative;
+}
+
+.media_box_wrapper {
     display: flex;
     align-items: center;
     justify-content: start;
     gap: 20px;
+}
+
+.image_preview {
+    object-fit: cover;
+    width: 100% !important;
 }
