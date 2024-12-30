@@ -111,7 +111,7 @@ export default function DropDownSearch({
       >
         <input
           type="text"
-          value={searchValue}
+          value={name === "archiveId" ? convertToPersianDate(searchValue) : searchValue}
           onChange={handleInputChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -130,9 +130,9 @@ export default function DropDownSearch({
             <div
               className={styles.dropdownItem}
               onClick={() => {
-                if (name === "operationDateId") {
+                if (name === "archiveId") {
                   setSearchValue("عملیات جدید");
-                  setSelectedValue("عملیات جدید"); 
+                  setSelectedValue("عملیات جدید");
                 }
                 firstoptionclick();
                 setIsOpen(false);
@@ -153,7 +153,7 @@ export default function DropDownSearch({
                   }
                 }}
               >
-                {name === "operationDateId"
+                {name === "archiveId"
                   ? convertToPersianDate(item[getOptionLabelProp])
                   : item[getOptionLabelProp]}
 

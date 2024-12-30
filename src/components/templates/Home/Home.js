@@ -1,5 +1,5 @@
 "use client";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import DoneIcon from "@mui/icons-material/Done";
 import Input from "@/components/module/Input/Input";
@@ -21,16 +21,25 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import Webcam from "@/components/module/Webcam/Webcam";
 import io from "socket.io-client";
 import Image from "next/image";
+import ModalBottom from "@/components/module/ModalBottom/ModalBottom";
+import LayersIcon from "@mui/icons-material/Layers";
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
+import Button2 from "@/components/module/Buttons/Button2";
+import EastIcon from "@mui/icons-material/East";
+import NorthIcon from "@mui/icons-material/North";
+import WestIcon from "@mui/icons-material/West";
+import SouthIcon from "@mui/icons-material/South";
 
 export default function Home() {
   const [data, setData] = useState([]);
   const [setting, setSetting] = useState("");
   const [socket, setSocket] = useState(null);
+  const [isVisible, setIsVisible] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
     customerId: "",
     operationId: "",
     settingId: "",
-    operationDateId: "",
+    archiveId: "",
   });
   const [showModal, setShowModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -47,6 +56,7 @@ export default function Home() {
   const [historyOperation, setHistoryOperation] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const isDesktop = useMediaQuery("(min-width:900px)");
   const [customerData, setCustomerData] = useState({
     fullname: "",
     email: "",
@@ -370,6 +380,7 @@ export default function Home() {
         );
         if (response.status === 200) {
           setHistoryOperation(response.data);
+          console.log(response.data);
         }
       } catch (error) {
         console.error(error);
@@ -446,55 +457,102 @@ export default function Home() {
 
   const saveCustomerInfo = async () => {
     if (!validateCustomerInfo()) return;
+    if (isNewOperation) {
+      const formData = new FormData();
+      formData.append("operationId", customerInfo.operationId);
+      formData.append("settingId", customerInfo.settingId);
+      formData.append("customerId", customerInfo.customerId);
 
-    const formData = new FormData();
-    formData.append("operationId", customerInfo.operationId);
-    formData.append("settingId", customerInfo.settingId);
-    formData.append("customerId", customerInfo.customerId);
-
-    for (const photo of photos) {
-      if (photo.startsWith("data:image")) {
-        const imageBlob = dataURItoBlob(photo);
-        const uniqueFileName = `${Date.now()}-${Math.random()
-          .toString(36)
-          .substr(2, 9)}.png`;
-        formData.append("photos", imageBlob, uniqueFileName);
-      } else {
-        const uniqueFileName = `${Date.now()}-${Math.random()
-          .toString(36)
-          .substr(2, 9)}.mp4`;
-        const file = await convertBlobToFile(photo, uniqueFileName);
-        formData.append("photos", file);
+      for (const photo of photos) {
+        if (photo.startsWith("data:image")) {
+          const imageBlob = dataURItoBlob(photo);
+          const uniqueFileName = `${Date.now()}-${Math.random()
+            .toString(36)
+            .substr(2, 9)}.png`;
+          formData.append("photos", imageBlob, uniqueFileName);
+        } else {
+          const uniqueFileName = `${Date.now()}-${Math.random()
+            .toString(36)
+            .substr(2, 9)}.mp4`;
+          const file = await convertBlobToFile(photo, uniqueFileName);
+          formData.append("photos", file);
+        }
       }
-    }
 
-    try {
-      setLoading(true);
-      const response = await axios.post(
-        "http://localhost:3000/api/archive",
-        formData
-      );
+      try {
+        setLoading(true);
+        const response = await axios.post(
+          "http://localhost:3000/api/archive",
+          formData
+        );
 
-      if (response.status === 201) {
-        setPhotos([]);
+        if (response.status === 201) {
+          setPhotos([]);
+          setShowToast(true);
+          fetchData();
+          setToastInfo({
+            type: "success",
+            title: "عملیات موفقیت آمیز",
+            message: "آرشیو بیمار با موفقیت اضافه شد",
+          });
+        }
+      } catch (error) {
         setShowToast(true);
-        fetchData();
         setToastInfo({
-          type: "success",
-          title: "عملیات موفقیت آمیز",
-          message: "آرشیو بیمار با موفقیت اضافه شد",
+          type: "error",
+          title: "خطا در اضافه کردن آرشیو",
+          message:
+            error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
         });
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      setShowToast(true);
-      setToastInfo({
-        type: "error",
-        title: "خطا در اضافه کردن آرشیو",
-        message:
-          error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
-      });
-    } finally {
-      setLoading(false);
+    } else {
+      const formData = new FormData();
+      formData.append("archiveId", customerInfo.archiveId);
+      for (const photo of photos) {
+        if (photo.startsWith("data:image")) {
+          const imageBlob = dataURItoBlob(photo);
+          const uniqueFileName = `${Date.now()}-${Math.random()
+            .toString(36)
+            .substr(2, 9)}.png`;
+          formData.append("photos", imageBlob, uniqueFileName);
+        } else {
+          const uniqueFileName = `${Date.now()}-${Math.random()
+            .toString(36)
+            .substr(2, 9)}.mp4`;
+          const file = await convertBlobToFile(photo, uniqueFileName);
+          formData.append("photos", file);
+        }
+      }
+      try {
+        setLoading(true);
+        const response = await axios.post(
+          "http://localhost:3000/api/archive/updatearchive",
+          formData
+        );
+
+        if (response.status === 200) {
+          setPhotos([]);
+          setShowToast(true);
+          fetchData();
+          setToastInfo({
+            type: "success",
+            title: "عملیات موفقیت آمیز",
+            message: "آرشیو بیمار با موفقیت اضافه شد",
+          });
+        }
+      } catch (error) {
+        setShowToast(true);
+        setToastInfo({
+          type: "error",
+          title: "خطا در اضافه کردن آرشیو",
+          message:
+            error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
+        });
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -564,6 +622,10 @@ export default function Home() {
     fetchData();
   }, [customerInfo.customerId, customerInfo.operationId]);
 
+  const toggleModalBottom = () => {
+    setIsVisible(!isVisible);
+  };
+
   return (
     <div className={`wrapper`}>
       <Box sx={{ flexGrow: 1, height: "100%" }}>
@@ -578,11 +640,12 @@ export default function Home() {
           }}
         >
           <Grid
-            size={{ xs: 12, md: 4, lg: 3 }}
+            size={{ xs: 0, md: 4, lg: 3 }}
             sx={{
-              display: "flex",
+              display: isDesktop ? "flex" : "none",
               flexDirection: "column",
             }}
+            className={styles.right_section}
           >
             <RightSection>
               <div className={styles.wrapdrop}>
@@ -620,10 +683,10 @@ export default function Home() {
                   firstoptiontext="عملیات جدید"
                   firstoptionclick={() => setIsNewOperation(true)}
                   items={historyOperation}
-                  name={"operationDateId"}
+                  name={"archiveId"}
                   getOptionLabelProp="date1"
                   onChange={ChangeCustomerInfoHandler}
-                  value={customerInfo.operationDateId}
+                  value={customerInfo.archiveId}
                   setIsNewOperation={setIsNewOperation}
                 />
               </div>
@@ -645,28 +708,42 @@ export default function Home() {
               </div>
             </RightSection>
           </Grid>
-          <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
+          <Grid
+            size={{ xs: 12, md: 8, lg: 9 }}
+            sx={{ height: "100%", background: "red" }}
+          >
             <LeftSection isExpanded={isExpanded}>
-              <Webcam
+              {/* <Webcam
                 setting={setting}
                 data={data}
                 setPhotos={setPhotos}
                 socket={socket}
                 setSocket={setSocket}
-              />
-              <div className={styles.icon_top_wrapper} onClick={toggleExpand}>
+              /> */}
+              <div
+                className={styles.icon_top_wrapper_left}
+                onClick={toggleExpand}
+              >
                 <img src="/images/4.svg" alt="icon" />
+              </div>
+              <div
+                className={styles.icon_top_wrapper_right}
+                onClick={toggleModalBottom}
+              >
+                <LayersIcon className={styles.icon} />
               </div>
               <div className={styles.icons_bottom_wrapper}>
                 <ReplayOutlinedIcon
-                  className={styles.icon_refresh}
+                  className={`${styles.icon_refresh} ${styles.icon}`}
                   onClick={() => setPhotos([])}
                 />
                 <div
                   className={styles.wrap_camera}
                   onClick={fetchDataFromServer}
                 >
-                  <CameraOutlinedIcon className={styles.icon_camera} />
+                  <CameraOutlinedIcon
+                    className={`${styles.icon_camera} ${styles.icon}`}
+                  />
                 </div>
                 <div className={styles.wrap_save_icon}>
                   <button
@@ -681,7 +758,9 @@ export default function Home() {
                       background: "transparent",
                     }}
                   >
-                    <SaveAltIcon className={styles.icon_camera} />
+                    <SaveAltIcon
+                      className={`${styles.icon_camera} ${styles.icon}`}
+                    />
                   </button>
                 </div>
               </div>
@@ -756,7 +835,7 @@ export default function Home() {
           <form onSubmit={handlerAddCustomer} style={{ width: "100%" }}>
             <Box sx={{ flexGrow: 1, width: "100%" }}>
               <Grid container spacing={2} className={styles.row_modal}>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Input
                     label="نام و نام خانوادگی"
                     value={customerData.fullname}
@@ -767,7 +846,7 @@ export default function Home() {
                     <span className="error">{errors.fullname}</span>
                   )}
                 </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Input
                     label="ایمیل"
                     value={customerData.email}
@@ -782,7 +861,7 @@ export default function Home() {
             </Box>
             <Box sx={{ flexGrow: 1, width: "100%" }}>
               <Grid container spacing={2} className={styles.row_modal}>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Input
                     label="شماره تلفن"
                     value={customerData.phonenumber}
@@ -794,7 +873,7 @@ export default function Home() {
                     <span className="error">{errors.phonenumber}</span>
                   )}
                 </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <DropDownSearch
                     title="جنسیت"
                     value={customerData.gender}
@@ -814,7 +893,7 @@ export default function Home() {
             </Box>
             <Box sx={{ flexGrow: 1, width: "100%" }}>
               <Grid container spacing={2} className={styles.row_modal}>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Input
                     label="شماره پرونده"
                     value={customerData.filenumber}
@@ -825,7 +904,7 @@ export default function Home() {
                     <span className="error">{errors.filenumber}</span>
                   )}
                 </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Input
                     label="کدملی"
                     value={customerData.nationalcode}
@@ -841,7 +920,7 @@ export default function Home() {
             </Box>
             <Box sx={{ flexGrow: 1, width: "100%" }}>
               <Grid container spacing={2} className={styles.row_modal}>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <InputData
                     label="تاریخ مراجعه"
                     value={dateReferenceValue}
@@ -852,7 +931,7 @@ export default function Home() {
                     <span className="error">{errors.datereference}</span>
                   )}
                 </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <InputData
                     label="تاریخ تولد"
                     value={dataBirthdaty}
@@ -900,7 +979,7 @@ export default function Home() {
             <form onSubmit={updateCustomer} style={{ width: "100%" }}>
               <Box sx={{ flexGrow: 1, width: "100%" }}>
                 <Grid container spacing={2} className={styles.row_modal}>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <Input
                       label="نام و نام خانوادگی"
                       value={customerData.fullname}
@@ -911,7 +990,7 @@ export default function Home() {
                       <span className="error">{errors.fullname}</span>
                     )}
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <Input
                       label="ایمیل"
                       value={customerData.email}
@@ -926,7 +1005,7 @@ export default function Home() {
               </Box>
               <Box sx={{ flexGrow: 1, width: "100%" }}>
                 <Grid container spacing={2} className={styles.row_modal}>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <Input
                       label="شماره تلفن"
                       value={customerData.phonenumber}
@@ -938,7 +1017,7 @@ export default function Home() {
                       <span className="error">{errors.phonenumber}</span>
                     )}
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <DropDownSearch
                       title="جنسیت"
                       value={customerData.gender}
@@ -958,7 +1037,7 @@ export default function Home() {
               </Box>
               <Box sx={{ flexGrow: 1, width: "100%" }}>
                 <Grid container spacing={2} className={styles.row_modal}>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <Input
                       label="شماره پرونده"
                       value={customerData.filenumber}
@@ -969,7 +1048,7 @@ export default function Home() {
                       <span className="error">{errors.filenumber}</span>
                     )}
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <Input
                       label="کدملی"
                       value={customerData.nationalcode}
@@ -985,7 +1064,7 @@ export default function Home() {
               </Box>
               <Box sx={{ flexGrow: 1, width: "100%" }}>
                 <Grid container spacing={2} className={styles.row_modal}>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <InputData
                       label="تاریخ مراجعه"
                       value={customerData?.datereference}
@@ -996,7 +1075,7 @@ export default function Home() {
                       <span className="error">{errors.datereference}</span>
                     )}
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <InputData
                       label="تاریخ تولد"
                       value={customerData?.birthday}
@@ -1051,6 +1130,79 @@ export default function Home() {
         showToast={showToast}
         setShowToast={setShowToast}
       />
+      <ModalBottom isVisible={isVisible} setIsVisible={setIsVisible}>
+        <div className={styles.container_bottom_modal}>
+          <div className={styles.wrapdrop}>
+            <DropDownSearch
+              firstoptiontext="افزودن بیمار"
+              firstoptionclick={showAddCustomerModal}
+              items={allCustomer}
+              title="بیمار"
+              getOptionLabelProp="fullname"
+              name={"customerId"}
+              isEdit={"edit"}
+              openEditModal={openEditModal}
+              onChange={ChangeCustomerInfoHandler}
+              value={customerInfo.customerId}
+            />
+          </div>
+          <div className={styles.wrapdrop}>
+            <DropDownSearch
+              title={"عملیات"}
+              firstoptiontext="افزودن عملیات"
+              firstoptionclick={() => {
+                setTypeModal(2);
+                setShowModal(true);
+              }}
+              items={operationsData}
+              name={"operationId"}
+              getOptionLabelProp="operation"
+              onChange={ChangeCustomerInfoHandler}
+              value={customerInfo.operationId}
+            />
+          </div>
+          <div className={styles.wrapdrop}>
+            <DropDownSearch
+              title={"تاریخ عملیات"}
+              firstoptiontext="عملیات جدید"
+              firstoptionclick={() => setIsNewOperation(true)}
+              items={historyOperation}
+              name={"archiveId"}
+              getOptionLabelProp="date1"
+              onChange={ChangeCustomerInfoHandler}
+              value={customerInfo.archiveId}
+              setIsNewOperation={setIsNewOperation}
+            />
+          </div>
+          <div className={styles.wrapdrop}>
+            <DropDownSearch
+              title={"حالت ضبط"}
+              firstoptiontext="افزودن حالت ضبط"
+              firstoptionclick={() => {
+                setTypeModal(4);
+                setShowModal(true);
+              }}
+              items={allSettings}
+              name={"settingId"}
+              getOptionLabelProp="name"
+              onChange={ChangeCustomerInfoHandler}
+              value={customerInfo.settingId}
+              setSetting={setSetting}
+            />
+          </div>
+          <div className={styles.wrap_actions}>
+            <div className={styles.wrap_icon_image}>
+              <InsertPhotoIcon className={styles.icon_image} />
+            </div>
+            <div className={styles.wrap_controls}>
+              <Button2 icon={EastIcon} />
+              <Button2 icon={NorthIcon} />
+              <Button2 icon={SouthIcon} />
+              <Button2 icon={WestIcon} />
+            </div>
+          </div>
+        </div>
+      </ModalBottom>
     </div>
   );
 }

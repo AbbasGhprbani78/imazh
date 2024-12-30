@@ -12,20 +12,19 @@ import Modal from "../Modal/Modal";
 import Button1 from "../Buttons/Button1";
 import KeyIcon from "@mui/icons-material/Key";
 import Input from "../Input/Input";
-import Button2 from "../Buttons/Button2";
-import CloseIcon from "@mui/icons-material/Close";
 import Toast from "../Toast/Toast";
 import { isRequired } from "@/utils/validate";
+import Image from "next/image";
 
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-const isActive = (href) => {
-  if (href === "/") {
-    return pathname === href;
-  }
-  return pathname.startsWith(href);
-};
+  const isActive = (href) => {
+    if (href === "/") {
+      return pathname === href;
+    }
+    return pathname.startsWith(href);
+  };
 
   const [me, setMe] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -33,6 +32,11 @@ const isActive = (href) => {
   const [typeModal, setTypeModal] = useState(1);
   const [imageProfile, setImageProfile] = useState("");
   const [password, setPassword] = useState("");
+  const [originalProfile, setOriginalProfile] = useState({
+    img: "",
+    username: "",
+  });
+
   const [profile, setProfile] = useState({
     img: "",
     username: "",
@@ -76,6 +80,7 @@ const isActive = (href) => {
       if (response.status === 200) {
         setMe(response.data);
         profile.username = response.data.username;
+        profile.img = response.data.img;
       }
     } catch (error) {
       console.log(error);
@@ -179,6 +184,26 @@ const isActive = (href) => {
     }
   };
 
+  const openProfileModal = () => {
+    setOriginalProfile({ ...profile });
+    setShowModal(true);
+    setTypeModal(1);
+  };
+  const openPasswordModal = () => {
+    setShowModal(true);
+    setTypeModal(2);
+  };
+  const openLogoutModal = () => {
+    setShowModal(true);
+    setTypeModal(3);
+  };
+
+  const closeModal = () => {
+    setProfile({ ...originalProfile });
+    setShowModal(false);
+    setImageProfile("");
+  };
+
   useEffect(() => {
     getMe();
   }, []);
@@ -186,13 +211,18 @@ const isActive = (href) => {
   return (
     <>
       <header className={`${styles.header} `}>
-        <Offcanvas />
+        <Offcanvas
+          openProfileModal={openProfileModal}
+          openPasswordModal={openPasswordModal}
+          openLogoutModal={openLogoutModal}
+          me={me}
+        />
         <nav className={styles.navbar}>
           <div className={styles.logo_wrapper}>
-            <img src="/images/6.svg" alt="logo" />
+            <Image src="/images/6.svg" alt="logo" width={40} height={40} />
           </div>
           <ul className={styles.list}>
-            {me.role == "d" ? (
+            {me?.role == "d" ? (
               <>
                 <Link
                   className={`${styles.list_item} ${
@@ -211,7 +241,7 @@ const isActive = (href) => {
                   آرشیو
                 </Link>
               </>
-            ) : me.role === "a" ? (
+            ) : me?.role === "a" ? (
               <>
                 <Link
                   className={`${styles.list_item} ${
@@ -230,7 +260,6 @@ const isActive = (href) => {
                   آرشیو
                 </Link>
                 <Link
-                  c
                   className={`${styles.list_item} ${
                     isActive("/setting") && styles.active
                   }`}
@@ -239,7 +268,7 @@ const isActive = (href) => {
                   تنظیمات
                 </Link>
               </>
-            ) : me.role === "s" ? (
+            ) : me?.role === "s" ? (
               <>
                 <Link
                   className={`${styles.list_item} ${
@@ -254,38 +283,28 @@ const isActive = (href) => {
           </ul>
         </nav>
         <div className={styles.profile_image_wrapper}>
-          <img src={me.img ? me.img : "/images/5.svg"} alt="profile" />
+          <Image
+            src={me.img ? me.img : "/images/5.svg"}
+            alt="profile"
+            width={40}
+            height={40}
+          />
           <div className={styles.wrap_useraction}>
             <ul className={styles.list_useraction}>
-              <li
-                className={styles.useraction_item}
-                onClick={() => {
-                  setShowModal(true);
-                  setTypeModal(1);
-                }}
-              >
+              <li className={styles.useraction_item} onClick={openProfileModal}>
                 <PersonIcon className={styles.icon_action} />
                 <span className={styles.action_text_user}>حساب کاربری</span>
               </li>
               <li
                 className={styles.useraction_item}
-                onClick={() => {
-                  setShowModal(true);
-                  setTypeModal(2);
-                }}
+                onClick={openPasswordModal}
               >
                 <KeyIcon className={styles.icon_action} />
                 <span className={styles.action_text_user}>
                   تغییر رمز کاربری
                 </span>
               </li>
-              <li
-                className={styles.useraction_item}
-                onClick={() => {
-                  setShowModal(true);
-                  setTypeModal(3);
-                }}
-              >
+              <li className={styles.useraction_item} onClick={openLogoutModal}>
                 <LogoutOutlinedIcon className={styles.icon_action} />
                 <span className={styles.action_text_user}>خروج</span>
               </li>
@@ -301,20 +320,22 @@ const isActive = (href) => {
             ? "تغییر رمز"
             : "خروج"
         }
-        onClick={() => setShowModal(false)}
+        onClick={closeModal}
         showModal={showModal}
       >
         {typeModal === 1 ? (
           <>
             <div className={styles.wrap_image_profile}>
-              <img
+              <Image
                 src={
                   imageProfile
                     ? imageProfile
-                    : me?.img
-                    ? me.img
+                    : profile?.img
+                    ? profile.img
                     : "/images/5.svg"
                 }
+                width={90}
+                height={90}
                 alt="profile"
               />
               <label
@@ -326,6 +347,7 @@ const isActive = (href) => {
                   position: "absolute",
                   top: "0",
                   left: "0",
+                  cursor: "pointer",
                 }}
               ></label>
               <input
@@ -398,7 +420,6 @@ const isActive = (href) => {
                 text={"تایید"}
                 Onclick={changePassowrdHandler}
               />
-              <Button2 onClick={() => setShowModal(false)} icon={CloseIcon} />
             </div>
           </>
         ) : (

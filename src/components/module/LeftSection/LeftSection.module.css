@@ -12,3 +12,10 @@
     height: 100dvh;
     z-index: 1000;
 }
+
+
+@media (max-width:900px) {
+    .camera_container {
+        height: 92dvh;
+    }
+}

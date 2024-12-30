@@ -1,6 +1,5 @@
-
 .offcanvas_container {
-    display:none;
+    display: none;
 }
 
 .link_item {
@@ -15,6 +14,13 @@
     color: #fff;
     width: 100%;
     padding: 7px 20px 7px 0;
+    position: relative;
+}
+
+
+.image_profile {
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .icon_item {
@@ -22,7 +28,7 @@
 }
 
 @media (max-width:900px) {
-    .offcanvas_container{
-        display:block;
+    .offcanvas_container {
+        display: block;
     }
 }

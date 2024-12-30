@@ -34,11 +34,12 @@
 }
 
 
-.wrap_right{
+.wrap_right {
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 .login_image {
     width: 57%;
     height: 97dvh;
@@ -51,6 +52,20 @@
     object-fit: cover;
 }
 
+@media (max-width:1200px) {
+    .wrap_right {
+        flex-direction: column;
+        align-items: center;
+        justify-content: start;
+        padding-top: 2rem;
+    }
+
+    .login_image {
+        width: 70%;
+        height: auto;
+    }
+
+}
 
 @media (max-width:992px) {
     .login_container {
@@ -60,7 +75,7 @@
 }
 
 @media (max-width:900px) {
-    .wrap_right{
+    .wrap_right {
         display: none;
     }
 }

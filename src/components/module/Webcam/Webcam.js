@@ -110,8 +110,7 @@ export default function Webcam({
     }
 
     if (setting === "#MKE01$A11*") {
-      if (data === "AG2" && !isRecording) {
-        //AG5
+      if (data === "AG5" && !isRecording) {
         startRecording();
       } else if (data === "AG6") {
         stopRecording();

@@ -1,7 +1,6 @@
 .wrapDropSearch {
     position: relative;
     width: 100%;
-    max-width: 300px;
     margin: 0 auto;
     font-family: "vazir", sans-serif;
 }
@@ -123,4 +122,11 @@
 
 .icon_edit {
     cursor: pointer;
+}
+
+
+@media (max-width:600px) {
+    .wrapDropSearch {
+        max-width: 100%;
+    }
 }

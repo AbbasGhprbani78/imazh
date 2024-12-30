@@ -31,7 +31,7 @@
 }
 
 .backstyle::before {
-    background-color: lightgrey;
+    background-color: #000;
 }
 
 

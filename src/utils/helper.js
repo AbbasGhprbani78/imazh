@@ -10,6 +10,9 @@ export function toEnglishNumber(number) {
 }
 
 export const convertToPersianDate = (isoDate) => {
+  if (!isoDate || isNaN(new Date(isoDate).getTime())) {
+    return "";
+  }
   const date = new Date(isoDate);
   return new Intl.DateTimeFormat("fa-IR", {
     dateStyle: "full",

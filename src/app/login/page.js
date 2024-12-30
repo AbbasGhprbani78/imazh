@@ -18,7 +18,7 @@ export default function Login() {
             maxHeight: "100dvh",
           }}
         >
-          <Grid size={{ xs: 12, md: 4 }} sx={{ height: "100dvh" }}>
+          <Grid size={{ xs: 12, md: 5, lg: 4 }} sx={{ height: "100dvh" }}>
             <div className={styles.login_container}>
               <div className={styles.logo_wrapper}>
                 <img src="/images/6.svg" alt="logo" />
@@ -35,7 +35,7 @@ export default function Login() {
             </div>
           </Grid>
           <Grid
-            size={{ xs: 12, md: 8 }}
+            size={{ xs: 12, md: 7, lg: 8 }}
             sx={{ height: "100dvh" }}
             className={styles.wrap_right}
           >
