@@ -2,13 +2,12 @@
   "name": "imazh",
   "version": "0.1.0",
   "private": true,
-"scripts": {
-  "dev": "node server.js",
-  "build": "next build",
-  "start": "cross-env NODE_ENV=production node server.js",
-  "lint": "next lint"
-},
-
+  "scripts": {
+    "dev": "node server.js",
+    "build": "next build",
+    "start": "cross-env NODE_ENV=production node server.js",
+    "lint": "next lint"
+  },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -26,7 +25,8 @@
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "stylis": "^4.3.4",
-    "stylis-plugin-rtl": "^2.1.1"
+    "stylis-plugin-rtl": "^2.1.1",
+    "swiper": "^11.1.15"
   },
   "devDependencies": {
     "cross-env": "^7.0.3"

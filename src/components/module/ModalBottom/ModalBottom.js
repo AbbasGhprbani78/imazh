@@ -14,7 +14,7 @@ export default function ModalBottom({ children, isVisible, setIsVisible }) {
           onClick={() => setIsVisible(false)}
         />
       </div>
-      {children}
+      <div className={styles.contnet_modal_bottom}>{children}</div>
     </div>
   );
 }

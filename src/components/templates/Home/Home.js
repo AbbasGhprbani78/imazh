@@ -29,6 +29,8 @@ import EastIcon from "@mui/icons-material/East";
 import NorthIcon from "@mui/icons-material/North";
 import WestIcon from "@mui/icons-material/West";
 import SouthIcon from "@mui/icons-material/South";
+import SliderImages from "@/components/module/SliderImages/SliderImages";
+import Preview from "@/components/module/Preview/Preview";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -55,8 +57,9 @@ export default function Home() {
   const [photos, setPhotos] = useState([]);
   const [historyOperation, setHistoryOperation] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const isDesktop = useMediaQuery("(min-width:900px)");
+
+
+  const [showListImages, setShowListImages] = useState(false);
   const [customerData, setCustomerData] = useState({
     fullname: "",
     email: "",
@@ -86,6 +89,8 @@ export default function Home() {
     gender: "",
     setting: "",
   });
+
+  const isDesktop = useMediaQuery("(min-width:900px)");
 
   const validateCustomerInfo = () => {
     if (!isRequired(customerInfo.customerId)) {
@@ -556,8 +561,8 @@ export default function Home() {
     }
   };
 
-  const toggleExpand = () => {
-    setIsExpanded((prev) => !prev);
+  const toggleShowListImages = () => {
+    setShowListImages((prev) => !prev);
   };
 
   const fetchDataFromServer = () => {
@@ -637,12 +642,13 @@ export default function Home() {
             alignItems: "stretch",
             flexWrap: "wrap",
             height: "100%",
+            direction: "rtl",
           }}
         >
           <Grid
             size={{ xs: 0, md: 4, lg: 3 }}
             sx={{
-              display: isDesktop ? "flex" : "none",
+              display: isDesktop && "flex",
               flexDirection: "column",
             }}
             className={styles.right_section}
@@ -708,73 +714,58 @@ export default function Home() {
               </div>
             </RightSection>
           </Grid>
-          <Grid
-            size={{ xs: 12, md: 8, lg: 9 }}
-            sx={{ height: "100%", background: "red" }}
-          >
-            <LeftSection isExpanded={isExpanded}>
-              {/* <Webcam
+          <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
+            <LeftSection>
+              <Preview>
+                {/* <Webcam
                 setting={setting}
                 data={data}
                 setPhotos={setPhotos}
                 socket={socket}
                 setSocket={setSocket}
               /> */}
-              <div
-                className={styles.icon_top_wrapper_left}
-                onClick={toggleExpand}
-              >
-                <img src="/images/4.svg" alt="icon" />
-              </div>
-              <div
-                className={styles.icon_top_wrapper_right}
-                onClick={toggleModalBottom}
-              >
-                <LayersIcon className={styles.icon} />
-              </div>
-              <div className={styles.icons_bottom_wrapper}>
-                <ReplayOutlinedIcon
-                  className={`${styles.icon_refresh} ${styles.icon}`}
-                  onClick={() => setPhotos([])}
-                />
                 <div
-                  className={styles.wrap_camera}
-                  onClick={fetchDataFromServer}
+                  className={styles.icon_top_wrapper_right}
+                  onClick={toggleModalBottom}
                 >
-                  <CameraOutlinedIcon
-                    className={`${styles.icon_camera} ${styles.icon}`}
-                  />
+                  <LayersIcon className={styles.icon} />
                 </div>
-                <div className={styles.wrap_save_icon}>
-                  <button
-                    className={`${styles.button_save} ${
-                      loading && styles.btn_save_disable
-                    }`}
-                    onClick={saveCustomerInfo}
-                    disabled={loading}
-                    style={{
-                      border: "none",
-                      outline: "none",
-                      background: "transparent",
-                    }}
+                <div className={styles.icons_bottom_wrapper}>
+                  <ReplayOutlinedIcon
+                    className={`${styles.icon_refresh} ${styles.icon}`}
+                    onClick={() => setPhotos([])}
+                  />
+                  <div
+                    className={styles.wrap_camera}
+                    onClick={fetchDataFromServer}
                   >
-                    <SaveAltIcon
+                    <CameraOutlinedIcon
                       className={`${styles.icon_camera} ${styles.icon}`}
                     />
-                  </button>
+                  </div>
+                  <div className={styles.wrap_save_icon}>
+                    <button
+                      className={`${styles.button_save} ${
+                        loading && styles.btn_save_disable
+                      }`}
+                      onClick={saveCustomerInfo}
+                      disabled={loading}
+                      style={{
+                        border: "none",
+                        outline: "none",
+                        background: "transparent",
+                      }}
+                    >
+                      <SaveAltIcon
+                        className={`${styles.icon_camera} ${styles.icon}`}
+                      />
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </Preview>
             </LeftSection>
             {photos.length > 0 && (
-              <Grid
-                container
-                spacing={2.5}
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  marginTop: "20px",
-                }}
-              >
+              <Grid container spacing={2.5} className={styles.wrap_get_media}>
                 {photos.map((file, index) => {
                   const isImage =
                     file.endsWith(".jpeg") ||
@@ -793,7 +784,7 @@ export default function Home() {
                       <Image
                         src={file}
                         alt={`uploaded file ${index}`}
-                        className={styles.image_preview}
+                        className={styles.media_preview}
                         height={210}
                         width={210}
                       />
@@ -803,12 +794,7 @@ export default function Home() {
                       <video
                         src={file}
                         controls
-                        className={styles.video_preview}
-                        style={{
-                          width: "200px",
-                          height: "200px",
-                          objectFit: "cover",
-                        }}
+                        className={styles.media_preview}
                       ></video>
                     </div>
                   );
@@ -1132,74 +1118,87 @@ export default function Home() {
       />
       <ModalBottom isVisible={isVisible} setIsVisible={setIsVisible}>
         <div className={styles.container_bottom_modal}>
-          <div className={styles.wrapdrop}>
-            <DropDownSearch
-              firstoptiontext="افزودن بیمار"
-              firstoptionclick={showAddCustomerModal}
-              items={allCustomer}
-              title="بیمار"
-              getOptionLabelProp="fullname"
-              name={"customerId"}
-              isEdit={"edit"}
-              openEditModal={openEditModal}
-              onChange={ChangeCustomerInfoHandler}
-              value={customerInfo.customerId}
-            />
-          </div>
-          <div className={styles.wrapdrop}>
-            <DropDownSearch
-              title={"عملیات"}
-              firstoptiontext="افزودن عملیات"
-              firstoptionclick={() => {
-                setTypeModal(2);
-                setShowModal(true);
-              }}
-              items={operationsData}
-              name={"operationId"}
-              getOptionLabelProp="operation"
-              onChange={ChangeCustomerInfoHandler}
-              value={customerInfo.operationId}
-            />
-          </div>
-          <div className={styles.wrapdrop}>
-            <DropDownSearch
-              title={"تاریخ عملیات"}
-              firstoptiontext="عملیات جدید"
-              firstoptionclick={() => setIsNewOperation(true)}
-              items={historyOperation}
-              name={"archiveId"}
-              getOptionLabelProp="date1"
-              onChange={ChangeCustomerInfoHandler}
-              value={customerInfo.archiveId}
-              setIsNewOperation={setIsNewOperation}
-            />
-          </div>
-          <div className={styles.wrapdrop}>
-            <DropDownSearch
-              title={"حالت ضبط"}
-              firstoptiontext="افزودن حالت ضبط"
-              firstoptionclick={() => {
-                setTypeModal(4);
-                setShowModal(true);
-              }}
-              items={allSettings}
-              name={"settingId"}
-              getOptionLabelProp="name"
-              onChange={ChangeCustomerInfoHandler}
-              value={customerInfo.settingId}
-              setSetting={setSetting}
-            />
-          </div>
+          {showListImages ? (
+            <>
+              <SliderImages />
+            </>
+          ) : (
+            <>
+              <div className={styles.wrapdrop}>
+                <DropDownSearch
+                  firstoptiontext="افزودن بیمار"
+                  firstoptionclick={showAddCustomerModal}
+                  items={allCustomer}
+                  title="بیمار"
+                  getOptionLabelProp="fullname"
+                  name={"customerId"}
+                  isEdit={"edit"}
+                  openEditModal={openEditModal}
+                  onChange={ChangeCustomerInfoHandler}
+                  value={customerInfo.customerId}
+                />
+              </div>
+              <div className={styles.wrapdrop}>
+                <DropDownSearch
+                  title={"عملیات"}
+                  firstoptiontext="افزودن عملیات"
+                  firstoptionclick={() => {
+                    setTypeModal(2);
+                    setShowModal(true);
+                  }}
+                  items={operationsData}
+                  name={"operationId"}
+                  getOptionLabelProp="operation"
+                  onChange={ChangeCustomerInfoHandler}
+                  value={customerInfo.operationId}
+                />
+              </div>
+              <div className={styles.wrapdrop}>
+                <DropDownSearch
+                  title={"تاریخ عملیات"}
+                  firstoptiontext="عملیات جدید"
+                  firstoptionclick={() => setIsNewOperation(true)}
+                  items={historyOperation}
+                  name={"archiveId"}
+                  getOptionLabelProp="date1"
+                  onChange={ChangeCustomerInfoHandler}
+                  value={customerInfo.archiveId}
+                  setIsNewOperation={setIsNewOperation}
+                />
+              </div>
+              <div className={styles.wrapdrop}>
+                <DropDownSearch
+                  title={"حالت ضبط"}
+                  firstoptiontext="افزودن حالت ضبط"
+                  firstoptionclick={() => {
+                    setTypeModal(4);
+                    setShowModal(true);
+                  }}
+                  items={allSettings}
+                  name={"settingId"}
+                  getOptionLabelProp="name"
+                  onChange={ChangeCustomerInfoHandler}
+                  value={customerInfo.settingId}
+                  setSetting={setSetting}
+                />
+              </div>
+            </>
+          )}
           <div className={styles.wrap_actions}>
-            <div className={styles.wrap_icon_image}>
+            <div
+              className={styles.wrap_icon_image}
+              onClick={toggleShowListImages}
+            >
               <InsertPhotoIcon className={styles.icon_image} />
             </div>
-            <div className={styles.wrap_controls}>
-              <Button2 icon={EastIcon} />
-              <Button2 icon={NorthIcon} />
-              <Button2 icon={SouthIcon} />
-              <Button2 icon={WestIcon} />
-            </div>
+            {!showListImages && (
+              <div className={styles.wrap_controls}>
+                <Button2 icon={EastIcon} />
+                <Button2 icon={NorthIcon} />
+                <Button2 icon={SouthIcon} />
+                <Button2 icon={WestIcon} />
+              </div>
+            )}
           </div>
         </div>
       </ModalBottom>

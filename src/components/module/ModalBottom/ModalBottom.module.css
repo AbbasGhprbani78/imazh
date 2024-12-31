@@ -27,7 +27,7 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    background: var(--color-1);
+    background-color: var(--color-2);
     border-radius: 20px 20px 0 0;
     z-index: 1000;
     transform: translateY(100%);
@@ -53,4 +53,20 @@
 .icon {
     transform: rotate(90deg);
     color: #fff;
+}
+
+
+@media (max-width:800px) {
+    .contnet_modal_bottom {
+        height: calc(70vh - 60px);
+        overflow-y: auto;
+    }
+}
+
+
+@media (max-width:768px) {
+    .contnet_modal_bottom {
+        height: auto;
+        overflow-y: hidden;
+    }
 }

@@ -1,13 +1,10 @@
 "use client";
-
 import styles from "./LeftSection.module.css";
 
-export default function LeftSection({ children, isExpanded }) {
+export default function LeftSection({ children }) {
   return (
     <div
-      className={`${styles.camera_container} ${
-        isExpanded ? styles.full_screen : ""
-      }`}
+      className={styles.camera_container}
     >
       {children}
     </div>

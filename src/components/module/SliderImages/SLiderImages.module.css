@@ -1,0 +1,48 @@
+.slider_container {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.swiper_slider {}
+
+.custom_buttons {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    z-index: 10;
+}
+
+.prev_button {}
+
+.btn_slide {
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+.arrowIcon {
+    font-size: 2.5rem;
+    color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.next_button {}
+
+.image_item_wrapper {
+    height: auto !important;
+    position: relative;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.image_item {
+    height: 100% !important;
+    width: 100% !important;
+    object-fit: cover;
+}

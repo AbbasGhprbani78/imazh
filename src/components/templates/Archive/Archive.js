@@ -69,7 +69,7 @@ export default function Archive() {
         setToastInfo({
           type: "success",
           title: "حذف موفقیت آمیز",
-          message:response?.data?.message,
+          message: response?.data?.message,
         });
         setShowToast(true);
       }
@@ -82,7 +82,7 @@ export default function Archive() {
       });
       setShowToast(true);
     }
-  }
+  };
 
   useEffect(() => {
     fetchArchives(page);
@@ -114,10 +114,8 @@ export default function Archive() {
       <div className={`wrapper ${styles.container}`}>
         <div className={styles.top}>
           <span className={`title`}>آرشیو</span>
-          <div className={styles.wrapper_actions}>
-            <Button2 icon={LocalPrintshopIcon} />
-          </div>
         </div>
+
         <SearchBox value={search} onChange={searchHandler} />
         <TableUser
           archives={filteredArchives}
@@ -137,4 +135,10 @@ export default function Archive() {
       />
     </>
   );
+}
+
+{
+  /* <div className={styles.wrapper_actions}>
+            <Button2 icon={LocalPrintshopIcon} />
+          </div> */
 }

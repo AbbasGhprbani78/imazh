@@ -1,21 +1,15 @@
 .camera_container {
-    height: 86dvh;
+    height: calc(100vh - 100px);
     position: relative;
     transition: all 0.3s ease-in-out;
+    background-color: red;
 }
 
-.full_screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100dvh;
-    z-index: 1000;
-}
 
 
 @media (max-width:900px) {
     .camera_container {
-        height: 92dvh;
+        height: calc(100dvh - 56.8px);
     }
+
 }

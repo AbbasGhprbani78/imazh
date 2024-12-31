@@ -13,7 +13,7 @@
     margin-bottom: 2rem;
 }
 
-.icon_top_wrapper_left {
+/* .icon_top_wrapper_left {
     position: absolute;
     top: 20px;
     left: 20px;
@@ -32,7 +32,7 @@
     width: 70%;
     height: 70%;
     object-fit: cover;
-}
+} */
 
 .icon_top_wrapper_right {
     position: absolute;
@@ -71,8 +71,8 @@
 }
 
 .wrap_camera {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     background-color: var(--color-4);
     display: flex;
     align-items: center;
@@ -106,6 +106,12 @@
     position: relative;
 }
 
+.wrap_get_media {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
 .media_box_wrapper {
     display: flex;
     align-items: center;
@@ -113,9 +119,11 @@
     gap: 20px;
 }
 
-.image_preview {
+.media_preview {
     object-fit: cover;
     width: 100% !important;
+    height: 100%;
+    aspect-ratio: 4 / 3;
 }
 
 .container_bottom_modal {
@@ -149,6 +157,31 @@
 }
 
 @media (max-width:900px) {
+
+    .wrap_get_media {
+        overflow-x: auto;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 16px;
+        padding: 0 10px;
+    }
+
+    .wrap_media_item {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+
+    .media_preview {
+        object-fit: cover;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    .wrap_camera {
+        width: 40px;
+        height: 40px;
+    }
+
     .right_section {
         display: none;
     }
@@ -161,3 +194,44 @@
         display: flex;
     }
 }
+
+
+
+/* sx= {
+         {
+         overflowX: {
+             xs: "auto", md: "visible"
+         }
+
+         ,
+         // اسکرول افقی برای سایز کمتر از 900px
+         display: "flex",
+         flexWrap: {
+             xs: "nowrap", md: "wrap"
+         }
+
+         ,
+         // غیرفعال کردن پیچیدن المان‌ها در سایز کوچک
+         gap: "16px",
+         // فاصله بین تصاویر
+     }
+ } */
+
+
+
+
+/* sx= {
+           {
+
+           flex: "0 0 auto",
+           // اندازه ثابت برای هر آیتم
+           width: {
+               xs: "200px", md: "auto"
+           }
+
+           ,
+           // عرض ثابت در سایز کوچک
+           display: "flex",
+           flexDirection: "column",
+       }
+   } */

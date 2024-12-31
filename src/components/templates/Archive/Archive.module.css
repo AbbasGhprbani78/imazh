@@ -21,3 +21,10 @@
 .text_model {
     color: #fff;
 }
+
+
+@media (max-width:900px) {
+    .container {
+        padding: 20px;
+    }
+}

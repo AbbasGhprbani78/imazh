@@ -14,9 +14,12 @@ import TollOutlinedIcon from "@mui/icons-material/TollOutlined";
 import BrushOutlinedIcon from "@mui/icons-material/BrushOutlined";
 import WorkspacesOutlinedIcon from "@mui/icons-material/WorkspacesOutlined";
 import axios from "axios";
+
+import Preview from "@/components/module/Preview/Preview";
+import ModalBottom from "@/components/module/ModalBottom/ModalBottom";
 export default function CustomerArchive({ id }) {
   const [showModal, setShowModal] = useState(false);
-
+  const [isVisible, setIsVisible] = useState(false);
   const getArchiveDetails = async () => {
     try {
       const response = await axios.get(
@@ -29,10 +32,10 @@ export default function CustomerArchive({ id }) {
       console.log(error);
     }
   };
-
   useEffect(() => {
     getArchiveDetails();
   }, []);
+
   return (
     <div className="wrapper">
       <Box sx={{ flexGrow: 1, height: "100%" }}>
@@ -41,12 +44,16 @@ export default function CustomerArchive({ id }) {
           spacing={2.5}
           sx={{
             display: "flex",
-            alignItems: "start",
+            alignItems: "stretch",
             flexWrap: "wrap",
             height: "100%",
+            rowGap: "0",
           }}
         >
-          <Grid size={{ xs: 12, md: 4, lg: 3 }} sx={{ height: "100%" }}>
+          <Grid
+            size={{ xs: 12, md: 4, lg: 3 }}
+            sx={{ display: "flex", flexDirection: "column" }}
+          >
             <RightSection style={"archive"}>
               <div className={styles.content_right}>
                 <DropDownSearch
@@ -74,7 +81,21 @@ export default function CustomerArchive({ id }) {
             </RightSection>
           </Grid>
           <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
-            <LeftSection saveItem={""} loading={""} />
+            <Grid className={styles.wrap_images} container spacing={2.5}>
+              <Grid size={{ xs: 12, lg: 6 }} className={styles.Preview_item}>
+                <Preview>
+                  <div
+                    className={styles.icon_top_wrapper_right}
+                    onClick={toggleModalBottom}
+                  >
+                    <LayersIcon className={styles.icon} />
+                  </div>
+                </Preview>
+              </Grid>
+              <Grid size={{ xs: 12, lg: 6 }} className={styles.Preview_item}>
+                <Preview></Preview>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </Box>
@@ -83,6 +104,10 @@ export default function CustomerArchive({ id }) {
         onClick={() => setShowModal(false)}
         showModal={showModal}
       ></Modal>
+      <ModalBottom
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+      ></ModalBottom>
     </div>
   );
 }

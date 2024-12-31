@@ -34,12 +34,12 @@ export default function TableUser({
     <div className={styles.table_container}>
       <TableContainer
         className={styles.table_content}
-        style={{ maxHeight: 420 }}
+       
       >
         <Table
           stickyHeader
           sx={{
-            minWidth: 750,
+            minWidth: "max-content",
           }}
         >
           <TableHead sx={{ zIndex: "12", position: "relative" }}>
@@ -202,10 +202,7 @@ export default function TableUser({
                     <Button2
                       icon={VisibilityIcon}
                       onClick={() =>
-                        goToArchiveCustomer(
-                          row?.customer?.fullname,
-                          row?.id
-                        )
+                        goToArchiveCustomer(row?.customer?.fullname, row?.id)
                       }
                     />
                     <Button2

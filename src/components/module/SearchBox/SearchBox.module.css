@@ -9,7 +9,7 @@
     color: #9f9f9f;
     width: 380px;
     max-width: 380px;
-    margin-top: 2.5rem;
+    margin-top: 1rem;
 }
 
 .input_search {
@@ -33,4 +33,10 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+}
+
+@media (max-width:600px) {
+    .searchBox {
+        max-width: 100%;
+    }
 }

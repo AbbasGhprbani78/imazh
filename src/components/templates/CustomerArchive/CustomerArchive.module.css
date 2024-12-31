@@ -7,11 +7,52 @@
     margin-top: 3rem;
 }
 
-
 .wrap_actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-top: 1px solid #fff;
     padding-top: 20px;
+}
+
+
+
+.wrap_images {
+    height: calc(100vh - 100px);
+    position: relative;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+}
+
+.Preview_item {
+    height: 100%;
+}
+
+
+
+
+@media (min-width: 900px) and (max-width: 1024px) {
+    .Preview_item {
+        height: calc(50% - 20px);
+    }
+}
+
+@media (max-width:900px) {
+    .wrap_images {
+        height: calc(100dvh - 56.8px);
+    }
+
+    .full_screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100dvh;
+        z-index: 1000;
+    }
+
+    .Preview_item {
+        height: calc(50dvh - 40px)
+    }
 }
