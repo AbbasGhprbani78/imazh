@@ -13,42 +13,7 @@
     margin-bottom: 2rem;
 }
 
-/* .icon_top_wrapper_left {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    height: 45px;
-    width: 45px;
-    border-radius: 50%;
-    overflow: hidden;
-    background-color: #fff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
-.icon_top_wrapper_left>img {
-    width: 70%;
-    height: 70%;
-    object-fit: cover;
-} */
-
-.icon_top_wrapper_right {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    height: 45px;
-    width: 45px;
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: #fff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    display: none;
-}
 
 
 .icons_bottom_wrapper {
@@ -126,9 +91,7 @@
     aspect-ratio: 4 / 3;
 }
 
-.container_bottom_modal {
-    padding: 20px;
-}
+
 
 .wrap_actions {
     display: flex;
@@ -190,48 +153,6 @@
         font-size: 2rem;
     }
 
-    .icon_top_wrapper_right {
-        display: flex;
-    }
+   
 }
 
-
-
-/* sx= {
-         {
-         overflowX: {
-             xs: "auto", md: "visible"
-         }
-
-         ,
-         // اسکرول افقی برای سایز کمتر از 900px
-         display: "flex",
-         flexWrap: {
-             xs: "nowrap", md: "wrap"
-         }
-
-         ,
-         // غیرفعال کردن پیچیدن المان‌ها در سایز کوچک
-         gap: "16px",
-         // فاصله بین تصاویر
-     }
- } */
-
-
-
-
-/* sx= {
-           {
-
-           flex: "0 0 auto",
-           // اندازه ثابت برای هر آیتم
-           width: {
-               xs: "200px", md: "auto"
-           }
-
-           ,
-           // عرض ثابت در سایز کوچک
-           display: "flex",
-           flexDirection: "column",
-       }
-   } */

@@ -26,6 +26,22 @@
     object-fit: cover;
 }
 
+.icon_top_wrapper_right {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    height: 45px;
+    width: 45px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+
 .full_screen {
     position: fixed;
     top: 0;
@@ -46,6 +62,10 @@
         height: 100dvh;
         z-index: 1000;
         background-color: blue;
+    }
+
+    .icon_top_wrapper_right {
+        display: flex;
     }
 }
 

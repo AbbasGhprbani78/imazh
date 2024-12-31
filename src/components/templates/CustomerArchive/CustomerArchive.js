@@ -32,6 +32,10 @@ export default function CustomerArchive({ id }) {
       console.log(error);
     }
   };
+  const toggleModalBottom = () => {
+    setIsVisible(!isVisible);
+  };
+
   useEffect(() => {
     getArchiveDetails();
   }, []);
@@ -83,17 +87,10 @@ export default function CustomerArchive({ id }) {
           <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
             <Grid className={styles.wrap_images} container spacing={2.5}>
               <Grid size={{ xs: 12, lg: 6 }} className={styles.Preview_item}>
-                <Preview>
-                  <div
-                    className={styles.icon_top_wrapper_right}
-                    onClick={toggleModalBottom}
-                  >
-                    <LayersIcon className={styles.icon} />
-                  </div>
-                </Preview>
+                <Preview toggleModalBottom={toggleModalBottom}></Preview>
               </Grid>
               <Grid size={{ xs: 12, lg: 6 }} className={styles.Preview_item}>
-                <Preview></Preview>
+                <Preview toggleModalBottom={toggleModalBottom}></Preview>
               </Grid>
             </Grid>
           </Grid>
@@ -104,10 +101,29 @@ export default function CustomerArchive({ id }) {
         onClick={() => setShowModal(false)}
         showModal={showModal}
       ></Modal>
-      <ModalBottom
-        isVisible={isVisible}
-        setIsVisible={setIsVisible}
-      ></ModalBottom>
+      <ModalBottom isVisible={isVisible} setIsVisible={setIsVisible}>
+        <DropDownSearch
+          title={"حالت ضبط"}
+          firstoptiontext="حالت ضبط جدید"
+          firstoptionclick={() => setShowModal(true)}
+          items={[]}
+          name={"recordId"}
+          getOptionLabelProp=""
+          onChange={""}
+          value={""}
+          setIsNewOperation={""}
+        />
+        <div className={styles.wrap_display}>
+          <DisplayPhoto title={"نحوه نمایش عکس‌ها"} item={"1"} />
+          <DisplayPhoto title={"گرید"} item={"2"} />
+        </div>
+        <div className={styles.wrap_actions}>
+          <Button2 icon={AutoFixHighOutlinedIcon} onClick={""} />
+          <Button2 icon={WorkspacesOutlinedIcon} onClick={""} />
+          <Button2 icon={TollOutlinedIcon} onClick={""} />
+          <Button2 icon={BrushOutlinedIcon} onClick={""} />
+        </div>
+      </ModalBottom>
     </div>
   );
 }

@@ -55,6 +55,9 @@
     color: #fff;
 }
 
+.contnet_modal_bottom {
+    padding: 20px;
+}
 
 @media (max-width:800px) {
     .contnet_modal_bottom {

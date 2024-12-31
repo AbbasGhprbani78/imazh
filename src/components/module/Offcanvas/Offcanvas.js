@@ -17,6 +17,7 @@ import Link from "next/link";
 import Image from "next/image";
 import PersonIcon from "@mui/icons-material/Person";
 import KeyIcon from "@mui/icons-material/Key";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 export default function Offcanvas({
   openProfileModal,
   openPasswordModal,
@@ -25,9 +26,17 @@ export default function Offcanvas({
 }) {
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdownOpen2, setDropdownOpen2] = useState(false);
+  const [dropdownOpen3, setDropdownOpen3] = useState(false);
 
   const handleSubDropdownToggle = () => {
     setDropdownOpen(!dropdownOpen);
+  };
+  const handleSubDropdownToggle2 = () => {
+    setDropdownOpen2(!dropdownOpen2);
+  };
+  const handleSubDropdownToggle3 = () => {
+    setDropdownOpen3(!dropdownOpen3);
   };
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -97,29 +106,126 @@ export default function Offcanvas({
             {me?.role === "a" ? (
               <>
                 <ListItemButton sx={{ marginBottom: "1.5rem", padding: "0" }}>
-                  <Link className={styles.link_offcanvas} href={"/"}>
-                    <HomeOutlinedIcon
-                      sx={{ width: "1.7rem", height: "1.7rem" }}
-                    />
-                    <span className={styles.link_text}>صفحه اصلی</span>
+                  <Link
+                    className={`${styles.link_offcanvas} ${styles.item_distance}`}
+                    href={"/"}
+                  >
+                    <div className={styles.wrap_text_icon}>
+                      <HomeOutlinedIcon
+                        sx={{ width: "1.7rem", height: "1.7rem" }}
+                      />
+                      <span className={styles.link_text}>صفحه اصلی</span>
+                    </div>
                   </Link>
                 </ListItemButton>
                 <ListItemButton sx={{ marginBottom: "1.5rem", padding: "0" }}>
-                  <Link className={styles.link_offcanvas} href={"/archive"}>
-                    <Inventory2OutlinedIcon
-                      sx={{ width: "1.7rem", height: "1.7rem" }}
-                    />
-                    <span className={styles.link_text}>آرشیو</span>
+                  <Link
+                    className={`${styles.link_offcanvas} ${styles.item_distance}`}
+                    href={"/archive"}
+                  >
+                    <div className={styles.wrap_text_icon}>
+                      <Inventory2OutlinedIcon
+                        sx={{ width: "1.7rem", height: "1.7rem" }}
+                      />
+                      <span className={styles.link_text}>آرشیو</span>
+                    </div>
                   </Link>
                 </ListItemButton>
-                <ListItemButton sx={{ marginBottom: "1.5rem", padding: "0" }}>
-                  <Link className={styles.link_offcanvas} href={"/setting"}>
-                    <SettingsOutlinedIcon
-                      sx={{ width: "1.7rem", height: "1.7rem" }}
-                    />
-                    <span className={styles.link_text}>تنظیمات</span>
-                  </Link>
+                <ListItemButton
+                  sx={{ marginBottom: "1.5rem", padding: "0" }}
+                  onClick={handleSubDropdownToggle2}
+                >
+                  <li
+                    className={`${styles.link_offcanvas} ${styles.item_distance}`}
+                  >
+                    <div className={styles.wrap_text_icon}>
+                      <SettingsOutlinedIcon
+                        sx={{ width: "1.7rem", height: "1.7rem" }}
+                      />
+                      <span className={styles.link_text}>تنظیمات</span>
+                    </div>
+                    {dropdownOpen2 ? <ExpandLess /> : <ExpandMore />}
+                  </li>
                 </ListItemButton>
+                <Collapse in={dropdownOpen2} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    <ListItemButton
+                      sx={{ marginBottom: "1rem", padding: "0 2rem 0 0" }}
+                      onClick={handleSubDropdownToggle3}
+                    >
+                      <li
+                        className={`${styles.link_offcanvas} ${styles.item_distance}`}
+                      >
+                        <div className={styles.wrap_text_icon}>
+                          <span className={styles.link_text}>حالت ضبط</span>
+                        </div>
+                        {dropdownOpen3 ? <ExpandLess /> : <ExpandMore />}
+                      </li>
+                    </ListItemButton>
+                    <Collapse in={dropdownOpen3} timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding>
+                        <ListItemButton
+                          sx={{ marginBottom: "1rem", padding: "0 4rem 0 0" }}
+                          onClick={""}
+                        >
+                          <li className={styles.link_offcanvas}>
+                            <span className={styles.link_text}>پایه</span>
+                          </li>
+                        </ListItemButton>
+                        <ListItemButton
+                          sx={{ marginBottom: "1rem", padding: "0 4rem 0 0" }}
+                          onClick={""}
+                        >
+                          <li className={styles.link_offcanvas}>
+                            <span className={styles.link_text}>ویدئو</span>
+                          </li>
+                        </ListItemButton>
+                        <ListItemButton
+                          sx={{ marginBottom: "1rem", padding: "0 4rem 0 0" }}
+                          onClick={""}
+                        >
+                          <li className={styles.link_offcanvas}>
+                            <span className={styles.link_text}>ویدئو</span>
+                          </li>
+                        </ListItemButton>
+                        <ListItemButton
+                          sx={{ marginBottom: "1rem", padding: "0 4rem 0 0" }}
+                          onClick={""}
+                        >
+                          <li className={styles.link_offcanvas}>
+                            <span className={styles.link_text}>دستی</span>
+                          </li>
+                        </ListItemButton>
+                      </List>
+                    </Collapse>
+                    <ListItemButton
+                      sx={{ marginBottom: "1rem", padding: "0 2rem 0 0" }}
+                      onClick={""}
+                    >
+                      <li className={styles.link_offcanvas}>
+                        <span className={styles.link_text}>تم</span>
+                      </li>
+                    </ListItemButton>
+                    <ListItemButton
+                      sx={{ marginBottom: "1rem", padding: "0 2rem 0 0" }}
+                      onClick={""}
+                    >
+                      <li className={styles.link_offcanvas}>
+                        <span className={styles.link_text}>لاگ</span>
+                      </li>
+                    </ListItemButton>
+                    <ListItemButton
+                      sx={{ marginBottom: "1rem", padding: "0 2rem 0 0" }}
+                      onClick={""}
+                    >
+                      <li className={styles.link_offcanvas}>
+                        <span className={styles.link_text}>
+                          پشتیبان‌گیری اطلاعات
+                        </span>
+                      </li>
+                    </ListItemButton>
+                  </List>
+                </Collapse>
               </>
             ) : me?.role === "d" ? (
               <>
@@ -157,10 +263,12 @@ export default function Offcanvas({
               onClick={openLogoutModal}
             >
               <li className={styles.link_offcanvas}>
-                <LogoutOutlinedIcon
-                  sx={{ width: "1.7rem", height: "1.7rem" }}
-                />
-                <span className={styles.link_text}>خروج</span>
+                <div className={styles.wrap_text_icon}>
+                  <LogoutOutlinedIcon
+                    sx={{ width: "1.7rem", height: "1.7rem" }}
+                  />
+                  <span className={styles.link_text}>خروج</span>
+                </div>
               </li>
             </ListItemButton>
           </List>

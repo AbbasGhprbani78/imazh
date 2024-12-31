@@ -22,7 +22,6 @@ import Webcam from "@/components/module/Webcam/Webcam";
 import io from "socket.io-client";
 import Image from "next/image";
 import ModalBottom from "@/components/module/ModalBottom/ModalBottom";
-import LayersIcon from "@mui/icons-material/Layers";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import Button2 from "@/components/module/Buttons/Button2";
 import EastIcon from "@mui/icons-material/East";
@@ -57,7 +56,6 @@ export default function Home() {
   const [photos, setPhotos] = useState([]);
   const [historyOperation, setHistoryOperation] = useState([]);
   const [loading, setLoading] = useState(false);
-
 
   const [showListImages, setShowListImages] = useState(false);
   const [customerData, setCustomerData] = useState({
@@ -600,6 +598,10 @@ export default function Home() {
     console.log("fetchData event emitted to backend");
     newSocket.emit("fetchData", { setting });
   };
+  
+   const toggleModalBottom = () => {
+     setIsVisible(!isVisible);
+   };
 
   useEffect(() => {
     getAllOperation();
@@ -627,9 +629,7 @@ export default function Home() {
     fetchData();
   }, [customerInfo.customerId, customerInfo.operationId]);
 
-  const toggleModalBottom = () => {
-    setIsVisible(!isVisible);
-  };
+ 
 
   return (
     <div className={`wrapper`}>
@@ -716,7 +716,7 @@ export default function Home() {
           </Grid>
           <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
             <LeftSection>
-              <Preview>
+              <Preview toggleModalBottom={toggleModalBottom}>
                 {/* <Webcam
                 setting={setting}
                 data={data}
@@ -724,12 +724,7 @@ export default function Home() {
                 socket={socket}
                 setSocket={setSocket}
               /> */}
-                <div
-                  className={styles.icon_top_wrapper_right}
-                  onClick={toggleModalBottom}
-                >
-                  <LayersIcon className={styles.icon} />
-                </div>
+
                 <div className={styles.icons_bottom_wrapper}>
                   <ReplayOutlinedIcon
                     className={`${styles.icon_refresh} ${styles.icon}`}
@@ -1117,7 +1112,6 @@ export default function Home() {
         setShowToast={setShowToast}
       />
       <ModalBottom isVisible={isVisible} setIsVisible={setIsVisible}>
-        <div className={styles.container_bottom_modal}>
           {showListImages ? (
             <>
               <SliderImages />
@@ -1200,7 +1194,6 @@ export default function Home() {
               </div>
             )}
           </div>
-        </div>
       </ModalBottom>
     </div>
   );

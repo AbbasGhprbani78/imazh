@@ -45,6 +45,7 @@ export default function Archive() {
 
   const fetchArchives = async (pageNumber) => {
     try {
+      setLoading(true);
       const response = await axios.get(
         `http://localhost:3000/api/archive?page=${pageNumber}&limit=${limit}`
       );
@@ -55,10 +56,13 @@ export default function Archive() {
       }
     } catch (error) {
       console.error("خطا در دریافت داده‌ها", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const deleteArchive = async () => {
+    setLoading(true);
     try {
       const response = await axios.delete(
         `http://localhost:3000/api/archive/${archiveId}`
@@ -81,6 +85,8 @@ export default function Archive() {
           error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
       });
       setShowToast(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -117,14 +123,20 @@ export default function Archive() {
         </div>
 
         <SearchBox value={search} onChange={searchHandler} />
-        <TableUser
-          archives={filteredArchives}
-          totalPage={totalPages}
-          handlePageChange={handlePageChange}
-          page={page}
-          setShowModal={setShowModal}
-          setArchiveId={setArchiveId}
-        />
+        {loading ? (
+          <div className={styles.wrap_loading}>
+            <span className={styles.loading}></span>
+          </div>
+        ) : (
+          <TableUser
+            archives={filteredArchives}
+            totalPage={totalPages}
+            handlePageChange={handlePageChange}
+            page={page}
+            setShowModal={setShowModal}
+            setArchiveId={setArchiveId}
+          />
+        )}
       </div>
       <Toast
         type={toastInfo.type}
