@@ -18,7 +18,7 @@
 }
 
 
-.item_distance{
+.item_distance {
     justify-content: space-between;
 }
 
@@ -36,6 +36,10 @@
 
 .icon_item {
     font-size: 2rem;
+}
+
+.active_route {
+    background-color: var(--color-1);
 }
 
 @media (max-width:900px) {

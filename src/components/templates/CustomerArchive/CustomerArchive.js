@@ -20,6 +20,13 @@ import ModalBottom from "@/components/module/ModalBottom/ModalBottom";
 export default function CustomerArchive({ id }) {
   const [showModal, setShowModal] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [expandedIndex, setExpandedIndex] = useState(null);
+
+
+  const toggleExpand = (index) => {
+    setExpandedIndex((prev) => (prev === index ? null : index));
+  };
+
   const getArchiveDetails = async () => {
     try {
       const response = await axios.get(
@@ -86,12 +93,23 @@ export default function CustomerArchive({ id }) {
           </Grid>
           <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
             <Grid className={styles.wrap_images} container spacing={2.5}>
-              <Grid size={{ xs: 12, lg: 6 }} className={styles.Preview_item}>
-                <Preview toggleModalBottom={toggleModalBottom}></Preview>
-              </Grid>
-              <Grid size={{ xs: 12, lg: 6 }} className={styles.Preview_item}>
-                <Preview toggleModalBottom={toggleModalBottom}></Preview>
-              </Grid>
+              {[1, 2].map((index) => (
+                <Grid
+                  key={index}
+                  size={{ xs: 12, lg: 6 }}
+                  className={`${styles.Preview_item} ${
+                    expandedIndex !== null && expandedIndex !== index
+                      ? styles.hidden
+                      : ""
+                  }`}
+                >
+                  <Preview
+                    toggleExpand={() => toggleExpand(index)}
+                    isExpanded={expandedIndex === index}
+                    toggleModalBottom={toggleModalBottom}
+                  />
+                </Grid>
+              ))}
             </Grid>
           </Grid>
         </Grid>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid2";
 import { Box, Collapse, List, ListItemButton } from "@mui/material";
 import RightSection from "@/components/module/RightSection/RightSection";
@@ -9,14 +9,36 @@ import BasicTab from "@/components/module/Setting/BasicTab/BasicTab";
 import ImageTab from "@/components/module/Setting/ImageTab/ImageTab";
 import VideoTab from "@/components/module/Setting/VideoTab/VideoTab";
 import ManualTab from "@/components/module/Setting/ManualTab/ManualTab";
-
+import ThemeTab from "@/components/module/Setting/ThemeTab/ThemeTab";
+import LogTab from "@/components/module/Setting/LogTab/LogTab";
+import DataBackupTab from "@/components/module/Setting/DataBackupTab/DataBackupTab";
+import { MyContext } from "@/context/context";
+import LeftSection from "@/components/module/LeftSection/LeftSection";
 export default function Settings() {
   const [dropdownOpen, setDropdownOpen] = useState(true);
-  const [tab, setTab] = useState(1);
+  const [tab, setTab] = useState(3);
+  const { selectTab } = useContext(MyContext);
 
   const handleSubDropdownToggle = () => {
     setDropdownOpen(!dropdownOpen);
   };
+
+  const tabs = [
+    { title: "پایه", component: <BasicTab /> },
+    { title: "ویدئو", component: <VideoTab /> },
+    { title: "عکس", component: <ImageTab /> },
+    { title: "دستی", component: <ManualTab /> },
+    { title: "تم", component: <ThemeTab /> },
+    { title: "لاگ", component: <LogTab /> },
+    { title: "پشتیبان‌گیری اطلاعات", component: <DataBackupTab /> },
+  ];
+
+  useEffect(() => {
+    if (selectTab) {
+      setTab(selectTab);
+    }
+  }, [selectTab]);
+
   return (
     <div className="wrapper">
       <Box sx={{ flexGrow: 1, height: "100%" }}>
@@ -48,78 +70,45 @@ export default function Settings() {
                 </ListItemButton>
                 <Collapse in={dropdownOpen} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
-                    <li
-                      className={`${styles.record_item} ${styles.hover_class} ${
-                        tab === 1 && styles.active_Tab
-                      }`}
-                      onClick={() => setTab(1)}
-                    >
-                      پایه
-                    </li>
-                    <li
-                      className={`${styles.record_item} ${styles.hover_class} ${
-                        tab === 2 && styles.active_Tab
-                      }`}
-                      onClick={() => setTab(2)}
-                    >
-                      ویدئو
-                    </li>
-                    <li
-                      className={`${styles.record_item} ${styles.hover_class} ${
-                        tab === 3 && styles.active_Tab
-                      }`}
-                      onClick={() => setTab(3)}
-                    >
-                      عکس
-                    </li>
-                    <li
-                      className={`${styles.record_item} ${styles.hover_class} ${
-                        tab === 4 && styles.active_Tab
-                      }`}
-                      onClick={() => setTab(4)}
-                    >
-                      دستی
-                    </li>
+                    {tabs.slice(0, 4).map((tabItem, index) => (
+                      <li
+                        key={index}
+                        className={`${styles.record_item} ${
+                          styles.hover_class
+                        } ${tab === index + 1 && styles.active_Tab}`}
+                        onClick={() => setTab(index + 1)}
+                      >
+                        {tabItem.title}
+                      </li>
+                    ))}
                   </List>
                 </Collapse>
-                <ListItemButton
-                  className={`${styles.item_setting} ${styles.hover_class}`}
-                >
-                  تم
-                </ListItemButton>
-                <ListItemButton
-                  className={`${styles.item_setting} ${styles.hover_class}`}
-                >
-                  دسترسی کاربر
-                </ListItemButton>
+                {tabs.slice(4).map((tabItem, index) => (
+                  <ListItemButton
+                    key={index + 4}
+                    className={`${styles.item_setting} ${styles.hover_class} ${
+                      tab === index + 5 && styles.active_Tab
+                    }`}
+                    onClick={() => setTab(index + 5)}
+                  >
+                    {tabItem.title}
+                  </ListItemButton>
+                ))}
               </List>
             </RightSection>
           </Grid>
-          <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "86dvh" }}>
-            <div className={styles.setting_wrapper}>
-              <p className={styles.title_Tab}>
-                {tab === 1
-                  ? "پایه"
-                  : tab === 2
-                  ? "ویدئو"
-                  : tab === 3
-                  ? "عکس"
-                  : tab === 4
-                  ? "دستی"
-                  : null}
-              </p>
-              <div className={styles.setting_content}>
-                {tab === 1 ? (
-                  <BasicTab />
-                ) : tab === 2 ? (
-                  <VideoTab />
-                ) : tab === 3 ? (
-                  <ImageTab />
-                ) : tab === 4 ? (
-                  <ManualTab />
-                ) : null}
+
+          <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
+            <LeftSection>
+              <div className={styles.setting_wrapper}>
+                <p className={styles.title_Tab}>
+                  {tabs[tab - 1]?.title || null}
+                </p>
+                <div className={styles.setting_content}>
+                  {tabs[tab - 1]?.component || null}
+                </div>
               </div>
-            </div>
+            </LeftSection>
           </Grid>
         </Grid>
       </Box>

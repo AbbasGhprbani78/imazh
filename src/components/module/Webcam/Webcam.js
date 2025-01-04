@@ -97,18 +97,7 @@ export default function Webcam({
       }
     };
 
-    if (setting === "#MKE02$A22*") {
-      if (data === "AD7" && !isRecording) {
-        startRecording();
-      } else if (data === "AE1") {
-        stopRecording();
-        if (socket) {
-          socket.disconnect();
-          setSocket(null);
-        }
-      }
-    }
-
+    // 180 deg
     if (setting === "#MKE01$A11*") {
       if (data === "AG5" && !isRecording) {
         startRecording();
@@ -121,6 +110,20 @@ export default function Webcam({
       }
     }
 
+    // 270 deg
+    if (setting === "#MKE02$A22*") {
+      if (data === "AD7" && !isRecording) {
+        startRecording();
+      } else if (data === "AE1") {
+        stopRecording();
+        if (socket) {
+          socket.disconnect();
+          setSocket(null);
+        }
+      }
+    }
+
+    // 5 pic
     if (setting === "#MKE03$A33*") {
       if (data === "AF1" && !isRecording) {
         captureImage();
@@ -132,6 +135,7 @@ export default function Webcam({
       }
     }
 
+    // 7 pic
     if (setting === "#MKE04$A44*") {
       if (data === "AF1" && !isRecording) {
         captureImage();

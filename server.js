@@ -75,8 +75,8 @@ app.prepare().then(() => {
     let client = null; 
     let receivedData = "";
 
-    socket.on("fetchData", ({ setting }) => {
-      if (!setting) {
+    socket.on("fetchData", ({ code }) => {
+      if (!code) {
         console.log("No setting provided, aborting execution.");
         socket.emit("serverData", { error: "Setting is required." });
         return;
@@ -94,7 +94,7 @@ app.prepare().then(() => {
 
       client.connect(port, host, () => {
         console.log(`Connected to ${host}:${port}`);
-        const command = setting || "#MKE01$A11*";
+        const command = code || "#MKE01$A11*";
         console.log("Sending command to TCP server:", command);
         client.write(command);
       });

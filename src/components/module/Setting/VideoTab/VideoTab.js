@@ -6,7 +6,7 @@ import ToggleInput from "../../ToggleInput/ToggleInput";
 import Button1 from "../../Buttons/Button1";
 export default function VideoTab() {
   return (
-    <form onSubmit={""}>
+    <form onSubmit={""} className="form-tab">
       <div className={`item-container-setting animationcome`}>
         <div className={"wrap_row"}>
           <DropDownSearch

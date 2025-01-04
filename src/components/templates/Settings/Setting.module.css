@@ -46,4 +46,13 @@
     background: var(--color-3);
 }
 
-.setting_content {}
+
+
+@media (max-width:900px) {
+    /* .setting_content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    } */
+}

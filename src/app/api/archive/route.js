@@ -78,7 +78,7 @@ export async function POST(req) {
       await fs.writeFile(filePath, Buffer.from(buffer));
 
       allPhotos.push({
-        url: `/uploads/${fileName}`,
+        url: `http://localhost:3000/uploads/${fileName}`,
         group: 1,
       });
     }

@@ -109,7 +109,7 @@ body {
 }
 
 .wrap-buttom {
-    max-width: 12%;
+    width: 12%;
     margin-top: 3rem;
 }
 
@@ -146,9 +146,45 @@ body::-webkit-scrollbar {
 }
 
 
+.form_tab {
+    width: 100%;
+}
+
+
+@media(max-width:1171px) {
+    .wrap-buttom {
+        width: 17%
+    }
+}
 
 @media (max-width:900px) {
-    .wrapper {
-        margin: 0;
+
+    .item-container-setting {
+        width: 100%;
     }
+
+    .wrap-buttom {
+        width: 70%;
+        margin-bottom: 2rem;
+    }
+
+    .form-tab {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+
+@media (max-width:600px) {
+    .item-container-setting {
+        width: 100%;
+    }
+
+    .wrap-buttom {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
 }

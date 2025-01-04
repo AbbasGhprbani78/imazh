@@ -11,7 +11,7 @@ import DoneIcon from "@mui/icons-material/Done";
 export default function ImageTab() {
   return (
     <div className="animationcome">
-      <form>
+      <form className="form-tab">
         <Box sx={{ flexGrow: 1, height: "100%" }}>
           <Grid
             container
@@ -23,21 +23,20 @@ export default function ImageTab() {
             }}
           >
             <Grid size={{ xs: 12, md: 6 }}>
-              <DropDownSearch
-                items={[]}
-                title={"پسوند"}
-                name={"extension"}
-                onChange={""}
-                getOptionLabelProp={""}
-                value={""}
-                style1={"dropimage"}
-                style2={"background"}
-              />
+              <div className={styles.container_drop}>
+                <DropDownSearch
+                  items={[]}
+                  title={"پسوند"}
+                  name={"extension"}
+                  onChange={""}
+                  getOptionLabelProp={""}
+                  value={""}
+                  style1={"dropimage"}
+                  style2={"background"}
+                />
+              </div>
             </Grid>
-            <Grid
-              size={{ xs: 12, md: 6 }}
-              sx={{ display: "flex", justifyContent: "end" }}
-            >
+            <Grid size={{ xs: 12, md: 6 }} className={styles.container_toggle}>
               <ToggleInput select1={"خودکار"} select2={"دستی"} />
             </Grid>
           </Grid>

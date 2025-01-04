@@ -6,7 +6,7 @@ import "swiper/css/navigation";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Image from "next/image";
-export default function SliderImages() {
+export default function SliderImages({ heightStyle, imagesItem }) {
   const swiperRef = useRef(null);
 
   const handleNextSlide = () => swiperRef.current?.swiper.slideNext();
@@ -18,54 +18,22 @@ export default function SliderImages() {
           ref={swiperRef}
           loop={true}
           slidesPerView={1}
-          className={styles.swiper_slider}
+          className={`${styles.swiper_slider} ${styles[heightStyle]}`}
           dir="ltr"
         >
-          <SwiperSlide className={styles.image_item_wrapper}>
-            <Image
-              width={300}
-              height={300}
-              className={styles.image_item}
-              src={"/images/IMG_8118.JPG"}
-              alt="image_operation"
-            />
-          </SwiperSlide>
-          <SwiperSlide className={styles.image_item_wrapper}>
-            <Image
-              width={300}
-              height={300}
-              className={styles.image_item}
-              src={"/images/IMG_8118.JPG"}
-              alt="image_operation"
-            />
-          </SwiperSlide>
-          <SwiperSlide className={styles.image_item_wrapper}>
-            <Image
-              width={300}
-              height={300}
-              className={styles.image_item}
-              src={"/images/IMG_8118.JPG"}
-              alt="image_operation"
-            />
-          </SwiperSlide>
-          <SwiperSlide className={styles.image_item_wrapper}>
-            <Image
-              width={300}
-              height={300}
-              className={styles.image_item}
-              src={"/images/IMG_8118.JPG"}
-              alt="image_operation"
-            />
-          </SwiperSlide>
-          <SwiperSlide className={styles.image_item_wrapper}>
-            <Image
-              width={300}
-              height={300}
-              className={styles.image_item}
-              src={"/images/IMG_8118.JPG"}
-              alt="image_operation"
-            />
-          </SwiperSlide>
+          {imagesItem &&
+            imagesItem.length > 0 &&
+            imagesItem.map((item) => (
+              <SwiperSlide className={styles.image_item_wrapper} key={item.id}>
+                <Image
+                  width={300}
+                  height={300}
+                  className={`${styles.image_item} `}
+                  src={item.url}
+                  alt="image_operation"
+                />
+              </SwiperSlide>
+            ))}
         </Swiper>
 
         <div className={styles.custom_buttons}>

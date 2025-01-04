@@ -1,6 +1,7 @@
 .slider_container {
     position: relative;
     margin-bottom: 1.5rem;
+    width: 100%;
 }
 
 .swiper_slider {}
@@ -45,4 +46,8 @@
     height: 100% !important;
     width: 100% !important;
     object-fit: cover;
+}
+
+.height {
+    height: 60dvh;
 }

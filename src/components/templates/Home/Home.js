@@ -32,6 +32,7 @@ import SliderImages from "@/components/module/SliderImages/SliderImages";
 import Preview from "@/components/module/Preview/Preview";
 
 export default function Home() {
+  const [isExpanded, setIsExpanded] = useState(false);
   const [data, setData] = useState([]);
   const [setting, setSetting] = useState("");
   const [socket, setSocket] = useState(null);
@@ -56,7 +57,7 @@ export default function Home() {
   const [photos, setPhotos] = useState([]);
   const [historyOperation, setHistoryOperation] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [allImagesArchive, setAllImagesArchive] = useState([]);
   const [showListImages, setShowListImages] = useState(false);
   const [customerData, setCustomerData] = useState({
     fullname: "",
@@ -98,7 +99,6 @@ export default function Home() {
         title: "خطا",
         message: "بیمار باید مشخص گردد",
       });
-      console.log(isRequired());
       return false;
     }
 
@@ -214,9 +214,9 @@ export default function Home() {
     if (!valiadteEmail(customerData.email)) {
       formErrors.email = "فرمت ایمیل معتبر نیست";
     }
-    if (!validateNationalCode(customerData.nationalcode)) {
-      formErrors.nationalcode = "فرمت کدملی معتبرنیست";
-    }
+    // if (!validateNationalCode(customerData.nationalcode)) {
+    //   formErrors.nationalcode = "فرمت کدملی معتبرنیست";
+    // }
     if (!valiadtePhone(customerData.phonenumber)) {
       formErrors.phonenumber = "فرمت شماره تلفن معتبر نیست";
     }
@@ -447,6 +447,7 @@ export default function Home() {
     const blob = await response.blob();
     return new File([blob], fileName, { type: blob.type });
   };
+
   const dataURItoBlob = (dataURI) => {
     const byteString = atob(dataURI.split(",")[1]);
     const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
@@ -563,8 +564,8 @@ export default function Home() {
     setShowListImages((prev) => !prev);
   };
 
-  const fetchDataFromServer = () => {
-    if (!setting) {
+  const fetchDataFromServer = (code) => {
+    if (!code) {
       setShowToast(true);
       setToastInfo({
         type: "error",
@@ -596,12 +597,21 @@ export default function Home() {
     setSocket(newSocket);
 
     console.log("fetchData event emitted to backend");
-    newSocket.emit("fetchData", { setting });
+    newSocket.emit("fetchData", { code });
   };
-  
-   const toggleModalBottom = () => {
-     setIsVisible(!isVisible);
-   };
+
+  const toggleModalBottom = () => {
+    setIsVisible(!isVisible);
+  };
+
+  const toggleExpand = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
+  const showAllImagesArchive = () => {
+    setShowModal(true);
+    setTypeModal(4);
+  };
 
   useEffect(() => {
     getAllOperation();
@@ -629,10 +639,27 @@ export default function Home() {
     fetchData();
   }, [customerInfo.customerId, customerInfo.operationId]);
 
- 
+  useEffect(() => {
+    if (customerInfo.archiveId) {
+      const getArchiveImage = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:3000/api/archive/${customerInfo.archiveId}`
+          );
+          if (response.status === 200) {
+            console.log(response?.data?.archive?.photos);
+            setAllImagesArchive(response?.data?.archive?.photos);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      getArchiveImage();
+    }
+  }, [customerInfo.archiveId]);
 
   return (
-    <div className={`wrapper`}>
+    <div className={styles.wrapper}>
       <Box sx={{ flexGrow: 1, height: "100%" }}>
         <Grid
           container
@@ -646,7 +673,7 @@ export default function Home() {
           }}
         >
           <Grid
-            size={{ xs: 0, md: 4, lg: 3 }}
+            size={{ xs: 0, md: 4, lg: 2.7 }}
             sx={{
               display: isDesktop && "flex",
               flexDirection: "column",
@@ -701,7 +728,7 @@ export default function Home() {
                   title={"حالت ضبط"}
                   firstoptiontext="افزودن حالت ضبط"
                   firstoptionclick={() => {
-                    setTypeModal(4);
+                    setTypeModal(5);
                     setShowModal(true);
                   }}
                   items={allSettings}
@@ -712,18 +739,52 @@ export default function Home() {
                   setSetting={setSetting}
                 />
               </div>
+              <div className={styles.wraparrowactions}>
+                <Button2
+                  icon={NorthIcon}
+                  onClick={() => fetchDataFromServer("#MKE26$M11*")}
+                />
+                <Button2
+                  icon={SouthIcon}
+                  onClick={() => fetchDataFromServer("#MKE27$M11*")}
+                />
+                <Button2 icon={EastIcon} onClick={""} />
+                <Button2 icon={WestIcon} onClick={""} />
+              </div>
+              {allImagesArchive.length > 0 && (
+                <div className={styles.image_archive_wrapper}>
+                  <div className={styles.image_archive_box}>
+                    <Image
+                      src={allImagesArchive[0].url}
+                      layout="fill"
+                      alt="image archive"
+                      className={styles.image_archive}
+                    />
+                    <span
+                      className={styles.text_view}
+                      onClick={showAllImagesArchive}
+                    >
+                      نمایش همه
+                    </span>
+                  </div>
+                </div>
+              )}
             </RightSection>
           </Grid>
-          <Grid size={{ xs: 12, md: 8, lg: 9 }} sx={{ height: "100%" }}>
+          <Grid size={{ xs: 12, md: 8, lg: 9.3 }} sx={{ height: "100%" }}>
             <LeftSection>
-              <Preview toggleModalBottom={toggleModalBottom}>
+              <Preview
+                toggleModalBottom={toggleModalBottom}
+                toggleExpand={toggleExpand}
+                isExpanded={isExpanded}
+              >
                 {/* <Webcam
-                setting={setting}
-                data={data}
-                setPhotos={setPhotos}
-                socket={socket}
-                setSocket={setSocket}
-              /> */}
+                  setting={setting}
+                  data={data}
+                  setPhotos={setPhotos}
+                  socket={socket}
+                  setSocket={setSocket}
+                /> */}
 
                 <div className={styles.icons_bottom_wrapper}>
                   <ReplayOutlinedIcon
@@ -732,7 +793,7 @@ export default function Home() {
                   />
                   <div
                     className={styles.wrap_camera}
-                    onClick={fetchDataFromServer}
+                    onClick={() => fetchDataFromServer(setting)}
                   >
                     <CameraOutlinedIcon
                       className={`${styles.icon_camera} ${styles.icon}`}
@@ -775,6 +836,7 @@ export default function Home() {
                         display: "flex",
                         flexDirection: "column",
                       }}
+                      key={index}
                     >
                       <Image
                         src={file}
@@ -785,13 +847,22 @@ export default function Home() {
                       />
                     </Grid>
                   ) : (
-                    <div key={index} className={styles.media_box}>
-                      <video
-                        src={file}
-                        controls
-                        className={styles.media_preview}
-                      ></video>
-                    </div>
+                    <Grid
+                      size={{ xs: 12, md: 3 }}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                      key={index}
+                    >
+                      <div className={styles.media_box}>
+                        <video
+                          src={file}
+                          controls
+                          className={styles.media_preview}
+                        ></video>
+                      </div>
+                    </Grid>
                   );
                 })}
               </Grid>
@@ -807,6 +878,8 @@ export default function Home() {
             ? "افزودن عملیات"
             : typeModal === 3
             ? "تغییراطلاعات کاربر"
+            : typeModal === 4
+            ? "آرشیو عکسها"
             : "افزودن  تنظیمات"
         }
         onClick={() => setShowModal(false)}
@@ -1074,6 +1147,13 @@ export default function Home() {
               </div>
             </form>
           </>
+        ) : typeModal === 4 ? (
+          <>
+            <SliderImages
+              heightStyle={"height"}
+              imagesItem={allImagesArchive}
+            />
+          </>
         ) : (
           <>
             <form onSubmit={addSettingHandler} style={{ width: "100%" }}>
@@ -1112,88 +1192,88 @@ export default function Home() {
         setShowToast={setShowToast}
       />
       <ModalBottom isVisible={isVisible} setIsVisible={setIsVisible}>
-          {showListImages ? (
-            <>
-              <SliderImages />
-            </>
-          ) : (
-            <>
-              <div className={styles.wrapdrop}>
-                <DropDownSearch
-                  firstoptiontext="افزودن بیمار"
-                  firstoptionclick={showAddCustomerModal}
-                  items={allCustomer}
-                  title="بیمار"
-                  getOptionLabelProp="fullname"
-                  name={"customerId"}
-                  isEdit={"edit"}
-                  openEditModal={openEditModal}
-                  onChange={ChangeCustomerInfoHandler}
-                  value={customerInfo.customerId}
-                />
-              </div>
-              <div className={styles.wrapdrop}>
-                <DropDownSearch
-                  title={"عملیات"}
-                  firstoptiontext="افزودن عملیات"
-                  firstoptionclick={() => {
-                    setTypeModal(2);
-                    setShowModal(true);
-                  }}
-                  items={operationsData}
-                  name={"operationId"}
-                  getOptionLabelProp="operation"
-                  onChange={ChangeCustomerInfoHandler}
-                  value={customerInfo.operationId}
-                />
-              </div>
-              <div className={styles.wrapdrop}>
-                <DropDownSearch
-                  title={"تاریخ عملیات"}
-                  firstoptiontext="عملیات جدید"
-                  firstoptionclick={() => setIsNewOperation(true)}
-                  items={historyOperation}
-                  name={"archiveId"}
-                  getOptionLabelProp="date1"
-                  onChange={ChangeCustomerInfoHandler}
-                  value={customerInfo.archiveId}
-                  setIsNewOperation={setIsNewOperation}
-                />
-              </div>
-              <div className={styles.wrapdrop}>
-                <DropDownSearch
-                  title={"حالت ضبط"}
-                  firstoptiontext="افزودن حالت ضبط"
-                  firstoptionclick={() => {
-                    setTypeModal(4);
-                    setShowModal(true);
-                  }}
-                  items={allSettings}
-                  name={"settingId"}
-                  getOptionLabelProp="name"
-                  onChange={ChangeCustomerInfoHandler}
-                  value={customerInfo.settingId}
-                  setSetting={setSetting}
-                />
-              </div>
-            </>
-          )}
-          <div className={styles.wrap_actions}>
-            <div
-              className={styles.wrap_icon_image}
-              onClick={toggleShowListImages}
-            >
-              <InsertPhotoIcon className={styles.icon_image} />
+        {showListImages ? (
+          <>
+            <SliderImages imagesItem={allImagesArchive} />
+          </>
+        ) : (
+          <>
+            <div className={styles.wrapdrop}>
+              <DropDownSearch
+                firstoptiontext="افزودن بیمار"
+                firstoptionclick={showAddCustomerModal}
+                items={allCustomer}
+                title="بیمار"
+                getOptionLabelProp="fullname"
+                name={"customerId"}
+                isEdit={"edit"}
+                openEditModal={openEditModal}
+                onChange={ChangeCustomerInfoHandler}
+                value={customerInfo.customerId}
+              />
             </div>
-            {!showListImages && (
-              <div className={styles.wrap_controls}>
-                <Button2 icon={EastIcon} />
-                <Button2 icon={NorthIcon} />
-                <Button2 icon={SouthIcon} />
-                <Button2 icon={WestIcon} />
-              </div>
-            )}
+            <div className={styles.wrapdrop}>
+              <DropDownSearch
+                title={"عملیات"}
+                firstoptiontext="افزودن عملیات"
+                firstoptionclick={() => {
+                  setTypeModal(2);
+                  setShowModal(true);
+                }}
+                items={operationsData}
+                name={"operationId"}
+                getOptionLabelProp="operation"
+                onChange={ChangeCustomerInfoHandler}
+                value={customerInfo.operationId}
+              />
+            </div>
+            <div className={styles.wrapdrop}>
+              <DropDownSearch
+                title={"تاریخ عملیات"}
+                firstoptiontext="عملیات جدید"
+                firstoptionclick={() => setIsNewOperation(true)}
+                items={historyOperation}
+                name={"archiveId"}
+                getOptionLabelProp="date1"
+                onChange={ChangeCustomerInfoHandler}
+                value={customerInfo.archiveId}
+                setIsNewOperation={setIsNewOperation}
+              />
+            </div>
+            <div className={styles.wrapdrop}>
+              <DropDownSearch
+                title={"حالت ضبط"}
+                firstoptiontext="افزودن حالت ضبط"
+                firstoptionclick={() => {
+                  setTypeModal(5);
+                  setShowModal(true);
+                }}
+                items={allSettings}
+                name={"settingId"}
+                getOptionLabelProp="name"
+                onChange={ChangeCustomerInfoHandler}
+                value={customerInfo.settingId}
+                setSetting={setSetting}
+              />
+            </div>
+          </>
+        )}
+        <div className={styles.wrap_actions}>
+          <div
+            className={styles.wrap_icon_image}
+            onClick={toggleShowListImages}
+          >
+            <InsertPhotoIcon className={styles.icon_image} />
           </div>
+          {!showListImages && (
+            <div className={styles.wrap_controls}>
+              <Button2 icon={EastIcon} />
+              <Button2 icon={NorthIcon} />
+              <Button2 icon={SouthIcon} />
+              <Button2 icon={WestIcon} />
+            </div>
+          )}
+        </div>
       </ModalBottom>
     </div>
   );

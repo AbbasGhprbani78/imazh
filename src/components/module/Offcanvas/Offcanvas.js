@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styles from "./Offcanvas.module.css";
 import {
   Drawer,
@@ -18,16 +18,27 @@ import Image from "next/image";
 import PersonIcon from "@mui/icons-material/Person";
 import KeyIcon from "@mui/icons-material/Key";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { MyContext } from "@/context/context";
+import { usePathname, useRouter } from "next/navigation";
 export default function Offcanvas({
   openProfileModal,
   openPasswordModal,
   openLogoutModal,
   me,
 }) {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dropdownOpen2, setDropdownOpen2] = useState(false);
   const [dropdownOpen3, setDropdownOpen3] = useState(false);
+  const { setSelectTab } = useContext(MyContext);
+  const router = useRouter();
+  const isActive = (href) => {
+    if (href === "/") {
+      return pathname === href;
+    }
+    return pathname.startsWith(href);
+  };
 
   const handleSubDropdownToggle = () => {
     setDropdownOpen(!dropdownOpen);
@@ -41,6 +52,13 @@ export default function Offcanvas({
   const handleDrawerToggle = () => {
     setOpen(!open);
   };
+
+  const handleGoToSetting = (tabNumber) => {
+    setSelectTab(tabNumber);
+    handleDrawerToggle()
+    router.push("/setting");
+  };
+
 
   return (
     <>
@@ -105,7 +123,10 @@ export default function Offcanvas({
             </Collapse>
             {me?.role === "a" ? (
               <>
-                <ListItemButton sx={{ marginBottom: "1.5rem", padding: "0" }}>
+                <ListItemButton
+                  sx={{ marginBottom: "1.5rem", padding: "0" }}
+                  className={`${isActive("/") && styles.active_route}`}
+                >
                   <Link
                     className={`${styles.link_offcanvas} ${styles.item_distance}`}
                     href={"/"}
@@ -118,9 +139,12 @@ export default function Offcanvas({
                     </div>
                   </Link>
                 </ListItemButton>
-                <ListItemButton sx={{ marginBottom: "1.5rem", padding: "0" }}>
+                <ListItemButton
+                  sx={{ marginBottom: "1.5rem", padding: "0" }}
+                  className={`${isActive("/archive") && styles.active_route}`}
+                >
                   <Link
-                    className={`${styles.link_offcanvas} ${styles.item_distance}`}
+                    className={`${styles.link_offcanvas} ${styles.item_distance} `}
                     href={"/archive"}
                   >
                     <div className={styles.wrap_text_icon}>
@@ -134,6 +158,7 @@ export default function Offcanvas({
                 <ListItemButton
                   sx={{ marginBottom: "1.5rem", padding: "0" }}
                   onClick={handleSubDropdownToggle2}
+                  className={`${isActive("/setting") && styles.active_route}`}
                 >
                   <li
                     className={`${styles.link_offcanvas} ${styles.item_distance}`}
@@ -166,7 +191,7 @@ export default function Offcanvas({
                       <List component="div" disablePadding>
                         <ListItemButton
                           sx={{ marginBottom: "1rem", padding: "0 4rem 0 0" }}
-                          onClick={""}
+                          onClick={() => handleGoToSetting(1)}
                         >
                           <li className={styles.link_offcanvas}>
                             <span className={styles.link_text}>پایه</span>
@@ -174,7 +199,7 @@ export default function Offcanvas({
                         </ListItemButton>
                         <ListItemButton
                           sx={{ marginBottom: "1rem", padding: "0 4rem 0 0" }}
-                          onClick={""}
+                          onClick={() => handleGoToSetting(2)}
                         >
                           <li className={styles.link_offcanvas}>
                             <span className={styles.link_text}>ویدئو</span>
@@ -182,15 +207,15 @@ export default function Offcanvas({
                         </ListItemButton>
                         <ListItemButton
                           sx={{ marginBottom: "1rem", padding: "0 4rem 0 0" }}
-                          onClick={""}
+                          onClick={() => handleGoToSetting(3)}
                         >
                           <li className={styles.link_offcanvas}>
-                            <span className={styles.link_text}>ویدئو</span>
+                            <span className={styles.link_text}>عکس</span>
                           </li>
                         </ListItemButton>
                         <ListItemButton
                           sx={{ marginBottom: "1rem", padding: "0 4rem 0 0" }}
-                          onClick={""}
+                          onClick={() => handleGoToSetting(4)}
                         >
                           <li className={styles.link_offcanvas}>
                             <span className={styles.link_text}>دستی</span>
@@ -200,7 +225,7 @@ export default function Offcanvas({
                     </Collapse>
                     <ListItemButton
                       sx={{ marginBottom: "1rem", padding: "0 2rem 0 0" }}
-                      onClick={""}
+                      onClick={() => handleGoToSetting(5)}
                     >
                       <li className={styles.link_offcanvas}>
                         <span className={styles.link_text}>تم</span>
@@ -208,7 +233,7 @@ export default function Offcanvas({
                     </ListItemButton>
                     <ListItemButton
                       sx={{ marginBottom: "1rem", padding: "0 2rem 0 0" }}
-                      onClick={""}
+                      onClick={() => handleGoToSetting(6)}
                     >
                       <li className={styles.link_offcanvas}>
                         <span className={styles.link_text}>لاگ</span>
@@ -216,7 +241,7 @@ export default function Offcanvas({
                     </ListItemButton>
                     <ListItemButton
                       sx={{ marginBottom: "1rem", padding: "0 2rem 0 0" }}
-                      onClick={""}
+                      onClick={() => handleGoToSetting(7)}
                     >
                       <li className={styles.link_offcanvas}>
                         <span className={styles.link_text}>

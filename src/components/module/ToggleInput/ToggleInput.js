@@ -50,7 +50,7 @@ export default function ToggleInput({ select1, select2, title }) {
   }));
 
   return (
-    <div>
+    <div className={styles.wrap_row}>
       {title && <span className={styles.title}>{title}</span>}
       <Stack
         direction="row"

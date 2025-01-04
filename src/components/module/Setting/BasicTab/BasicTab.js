@@ -7,7 +7,7 @@ import ToggleInput from "../../ToggleInput/ToggleInput";
 import DoneIcon from "@mui/icons-material/Done";
 export default function BasicTab() {
   return (
-    <form onSubmit={""}>
+    <form onSubmit={""} className={"form-tab"}>
       <div className={`item-container-setting animationcome`}>
         <div className={"wrap_row"}>
           <DropDownSearch
