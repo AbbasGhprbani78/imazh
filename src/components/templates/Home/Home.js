@@ -644,11 +644,10 @@ export default function Home() {
       const getArchiveImage = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:3000/api/archive/${customerInfo.archiveId}`
+            `http://localhost:3000/api/archive/${customerInfo.archiveId}?group=1`
           );
           if (response.status === 200) {
-            console.log(response?.data?.archive?.photos);
-            setAllImagesArchive(response?.data?.archive?.photos);
+            setAllImagesArchive(response?.data?.archives?.[0]?.photos);
           }
         } catch (error) {
           console.log(error);
@@ -751,7 +750,7 @@ export default function Home() {
                 <Button2 icon={EastIcon} onClick={""} />
                 <Button2 icon={WestIcon} onClick={""} />
               </div>
-              {allImagesArchive.length > 0 && (
+              {allImagesArchive && allImagesArchive.length > 0 && (
                 <div className={styles.image_archive_wrapper}>
                   <div className={styles.image_archive_box}>
                     <Image

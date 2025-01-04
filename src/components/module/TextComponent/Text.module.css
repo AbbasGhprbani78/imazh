@@ -1,0 +1,27 @@
+.wrap {
+    position: relative;
+    border: 1px solid #fff;
+    border-radius: 8px;
+    padding: 0 15px;
+    height: 53.6px;
+    line-height: 53.6px;
+    color: #fff;
+}
+
+
+.lable {
+    position: absolute;
+    top: -27px;
+    right: 12px;
+    font-size: 0.75rem;
+    background-color: var(--color-2);
+    padding: 0 3px 0 5px;
+    width: max-content;
+    display: inline-block;
+}
+
+.text {
+    z-index: 5;
+    display: inline-block;
+    position: relative;
+}

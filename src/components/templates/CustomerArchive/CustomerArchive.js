@@ -17,33 +17,44 @@ import axios from "axios";
 
 import Preview from "@/components/module/Preview/Preview";
 import ModalBottom from "@/components/module/ModalBottom/ModalBottom";
+import TextComponent from "@/components/module/TextComponent/TextComponent";
 export default function CustomerArchive({ id }) {
   const [showModal, setShowModal] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState(null);
-
+  const [archiveDetails, setArchiveDetails] = useState("");
+  const [displayType, setDisplayType] = useState("");
 
   const toggleExpand = (index) => {
     setExpandedIndex((prev) => (prev === index ? null : index));
   };
 
-  const getArchiveDetails = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/api/archive/${id}`
-      );
-      if (response.status === 200) {
-        console.log(response.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const toggleModalBottom = () => {
     setIsVisible(!isVisible);
   };
 
+  const handleChangeDisplay = (e) => {
+    const { name, value } = e.target;
+    setDisplayType((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   useEffect(() => {
+    const getArchiveDetails = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/archive/${id}`
+        );
+        if (response.status === 200) {
+          console.log(response.data);
+          setArchiveDetails(response.data.archive);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
     getArchiveDetails();
   }, []);
 
@@ -67,19 +78,26 @@ export default function CustomerArchive({ id }) {
           >
             <RightSection style={"archive"}>
               <div className={styles.content_right}>
-                <DropDownSearch
-                  title={"حالت ضبط"}
-                  firstoptiontext="حالت ضبط جدید"
-                  firstoptionclick={() => setShowModal(true)}
-                  items={[]}
-                  name={"recordId"}
-                  getOptionLabelProp=""
-                  onChange={""}
-                  value={""}
-                  setIsNewOperation={""}
+                <TextComponent
+                  text={archiveDetails?.setting?.name}
+                  lable={"حالت ضبط"}
                 />
                 <div className={styles.wrap_display}>
-                  <DisplayPhoto title={"نحوه نمایش عکس‌ها"} item={"1"} />
+                  <div style={{ marginBottom: "2rem" }}>
+                    <DropDownSearch
+                      firstoptiontext=""
+                      firstoptionclick={""}
+                      items={[
+                        { id: 1, name: "کنار هم" },
+                        { id: 2, name: "روی هم" },
+                      ]}
+                      title="نحوه نمایش عکس‌ها"
+                      getOptionLabelProp="name"
+                      name={"displayType"}
+                      onChange={handleChangeDisplay}
+                      value={displayType}
+                    />
+                  </div>
                   <DisplayPhoto title={"گرید"} item={"2"} />
                 </div>
                 <div className={styles.wrap_actions}>
@@ -120,19 +138,26 @@ export default function CustomerArchive({ id }) {
         showModal={showModal}
       ></Modal>
       <ModalBottom isVisible={isVisible} setIsVisible={setIsVisible}>
-        <DropDownSearch
-          title={"حالت ضبط"}
-          firstoptiontext="حالت ضبط جدید"
-          firstoptionclick={() => setShowModal(true)}
-          items={[]}
-          name={"recordId"}
-          getOptionLabelProp=""
-          onChange={""}
-          value={""}
-          setIsNewOperation={""}
+        <TextComponent
+          text={archiveDetails?.setting?.name}
+          lable={"حالت ضبط"}
         />
         <div className={styles.wrap_display}>
-          <DisplayPhoto title={"نحوه نمایش عکس‌ها"} item={"1"} />
+          <div style={{ marginBottom: "2rem" }}>
+            <DropDownSearch
+              firstoptiontext=""
+              firstoptionclick={""}
+              items={[
+                { id: 1, name: "کنار هم" },
+                { id: 2, name: "روی هم" },
+              ]}
+              title="نحوه نمایش عکس‌ها"
+              getOptionLabelProp="name"
+              name={"displayType"}
+              onChange={handleChangeDisplay}
+              value={displayType}
+            />
+          </div>
           <DisplayPhoto title={"گرید"} item={"2"} />
         </div>
         <div className={styles.wrap_actions}>
