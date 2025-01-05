@@ -151,6 +151,16 @@ body::-webkit-scrollbar {
 }
 
 
+[data-testid="container"] {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+div[style*="border-width: 6px"]:nth-of-type(1) {
+    margin-left: -20px !important;
+    margin-right: 1px !important;
+}
+
 @media(max-width:1171px) {
     .wrap-buttom {
         width: 17%

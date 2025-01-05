@@ -1,5 +1,5 @@
 .camera_container {
-    height: calc(100vh - 100px);
+    height: calc(100dvh - 100px);
     position: relative;
     transition: all 0.3s ease-in-out;
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./Preview.module.css";
 import LayersIcon from "@mui/icons-material/Layers";
 export default function Preview({

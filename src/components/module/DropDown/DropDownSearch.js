@@ -33,7 +33,7 @@ export default function DropDownSearch({
     setSearchValue(value);
 
     if (value.trim() === "") {
-      setFilteredItems(items); 
+      setFilteredItems(items);
     } else {
       setFilteredItems(
         items.filter((item) =>
@@ -45,7 +45,7 @@ export default function DropDownSearch({
 
   const handleSelectItem = (item) => {
     const selectedLabel = item[getOptionLabelProp];
-    setSearchValue(selectedLabel); 
+    setSearchValue(selectedLabel);
     setSelectedValue(selectedLabel);
     if (setSetting) {
       setSetting(selectedLabel);
@@ -64,7 +64,7 @@ export default function DropDownSearch({
 
   const handleBlur = () => {
     setIsFocused(false);
- 
+
     if (
       !filteredItems.some((item) => item[getOptionLabelProp] === searchValue)
     ) {
@@ -91,10 +91,15 @@ export default function DropDownSearch({
   }, [items]);
 
   useEffect(() => {
-    if (name === "gender" && value !== "") {
-      const genderLabel = value === "men" ? "مرد" : "زن";
-      setSearchValue(genderLabel);
-      setSelectedValue(genderLabel); 
+    if (name === "gender" && value) {
+      const fillValue = value === "men" ? "مرد" : "زن";
+      setSearchValue(fillValue);
+      setSelectedValue(fillValue);
+    }
+    if (name === "displayType" && value) {
+      const fillValue = value === 1 ? "کنارهم" : "روی هم";
+      setSearchValue(fillValue);
+      setSelectedValue(fillValue);
     }
   }, [value]);
 
@@ -111,7 +116,11 @@ export default function DropDownSearch({
       >
         <input
           type="text"
-          value={name === "archiveId" ? convertToPersianDate(searchValue) : searchValue}
+          value={
+            name === "archiveId"
+              ? convertToPersianDate(searchValue)
+              : searchValue
+          }
           onChange={handleInputChange}
           onFocus={handleFocus}
           onBlur={handleBlur}

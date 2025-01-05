@@ -11,6 +11,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@img-comparison-slider/react": "^8.0.2",
     "@mui/icons-material": "^6.2.0",
     "@mui/material": "^6.2.0",
     "@prisma/client": "^6.1.0",
@@ -20,6 +21,7 @@
     "next": "15.1.0",
     "prisma": "^6.1.0",
     "react": "^19.0.0",
+    "react-compare-image": "^3.4.0",
     "react-dom": "^19.0.0",
     "react-multi-date-picker": "^4.5.2",
     "socket.io": "^4.8.1",
