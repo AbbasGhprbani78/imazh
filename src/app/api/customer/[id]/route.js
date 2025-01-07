@@ -266,24 +266,32 @@ export async function PUT(req, context) {
 export async function DELETE(req, { params }) {
   try {
     const { id } = params;
-
-    if (!id) {
-      return new Response(JSON.stringify({ error: "ایدی مشتری لازم است" }), {
+    if (!id || isNaN(Number(id))) {
+      return new Response(JSON.stringify({ message: "ایدی معتبر نیست" }), {
         status: 400,
       });
     }
 
-    await prisma.customer.delete({
-      where: { id: parseInt(id, 10) },
+    const customer = await prisma.customer.update({
+      where: { id: Number(id) },
+      data: { isDelete: true },
     });
 
-    return new Response(JSON.stringify({ message: "مشتری با موفقیت حذف شد" }), {
-      status: 200,
-    });
+   return new Response(
+     JSON.stringify({
+       message: "بیمار با موفقیت حذف گردید",
+       customer,
+     }),
+     { status: 200 }
+   );
   } catch (error) {
-    console.error("Error deleting customer:", error);
-    return new Response(JSON.stringify({ error: "مشکلی سمت سرور پیش آمد" }), {
-      status: 500,
-    });
+    console.error("Error processing GET request:", error.message);
+    return new Response(
+      JSON.stringify({
+        message: "مشکلی سمت سرور پیش آمده",
+        error: error.message,
+      }),
+      { status: 500 }
+    );
   }
 }

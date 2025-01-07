@@ -1,0 +1,19 @@
+.container_actions {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.wrap_input {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    width: 100%;
+}
+
+.tooltip {
+    font-size: 2rem !important;
+}

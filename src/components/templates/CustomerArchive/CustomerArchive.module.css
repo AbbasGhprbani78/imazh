@@ -1,20 +1,16 @@
-.content_right {}
 
 .wrap_display {
     margin-top: 2rem;
 }
 
-.wrap_actions {
-    display: flex;
-    align-items: center;
+ .wrap_actions {
     justify-content: space-between;
     border-top: 1px solid #fff;
     padding-top: 20px;
-}
+} 
 
 .left_sec {
     height: calc(100dvh - 100px);
-    /* position: relative; */
 }
 
 .wrap_images {
@@ -29,11 +25,9 @@
     height: 100%;
 }
 
-
 .hidden {
     display: none;
 }
-
 
 .wrapper_arrow {
     position: absolute;

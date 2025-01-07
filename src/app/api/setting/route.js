@@ -18,18 +18,25 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
-    const { name } = body;
+    const { name, description } = body;
 
     if (!name) {
       return new Response(
-        JSON.stringify({ message: "نام تنظیمات نمی تواند خالی باشد" }),
+        JSON.stringify({ message: "کد تنظیمات نمی تواند خالی باشد" }),
         { status: 400 }
       );
     }
+        if (!description) {
+          return new Response(
+            JSON.stringify({ message: "اسم تنظیمات نمی تواند خالی باشد" }),
+            { status: 400 }
+          );
+        }
 
     const newSetting = await prisma.setting.create({
       data: {
         name,
+        description,
       },
     });
 

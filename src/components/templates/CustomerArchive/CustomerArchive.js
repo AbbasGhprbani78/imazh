@@ -1,6 +1,5 @@
 "use client";
 import DropDownSearch from "@/components/module/DropDown/DropDownSearch";
-import LeftSection from "@/components/module/LeftSection/LeftSection";
 import RightSection from "@/components/module/RightSection/RightSection";
 import Grid from "@mui/material/Grid2";
 import React, { useEffect, useState } from "react";
@@ -8,11 +7,6 @@ import styles from "./CustomerArchive.module.css";
 import { Box } from "@mui/material";
 import Modal from "@/components/module/Modal/Modal";
 import DisplayPhoto from "@/components/module/DisplayPhoto/DisplayPhoto";
-import Button2 from "@/components/module/Buttons/Button2";
-import AutoFixHighOutlinedIcon from "@mui/icons-material/AutoFixHighOutlined";
-import TollOutlinedIcon from "@mui/icons-material/TollOutlined";
-import BrushOutlinedIcon from "@mui/icons-material/BrushOutlined";
-import WorkspacesOutlinedIcon from "@mui/icons-material/WorkspacesOutlined";
 import axios from "axios";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -21,6 +15,7 @@ import ModalBottom from "@/components/module/ModalBottom/ModalBottom";
 import TextComponent from "@/components/module/TextComponent/TextComponent";
 import Image from "next/image";
 import CampareImage from "@/components/module/CampareImage/CampareImage";
+import AditPicture from "@/components/module/AditPicture/AditPicture";
 
 export default function CustomerArchive({ id }) {
   const [isLoadingGroup1, setIsLoadingGroup1] = useState(true);
@@ -30,6 +25,15 @@ export default function CustomerArchive({ id }) {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [archiveDetails, setArchiveDetails] = useState("");
   const [displayType, setDisplayType] = useState(1);
+  const [filters, setFilters] = useState({
+    contrast: 100,
+    brightness: 100,
+    grayscale: 0,
+    saturation: 100,
+    sepia: 0,
+    hue: 0,
+    opacity: 100,
+  });
   const [currentIndexes, setCurrentIndexes] = useState({
     group1: 0,
     group2: 0,
@@ -67,8 +71,6 @@ export default function CustomerArchive({ id }) {
     setDisplayType(value);
   };
 
-
-
   useEffect(() => {
     const getArchiveDetails = async () => {
       try {
@@ -90,6 +92,18 @@ export default function CustomerArchive({ id }) {
     archiveDetails?.photos?.filter((img) => img.group === 1) || [];
   const group2Images =
     archiveDetails?.photos?.filter((img) => img.group === 2) || [];
+
+  const getFilterStyle = () => ({
+    filter: `
+    contrast(${filters.contrast}%)
+    brightness(${filters.brightness}%)
+    grayscale(${filters.grayscale}%)
+    saturate(${filters.saturation}%)
+    sepia(${filters.sepia}%)
+    hue-rotate(${filters.hue}deg)
+    opacity(${filters.opacity}%)
+  `,
+  });
 
   return (
     <>
@@ -124,6 +138,8 @@ export default function CustomerArchive({ id }) {
                         items={[
                           { id: 1, name: "کنارهم" },
                           { id: 2, name: "روی هم" },
+                          { id: 3, name: "قبل عمل" },
+                          { id: 4, name: "بعد عمل" },
                         ]}
                         title="نحوه نمایش عکس‌ها"
                         getOptionLabelProp="name"
@@ -135,103 +151,195 @@ export default function CustomerArchive({ id }) {
                     <DisplayPhoto title={"گرید"} item={"2"} />
                   </div>
                   <div className={styles.wrap_actions}>
-                    <Button2 icon={AutoFixHighOutlinedIcon} onClick={""} />
-                    <Button2 icon={WorkspacesOutlinedIcon} onClick={""} />
-                    <Button2 icon={TollOutlinedIcon} onClick={""} />
-                    <Button2 icon={BrushOutlinedIcon} onClick={""} />
+                    <AditPicture filters={filters} setFilters={setFilters} />
                   </div>
                 </div>
               </RightSection>
             </Grid>
             <Grid size={{ xs: 12, md: 8, lg: 9 }} className={styles.left_sec}>
-              {displayType === 1 ? (
-                <Grid className={styles.wrap_images} container spacing={2.5}>
-                  <Grid
-                    size={{ xs: 12, lg: 6 }}
-                    className={`${styles.Preview_item}`}
-                    style={{ display: expandedIndex === 2  ? "none" : "block" }}
-                  >
+              <Grid className={styles.wrap_images} container spacing={2.5}>
+                {displayType === 1 ? (
+                  <>
+                    <Grid
+                      size={{ xs: 12, lg: 6 }}
+                      className={`${styles.Preview_item}`}
+                      style={{
+                        display: expandedIndex === 2 ? "none" : "block",
+                      }}
+                    >
+                      <Preview
+                        toggleExpand={() => toggleExpand(1)}
+                        isExpanded={expandedIndex === 1}
+                        toggleModalBottom={toggleModalBottom}
+                      >
+                        {isLoadingGroup1 && (
+                          <div className={styles.placeholder}>
+                            <Image
+                              src="/images/1.svg"
+                              alt="Loading Group 1"
+                              layout="fill"
+                              className={styles.image_placeholder}
+                            />
+                          </div>
+                        )}
+                        <Image
+                          src={group1Images[currentIndexes?.group1]?.url}
+                          alt={`Group 1 - ${currentIndexes?.group1}`}
+                          layout="fill"
+                          className={styles.image_archive}
+                          onLoad={() => setIsLoadingGroup1(false)}
+                          style={{
+                            display: isLoadingGroup1 ? "none" : "block",
+                            ...getFilterStyle(),
+                          }}
+                        />
+                      </Preview>
+                    </Grid>
+                    <Grid
+                      size={{ xs: 12, lg: 6 }}
+                      className={`${styles.Preview_item}`}
+                      style={{
+                        display: expandedIndex === 1 ? "none" : "block",
+                      }}
+                    >
+                      <Preview
+                        toggleExpand={() => toggleExpand(2)}
+                        isExpanded={expandedIndex === 2}
+                        toggleModalBottom={toggleModalBottom}
+                      >
+                        {isLoadingGroup2 && (
+                          <div className={styles.placeholder}>
+                            <Image
+                              src="/images/1.svg"
+                              alt="Loading Group 2"
+                              layout="fill"
+                              className={styles.image_placeholder}
+                            />
+                          </div>
+                        )}
+                        <Image
+                          src={group2Images[currentIndexes?.group2]?.url}
+                          alt={`Group 2 - ${currentIndexes?.group2}`}
+                          layout="fill"
+                          className={styles.image_archive}
+                          onLoad={() => setIsLoadingGroup2(false)}
+                          style={{
+                            display: isLoadingGroup2 ? "none" : "block",
+                            ...getFilterStyle(),
+                          }}
+                        />
+                      </Preview>
+                    </Grid>
+                  </>
+                ) : displayType === 2 ? (
+                  <>
                     <Preview
-                      toggleExpand={() => toggleExpand(1)}
-                      isExpanded={expandedIndex === 1}
+                      toggleExpand={() => toggleExpand(3)}
+                      isExpanded={expandedIndex === 3}
                       toggleModalBottom={toggleModalBottom}
                     >
-                      {isLoadingGroup1 && (
-                        <div className={styles.placeholder}>
-                          <Image
-                            src="/images/1.svg"
-                            alt="Loading Group 1"
-                            layout="fill"
-                            className={styles.image_placeholder}
-                          />
-                        </div>
-                      )}
-                      <Image
-                        src={group1Images[currentIndexes?.group1]?.url}
-                        alt={`Group 1 - ${currentIndexes?.group1}`}
-                        layout="fill"
-                        className={styles.image_archive}
-                        onLoad={() => setIsLoadingGroup1(false)}
-                        style={{ display: isLoadingGroup1 ? "none" : "block" }}
+                      <CampareImage
+                        beforeImage={group1Images[currentIndexes?.group1]?.url}
+                        afterImage={group2Images[currentIndexes?.group2]?.url}
+                        getFilterStyle={getFilterStyle}
+                        filters={filters}
                       />
                     </Preview>
-                  </Grid>
-                  <Grid
-                    size={{ xs: 12, lg: 6 }}
-                    className={`${styles.Preview_item}`}
-                    style={{ display: expandedIndex === 1 ? "none" : "block" }}
+                  </>
+                ) : displayType === 3 ? (
+                  <>
+                    <Grid
+                      size={{ xs: 12 }}
+                      className={`${styles.Preview_item}`}
+                      style={{
+                        display: expandedIndex === 2 ? "none" : "block",
+                      }}
+                    >
+                      <Preview
+                        toggleExpand={() => toggleExpand(1)}
+                        isExpanded={expandedIndex === 1}
+                        toggleModalBottom={toggleModalBottom}
+                      >
+                        {isLoadingGroup1 && (
+                          <div className={styles.placeholder}>
+                            <Image
+                              src="/images/1.svg"
+                              alt="Loading Group 1"
+                              layout="fill"
+                              className={styles.image_placeholder}
+                            />
+                          </div>
+                        )}
+                        <Image
+                          src={group1Images[currentIndexes?.group1]?.url}
+                          alt={`Group 1 - ${currentIndexes?.group1}`}
+                          layout="fill"
+                          className={styles.image_archive}
+                          onLoad={() => setIsLoadingGroup1(false)}
+                          style={{
+                            display: isLoadingGroup1 ? "none" : "block",
+                            ...getFilterStyle(),
+                          }}
+                        />
+                      </Preview>
+                    </Grid>
+                  </>
+                ) : (
+                  <>
+                    <Grid
+                      size={{ xs: 12 }}
+                      className={`${styles.Preview_item}`}
+                      style={{
+                        display: expandedIndex === 1 ? "none" : "block",
+                      }}
+                    >
+                      <Preview
+                        toggleExpand={() => toggleExpand(2)}
+                        isExpanded={expandedIndex === 2}
+                        toggleModalBottom={toggleModalBottom}
+                      >
+                        {isLoadingGroup2 && (
+                          <div className={styles.placeholder}>
+                            <Image
+                              src="/images/1.svg"
+                              alt="Loading Group 2"
+                              layout="fill"
+                              className={styles.image_placeholder}
+                            />
+                          </div>
+                        )}
+                        <Image
+                          src={group2Images[currentIndexes?.group2]?.url}
+                          alt={`Group 2 - ${currentIndexes?.group2}`}
+                          layout="fill"
+                          className={styles.image_archive}
+                          onLoad={() => setIsLoadingGroup2(false)}
+                          style={{
+                            display: isLoadingGroup2 ? "none" : "block",
+                            ...getFilterStyle(),
+                          }}
+                        />
+                      </Preview>
+                    </Grid>
+                  </>
+                )}
+                <div className={styles.wrapper_arrow}>
+                  <button
+                    className={`${styles.button_arrow} ${styles.button_arrow_right}`}
+                    onClick={() => handleSlide(-1)}
                   >
-                    <Preview
-                      toggleExpand={() => toggleExpand(2)}
-                      isExpanded={expandedIndex === 2}
-                      toggleModalBottom={toggleModalBottom}
-                    >
-                      {isLoadingGroup2 && (
-                        <div className={styles.placeholder}>
-                          <Image
-                            src="/images/1.svg"
-                            alt="Loading Group 2"
-                            layout="fill"
-                            className={styles.image_placeholder}
-                          />
-                        </div>
-                      )}
-                      <Image
-                        src={group2Images[currentIndexes?.group2]?.url}
-                        alt={`Group 2 - ${currentIndexes?.group2}`}
-                        layout="fill"
-                        className={styles.image_archive}
-                        onLoad={() => setIsLoadingGroup2(false)}
-                        style={{ display: isLoadingGroup2 ? "none" : "block" }}
-                      />
-                    </Preview>
-                  </Grid>
-                  <div className={styles.wrapper_arrow}>
-                    <button
-                      className={`${styles.button_arrow} ${styles.button_arrow_right}`}
-                      onClick={() => handleSlide(-1)}
-                    >
-                      <ArrowForwardIosIcon className={styles.arrow_icon} />
-                    </button>
-                    <button
-                      className={`${styles.button_arrow} ${styles.button_arrow_left}`}
-                    >
-                      <ArrowBackIosNewIcon
-                        className={styles.arrow_icon}
-                        onClick={() => handleSlide(1)}
-                      />
-                    </button>
-                  </div>
-                </Grid>
-              ) : (
-                <Preview
-                  toggleExpand={() => toggleExpand(3)}
-                  isExpanded={expandedIndex === 3}
-                  toggleModalBottom={toggleModalBottom}
-                >
-                  <CampareImage />
-                </Preview>
-              )}
+                    <ArrowForwardIosIcon className={styles.arrow_icon} />
+                  </button>
+                  <button
+                    className={`${styles.button_arrow} ${styles.button_arrow_left}`}
+                  >
+                    <ArrowBackIosNewIcon
+                      className={styles.arrow_icon}
+                      onClick={() => handleSlide(1)}
+                    />
+                  </button>
+                </div>
+              </Grid>
             </Grid>
           </Grid>
         </Box>
@@ -252,8 +360,10 @@ export default function CustomerArchive({ id }) {
               firstoptiontext=""
               firstoptionclick={""}
               items={[
-                { id: 1, name: "کنار هم" },
+                { id: 1, name: "کنارهم" },
                 { id: 2, name: "روی هم" },
+                { id: 3, name: "قبل عمل" },
+                { id: 4, name: "بعد عمل" },
               ]}
               title="نحوه نمایش عکس‌ها"
               getOptionLabelProp="name"
@@ -265,10 +375,7 @@ export default function CustomerArchive({ id }) {
           <DisplayPhoto title={"گرید"} item={"2"} />
         </div>
         <div className={styles.wrap_actions}>
-          <Button2 icon={AutoFixHighOutlinedIcon} onClick={""} />
-          <Button2 icon={WorkspacesOutlinedIcon} onClick={""} />
-          <Button2 icon={TollOutlinedIcon} onClick={""} />
-          <Button2 icon={BrushOutlinedIcon} onClick={""} />
+          <AditPicture filters={filters} setFilters={setFilters} />
         </div>
       </ModalBottom>
     </>

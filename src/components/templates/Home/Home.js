@@ -32,9 +32,11 @@ import SliderImages from "@/components/module/SliderImages/SliderImages";
 import Preview from "@/components/module/Preview/Preview";
 
 export default function Home() {
+  const isDesktop = useMediaQuery("(min-width:900px)");
   const [isExpanded, setIsExpanded] = useState(false);
   const [data, setData] = useState([]);
   const [setting, setSetting] = useState("");
+  const [settingDes, setSettingDes] = useState("");
   const [socket, setSocket] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
@@ -87,9 +89,8 @@ export default function Home() {
     filenumber: "",
     gender: "",
     setting: "",
+    setting_des: "",
   });
-
-  const isDesktop = useMediaQuery("(min-width:900px)");
 
   const validateCustomerInfo = () => {
     if (!isRequired(customerInfo.customerId)) {
@@ -255,7 +256,7 @@ export default function Home() {
         setToastInfo({
           type: "error",
           title: "خطا در اضافه کردن بیمار",
-          message: "",
+          message: error?.response?.data?.message,
         });
       }
     }
@@ -338,7 +339,10 @@ export default function Home() {
     e.preventDefault();
     let formErrors = {};
     if (!isRequired(setting)) {
-      formErrors.setting = "وارد کردن تنظیمات عملیات الزامی است";
+      formErrors.setting = "وارد کردن کد تنظیمات الزامی است";
+    }
+    if (!isRequired(settingDes)) {
+      formErrors.setting_des = "وارد کردن اسم تنظیمات الزامی است";
     }
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
@@ -346,6 +350,7 @@ export default function Home() {
       try {
         const response = await axios.post("http://localhost:3000/api/setting", {
           name: setting,
+          description: settingDes,
         });
         if (response.status === 201) {
           getAllSetting();
@@ -359,7 +364,6 @@ export default function Home() {
           });
         }
       } catch (error) {
-        console.log(error);
         setShowToast(true);
         setToastInfo({
           type: "error",
@@ -1158,15 +1162,26 @@ export default function Home() {
             <form onSubmit={addSettingHandler} style={{ width: "100%" }}>
               <Box sx={{ flexGrow: 1, width: "100%" }}>
                 <Grid container spacing={2} className={styles.row_modal}>
-                  <Grid size={{ xs: 12 }}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <Input
-                      label="تنظیمات"
+                      label="کد تنظیمات"
                       value={setting}
                       onChange={(e) => setSetting(e.target.value)}
                       name={"setting"}
                     />
                     {errors.setting && (
                       <span className="error">{errors.setting}</span>
+                    )}
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <Input
+                      label="اسم تنظیمات"
+                      value={settingDes}
+                      onChange={(e) => setSettingDes(e.target.value)}
+                      name={"setting-des"}
+                    />
+                    {errors.setting_des && (
+                      <span className="error">{errors.setting_des}</span>
                     )}
                   </Grid>
                 </Grid>
