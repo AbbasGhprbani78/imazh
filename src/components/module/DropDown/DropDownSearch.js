@@ -96,18 +96,6 @@ export default function DropDownSearch({
       setSearchValue(fillValue);
       setSelectedValue(fillValue);
     }
-    if (name === "displayType" && value) {
-      const fillValue =
-        value === 1
-          ? "کنارهم"
-          : value === 2
-          ? "روی هم"
-          : value === 3
-          ? "قبل عمل"
-          : "بعد عمل";
-      setSearchValue(fillValue);
-      setSelectedValue(fillValue);
-    }
   }, [value]);
 
   return (

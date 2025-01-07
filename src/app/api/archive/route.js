@@ -110,3 +110,20 @@ export async function POST(req) {
     );
   }
 }
+
+// const allArchives = await prisma.archive.findMany({
+//   where: {
+//     isDelete: false,
+//     customer: {
+//       isDelete: false,
+//     },
+//   },
+//   skip: (pageNumber - 1) * limitNumber,
+//   take: limitNumber,
+//   include: {
+//     customer: true,
+//     operation: true,
+//     setting: true,
+//     photos: true,
+//   },
+// });

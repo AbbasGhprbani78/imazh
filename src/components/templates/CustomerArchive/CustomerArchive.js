@@ -16,6 +16,9 @@ import TextComponent from "@/components/module/TextComponent/TextComponent";
 import Image from "next/image";
 import CampareImage from "@/components/module/CampareImage/CampareImage";
 import AditPicture from "@/components/module/AditPicture/AditPicture";
+import NormalDropDown from "@/components/module/DropDown/NormalDropDown";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
+import { FaDownload } from "react-icons/fa6";
 
 export default function CustomerArchive({ id }) {
   const [isLoadingGroup1, setIsLoadingGroup1] = useState(true);
@@ -25,6 +28,7 @@ export default function CustomerArchive({ id }) {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [archiveDetails, setArchiveDetails] = useState("");
   const [displayType, setDisplayType] = useState(1);
+  const [isHide, setIsHide] = useState(false);
   const [filters, setFilters] = useState({
     contrast: 100,
     brightness: 100,
@@ -60,6 +64,7 @@ export default function CustomerArchive({ id }) {
 
   const toggleExpand = (index) => {
     setExpandedIndex((prev) => (prev === index ? null : index));
+    setIsHide((prev) => !prev);
   };
 
   const toggleModalBottom = () => {
@@ -132,20 +137,16 @@ export default function CustomerArchive({ id }) {
                   />
                   <div className={styles.wrap_display}>
                     <div style={{ marginBottom: "2rem" }}>
-                      <DropDownSearch
-                        firstoptiontext=""
-                        firstoptionclick={""}
+                      <NormalDropDown
                         items={[
                           { id: 1, name: "کنارهم" },
                           { id: 2, name: "روی هم" },
                           { id: 3, name: "قبل عمل" },
                           { id: 4, name: "بعد عمل" },
                         ]}
-                        title="نحوه نمایش عکس‌ها"
-                        getOptionLabelProp="name"
-                        name={"displayType"}
                         onChange={handleChangeDisplay}
                         value={displayType}
+                        title="نحوه نمایش عکس‌ها"
                       />
                     </div>
                     <DisplayPhoto title={"گرید"} item={"2"} />
@@ -158,7 +159,7 @@ export default function CustomerArchive({ id }) {
             </Grid>
             <Grid size={{ xs: 12, md: 8, lg: 9 }} className={styles.left_sec}>
               <Grid className={styles.wrap_images} container spacing={2.5}>
-                {displayType === 1 ? (
+                {displayType == 1 ? (
                   <>
                     <Grid
                       size={{ xs: 12, lg: 6 }}
@@ -171,6 +172,7 @@ export default function CustomerArchive({ id }) {
                         toggleExpand={() => toggleExpand(1)}
                         isExpanded={expandedIndex === 1}
                         toggleModalBottom={toggleModalBottom}
+                        isHide={isHide}
                       >
                         {isLoadingGroup1 && (
                           <div className={styles.placeholder}>
@@ -194,6 +196,24 @@ export default function CustomerArchive({ id }) {
                           }}
                         />
                       </Preview>
+                      <div className={styles.wrap_action_image}>
+                        <div
+                          className={styles.option_item_img}
+                          onClick={() => toggleExpand(1)}
+                        >
+                          <ZoomOutMapIcon className={styles.icon_option} />
+                          <span className={styles.text_option_item_img}>
+                            بزرگنمایی
+                          </span>
+                        </div>
+
+                        <div className={styles.option_item_img} onClick={""}>
+                          <FaDownload className={styles.icon_option} />
+                          <span className={styles.text_option_item_img}>
+                            دانلود
+                          </span>
+                        </div>
+                      </div>
                     </Grid>
                     <Grid
                       size={{ xs: 12, lg: 6 }}
@@ -206,6 +226,7 @@ export default function CustomerArchive({ id }) {
                         toggleExpand={() => toggleExpand(2)}
                         isExpanded={expandedIndex === 2}
                         toggleModalBottom={toggleModalBottom}
+                        isHide={isHide}
                       >
                         {isLoadingGroup2 && (
                           <div className={styles.placeholder}>
@@ -229,9 +250,27 @@ export default function CustomerArchive({ id }) {
                           }}
                         />
                       </Preview>
+                      <div className={styles.wrap_action_image}>
+                        <div
+                          className={styles.option_item_img}
+                          onClick={() => toggleExpand(2)}
+                        >
+                          <ZoomOutMapIcon className={styles.icon_option} />
+                          <span className={styles.text_option_item_img}>
+                            بزرگنمایی
+                          </span>
+                        </div>
+
+                        <div className={styles.option_item_img} onClick={""}>
+                          <FaDownload className={styles.icon_option} />
+                          <span className={styles.text_option_item_img}>
+                            دانلود
+                          </span>
+                        </div>
+                      </div>
                     </Grid>
                   </>
-                ) : displayType === 2 ? (
+                ) : displayType == 2 ? (
                   <>
                     <Preview
                       toggleExpand={() => toggleExpand(3)}
@@ -246,7 +285,7 @@ export default function CustomerArchive({ id }) {
                       />
                     </Preview>
                   </>
-                ) : displayType === 3 ? (
+                ) : displayType == 3 ? (
                   <>
                     <Grid
                       size={{ xs: 12 }}
@@ -259,6 +298,7 @@ export default function CustomerArchive({ id }) {
                         toggleExpand={() => toggleExpand(1)}
                         isExpanded={expandedIndex === 1}
                         toggleModalBottom={toggleModalBottom}
+                        isHide={isHide}
                       >
                         {isLoadingGroup1 && (
                           <div className={styles.placeholder}>
@@ -297,6 +337,7 @@ export default function CustomerArchive({ id }) {
                         toggleExpand={() => toggleExpand(2)}
                         isExpanded={expandedIndex === 2}
                         toggleModalBottom={toggleModalBottom}
+                        isHide={isHide}
                       >
                         {isLoadingGroup2 && (
                           <div className={styles.placeholder}>
@@ -356,20 +397,16 @@ export default function CustomerArchive({ id }) {
         />
         <div className={styles.wrap_display}>
           <div style={{ marginBottom: "2rem" }}>
-            <DropDownSearch
-              firstoptiontext=""
-              firstoptionclick={""}
+            <NormalDropDown
               items={[
                 { id: 1, name: "کنارهم" },
                 { id: 2, name: "روی هم" },
                 { id: 3, name: "قبل عمل" },
                 { id: 4, name: "بعد عمل" },
               ]}
-              title="نحوه نمایش عکس‌ها"
-              getOptionLabelProp="name"
-              name={"displayType"}
               onChange={handleChangeDisplay}
               value={displayType}
+              title="نحوه نمایش عکس‌ها"
             />
           </div>
           <DisplayPhoto title={"گرید"} item={"2"} />

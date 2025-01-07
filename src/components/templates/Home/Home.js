@@ -30,6 +30,7 @@ import WestIcon from "@mui/icons-material/West";
 import SouthIcon from "@mui/icons-material/South";
 import SliderImages from "@/components/module/SliderImages/SliderImages";
 import Preview from "@/components/module/Preview/Preview";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function Home() {
   const isDesktop = useMediaQuery("(min-width:900px)");
@@ -160,16 +161,6 @@ export default function Home() {
   };
 
   const showAddCustomerModal = () => {
-    setCustomerData({
-      fullname: "",
-      email: "",
-      phonenumber: "",
-      nationalcode: "",
-      datereference: "",
-      birthday: "",
-      filenumber: "",
-      gender: "",
-    });
     setTypeModal(1);
     setShowModal(true);
   };
@@ -439,7 +430,33 @@ export default function Home() {
       setShowToast(true);
       setToastInfo({
         type: "error",
-        title: "خطا در اضافه کردن عملیات",
+        title: "خطا در تغییر اطلاعات",
+        message:
+          error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
+      });
+    }
+  };
+
+  const deleteCustomerHandler = async () => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/customer/${idUser}`
+      );
+      if (response.status === 200) {
+        setShowToast(true);
+        setToastInfo({
+          type: "success",
+          title: "عملیات موفقیت آمیز",
+          message: "بیمار با موفقیت حذف شد",
+        });
+        setShowModal(false);
+        getAllCustomer()
+      }
+    } catch (error) {
+      setShowToast(true);
+      setToastInfo({
+        type: "error",
+        title: "خطا در حذف کردن بیمار",
         message:
           error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
       });
@@ -883,7 +900,9 @@ export default function Home() {
             ? "تغییراطلاعات کاربر"
             : typeModal === 4
             ? "آرشیو عکسها"
-            : "افزودن  تنظیمات"
+            : typeModal === 5
+            ? "افزودن  تنظیمات"
+            : "حذف بیمار"
         }
         onClick={() => setShowModal(false)}
         showModal={showModal}
@@ -1145,6 +1164,13 @@ export default function Home() {
                   </Grid>
                 </Grid>
               </Box>
+              <div
+                className={styles.wrap_delete}
+                onClick={() => setTypeModal(6)}
+              >
+                <CloseIcon />
+                <span className={styles.delete_text}>حذف</span>
+              </div>
               <div className={styles.wrap_btn}>
                 <Button1 text={"ذخیره"} icon={DoneIcon} type={"submit"} />
               </div>
@@ -1157,7 +1183,7 @@ export default function Home() {
               imagesItem={allImagesArchive}
             />
           </>
-        ) : (
+        ) : typeModal === 5 ? (
           <>
             <form onSubmit={addSettingHandler} style={{ width: "100%" }}>
               <Box sx={{ flexGrow: 1, width: "100%" }}>
@@ -1195,6 +1221,22 @@ export default function Home() {
                 />
               </div>
             </form>
+          </>
+        ) : (
+          <>
+            <p className={styles.text_model}>
+              آیا از حذف بیمار اطمینان دارید ؟
+            </p>
+            <div className={styles.wrap_btn_actions}>
+              <Button1 text={"خیر"} Onclick={() => setShowModal(false)} />
+              <Button1
+                disable={loading}
+                text={"بله"}
+                Onclick={deleteCustomerHandler}
+                style={{ background: "#535353" }}
+                backstyle={"backstyle"}
+              />
+            </div>
           </>
         )}
       </Modal>

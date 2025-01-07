@@ -189,6 +189,28 @@
     visibility: visible;
 }
 
+.wrap_delete {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: max-content;
+    border-bottom: 1px solid #c91212;
+    color: #c91212;
+    cursor: pointer;
+}
+
+.wrap_btn_actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2rem;
+    width: 70%;
+}
+
+.text_model {
+    color: #fff;
+}
+
 @media (max-width:900px) {
 
     .wrapper {

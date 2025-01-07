@@ -124,6 +124,29 @@
     cursor: pointer;
 }
 
+.wrap_normal_drop {
+    border: 1px solid #fff;
+    border-radius: 8px;
+    padding: 0 15px;
+    cursor: pointer;
+}
+
+.select_drop {
+    border: none;
+    outline: none;
+    width: 100%;
+    background-color: transparent;
+    color: #fff;
+    font-family: "vazir" !important;
+    font-size: 1rem;
+    height: 53.6px;
+    line-height: 53.6px;
+    cursor: pointer;
+}
+
+.select_item {
+    color: #000;
+}
 
 @media (max-width:600px) {
     .wrapDropSearch {

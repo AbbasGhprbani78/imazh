@@ -6,15 +6,17 @@ export default function Preview({
   toggleModalBottom,
   isExpanded,
   toggleExpand,
- 
+  isHide,
 }) {
   return (
     <div
       className={`${styles.wrap_preview} ${isExpanded && styles.full_screen}  `}
     >
-      <div className={styles.icon_top_wrapper_left} onClick={toggleExpand}>
-        <img src="/images/4.svg" alt="icon" />
-      </div>
+      {isHide && (
+        <div className={styles.icon_top_wrapper_left} onClick={toggleExpand}>
+          <img src="/images/4.svg" alt="icon" />
+        </div>
+      )}
       <div
         className={styles.icon_top_wrapper_right}
         onClick={toggleModalBottom}
