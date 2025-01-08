@@ -378,7 +378,6 @@ export default function Home() {
         );
         if (response.status === 200) {
           setHistoryOperation(response.data);
-          console.log(response.data);
         }
       } catch (error) {
         console.error(error);
@@ -450,7 +449,7 @@ export default function Home() {
           message: "بیمار با موفقیت حذف شد",
         });
         setShowModal(false);
-        getAllCustomer()
+        getAllCustomer();
       }
     } catch (error) {
       setShowToast(true);
@@ -669,6 +668,7 @@ export default function Home() {
           );
           if (response.status === 200) {
             setAllImagesArchive(response?.data?.archives?.[0]?.photos);
+            console.log(response?.data?.archives?.[0]?.photos);
           }
         } catch (error) {
           console.log(error);

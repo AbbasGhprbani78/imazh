@@ -2,7 +2,7 @@
     position: fixed;
     width: 100%;
     min-height: 100vh;
-    z-index: 9999999999;
+    z-index: 9999;
     top: 0;
     left: 0;
     right: 0;
@@ -25,7 +25,7 @@
     position: fixed;
     width: 100%;
     min-height: 100vh;
-    z-index: 9999999999;
+    z-index: 9999;
     top: 0;
     left: 0;
     right: 0;
@@ -36,7 +36,7 @@
     padding: 20px;
     border-radius: 20px;
     background-color: var(--color-2);
-    z-index: 999999999999999999;
+    z-index: 99999;
     width: 35vw;
     position: relative;
 }

@@ -38,7 +38,7 @@ export async function GET(req, { params }) {
   try {
     const { id } = params;
     const { searchParams } = new URL(req.url);
-    const group = searchParams.get("group"); // دریافت پارامتر group از URL
+    const group = searchParams.get("group");
 
     if (!id || isNaN(Number(id))) {
       return new Response(JSON.stringify({ message: "ایدی معتبر نیست" }), {
@@ -47,7 +47,6 @@ export async function GET(req, { params }) {
     }
 
     if (group) {
-      // اگر group مشخص شده باشد، فیلتر بر اساس گروه
       const archives = await prisma.archive.findMany({
         where: {
           id: Number(id),
@@ -62,7 +61,11 @@ export async function GET(req, { params }) {
           customer: true,
           operation: true,
           setting: true,
-          photos: true,
+          photos: {
+            where: {
+              group: Number(group),
+            },
+          },
         },
       });
 
@@ -82,7 +85,6 @@ export async function GET(req, { params }) {
       );
     }
 
-    // اگر group مشخص نشده باشد، تمام اطلاعات آرشیو
     const archive = await prisma.archive.findUnique({
       where: {
         id: Number(id),

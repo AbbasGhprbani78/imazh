@@ -76,6 +76,29 @@ export default function CustomerArchive({ id }) {
     setDisplayType(value);
   };
 
+  const saveImage = (idImage) => {
+    const imgElement = document.getElementById(idImage);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = imgElement.naturalWidth;
+    canvas.height = imgElement.naturalHeight;
+
+    ctx.filter = `
+      contrast(${filters.contrast}%) brightness(${filters.brightness}%) grayscale(${filters.grayscale}%) 
+      saturate(${filters.saturation}%) sepia(${filters.sepia}%) hue-rotate(${filters.hue}deg) opacity(${filters.opacity}%)
+    `;
+
+    ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob((blob) => {
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "edited-image.png";
+      link.click();
+    });
+  };
+
   useEffect(() => {
     const getArchiveDetails = async () => {
       try {
@@ -185,6 +208,7 @@ export default function CustomerArchive({ id }) {
                           </div>
                         )}
                         <Image
+                          id="group1-image"
                           src={group1Images[currentIndexes?.group1]?.url}
                           alt={`Group 1 - ${currentIndexes?.group1}`}
                           layout="fill"
@@ -206,8 +230,10 @@ export default function CustomerArchive({ id }) {
                             بزرگنمایی
                           </span>
                         </div>
-
-                        <div className={styles.option_item_img} onClick={""}>
+                        <div
+                          className={styles.option_item_img}
+                          onClick={() => saveImage("group1-image")}
+                        >
                           <FaDownload className={styles.icon_option} />
                           <span className={styles.text_option_item_img}>
                             دانلود
@@ -239,6 +265,7 @@ export default function CustomerArchive({ id }) {
                           </div>
                         )}
                         <Image
+                          id="group2-image"
                           src={group2Images[currentIndexes?.group2]?.url}
                           alt={`Group 2 - ${currentIndexes?.group2}`}
                           layout="fill"
@@ -261,7 +288,10 @@ export default function CustomerArchive({ id }) {
                           </span>
                         </div>
 
-                        <div className={styles.option_item_img} onClick={""}>
+                        <div
+                          className={styles.option_item_img}
+                          onClick={() => saveImage("group2-image")}
+                        >
                           <FaDownload className={styles.icon_option} />
                           <span className={styles.text_option_item_img}>
                             دانلود
@@ -276,6 +306,7 @@ export default function CustomerArchive({ id }) {
                       toggleExpand={() => toggleExpand(3)}
                       isExpanded={expandedIndex === 3}
                       toggleModalBottom={toggleModalBottom}
+                      isHide={"true"}
                     >
                       <CampareImage
                         beforeImage={group1Images[currentIndexes?.group1]?.url}
@@ -311,6 +342,7 @@ export default function CustomerArchive({ id }) {
                           </div>
                         )}
                         <Image
+                          id="group1-image"
                           src={group1Images[currentIndexes?.group1]?.url}
                           alt={`Group 1 - ${currentIndexes?.group1}`}
                           layout="fill"
@@ -322,6 +354,26 @@ export default function CustomerArchive({ id }) {
                           }}
                         />
                       </Preview>
+                      <div className={styles.wrap_action_image}>
+                        <div
+                          className={styles.option_item_img}
+                          onClick={() => toggleExpand(1)}
+                        >
+                          <ZoomOutMapIcon className={styles.icon_option} />
+                          <span className={styles.text_option_item_img}>
+                            بزرگنمایی
+                          </span>
+                        </div>
+                        <div
+                          className={styles.option_item_img}
+                          onClick={() => saveImage("group1-image")}
+                        >
+                          <FaDownload className={styles.icon_option} />
+                          <span className={styles.text_option_item_img}>
+                            دانلود
+                          </span>
+                        </div>
+                      </div>
                     </Grid>
                   </>
                 ) : (
@@ -350,6 +402,7 @@ export default function CustomerArchive({ id }) {
                           </div>
                         )}
                         <Image
+                          id="group2-image"
                           src={group2Images[currentIndexes?.group2]?.url}
                           alt={`Group 2 - ${currentIndexes?.group2}`}
                           layout="fill"
@@ -361,25 +414,44 @@ export default function CustomerArchive({ id }) {
                           }}
                         />
                       </Preview>
+                      <div className={styles.wrap_action_image}>
+                        <div
+                          className={styles.option_item_img}
+                          onClick={() => toggleExpand(2)}
+                        >
+                          <ZoomOutMapIcon className={styles.icon_option} />
+                          <span className={styles.text_option_item_img}>
+                            بزرگنمایی
+                          </span>
+                        </div>
+
+                        <div
+                          className={styles.option_item_img}
+                          onClick={() => saveImage("group2-image")}
+                        >
+                          <FaDownload className={styles.icon_option} />
+                          <span className={styles.text_option_item_img}>
+                            دانلود
+                          </span>
+                        </div>
+                      </div>
                     </Grid>
                   </>
                 )}
-                <div className={styles.wrapper_arrow}>
-                  <button
-                    className={`${styles.button_arrow} ${styles.button_arrow_right}`}
-                    onClick={() => handleSlide(-1)}
-                  >
-                    <ArrowForwardIosIcon className={styles.arrow_icon} />
-                  </button>
-                  <button
-                    className={`${styles.button_arrow} ${styles.button_arrow_left}`}
-                  >
-                    <ArrowBackIosNewIcon
-                      className={styles.arrow_icon}
-                      onClick={() => handleSlide(1)}
-                    />
-                  </button>
-                </div>
+                <button
+                  className={`${styles.button_arrow} ${styles.button_arrow_right}`}
+                  onClick={() => handleSlide(-1)}
+                >
+                  <ArrowForwardIosIcon className={styles.arrow_icon} />
+                </button>
+                <button
+                  className={`${styles.button_arrow} ${styles.button_arrow_left}`}
+                >
+                  <ArrowBackIosNewIcon
+                    className={styles.arrow_icon}
+                    onClick={() => handleSlide(1)}
+                  />
+                </button>
               </Grid>
             </Grid>
           </Grid>
