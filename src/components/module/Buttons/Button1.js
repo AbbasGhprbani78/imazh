@@ -4,18 +4,22 @@ import styles from "./Button.module.css";
 import { styled } from "@mui/material/styles";
 
 const CustomButton = styled(Button)(() => ({
-  color: "#fff",
   fontSize: ".9rem",
-  borderRadius: "15px",
+  borderRadius: "15px", 
   fontFamily: "vazir",
   paddingLeft: "20px",
   paddingRight: "20px",
   position: "relative",
-  background: "#53a7f3",
+  background: "var(--color-4)", 
+  color: "var(--color-5)", 
   width: "100%",
+  "&:hover": {
+    background: "var(--color-6)",
+  },
   "&:disabled": {
     cursor: "not-allowed",
-    background: "#264e73",
+    background: "var(--color-8)", 
+    color: "var(--color-7)",
   },
 }));
 
@@ -26,7 +30,7 @@ export default function Button1({
   disable,
   Onclick,
   style,
-  backstyle
+  backstyle,
 }) {
   return (
     <CustomButton

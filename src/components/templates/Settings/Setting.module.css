@@ -1,24 +1,18 @@
-.setting_wrapper {
-    /* height: 86dvh;
-    position: relative;
-    transition: all 0.3s ease-in-out; */
-}
-
 .record_list {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: #fff;
+    color: var(--color-5);
     margin-bottom: 7px;
-    background: #303030;
+    background-color: var(--color-14);
     transition: all .3s ease;
 }
 
 .record_item {
-    background: #303030;
+    background-color: var(--color-14);
     padding: 8px 16px;
     margin-bottom: 7px;
-    color: #fff;
+    color: var(--color-5);
     cursor: pointer;
     transition: all .3s ease;
 }
@@ -29,7 +23,7 @@
 }
 
 .item_setting {
-    color: #fff;
+    color: var(--color-5);
     margin-top: 1rem;
     transition: all .3s ease;
 }
@@ -38,7 +32,7 @@
     margin-top: 1rem;
     padding: 0 20px;
     font-weight: bold;
-    color: #fff;
+    color: var(--color-5);
     margin-bottom: 2rem;
 }
 

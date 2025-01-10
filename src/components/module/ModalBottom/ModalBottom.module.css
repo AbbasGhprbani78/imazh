@@ -53,7 +53,7 @@
 
 .icon {
     transform: rotate(90deg);
-    color: #fff;
+    color: var(--color-5);
 }
 
 .contnet_modal_bottom {

@@ -69,7 +69,7 @@ export default function Offcanvas({
             padding: "0",
           }}
         >
-          <MenuIcon sx={{ color: "#fff" }} />
+          <MenuIcon className={styles.menu_icon} />
         </IconButton>
         <Drawer
           anchor="right"

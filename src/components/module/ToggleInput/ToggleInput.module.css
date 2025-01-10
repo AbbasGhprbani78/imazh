@@ -1,7 +1,13 @@
 .title {
-    color: #fff;
+    color: var(--color-5);
     display: inline-block;
     margin-bottom: 1rem;
+}
+
+
+.item_toggle{
+    color: var(--color-5);
+    font-family: "vazir";
 }
 
 

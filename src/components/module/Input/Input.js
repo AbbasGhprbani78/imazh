@@ -9,39 +9,39 @@ import styles from "./Input.module.css";
 
 const StyledTextField = styled(TextField)(() => ({
   "& .MuiInputBase-root": {
-    color: "#fff",
+    color: "var(--color-5)",
     fontFamily: "vazir, sans-serif",
     fontSize: ".9rem",
     borderRadius: "8px",
     "&.Mui-disabled": {
-      backgroundColor: "#333", 
+      backgroundColor: "var(--color-17)",
       color: "#ّّfff",
     },
   },
   "& .MuiInputLabel-root": {
-    color: "#fff",
+    color: "var(--color-5)",
     fontFamily: "vazir, sans-serif",
     fontSize: ".9rem",
     "&.Mui-focused": {
-      color: "#fff",
+      color: "var(--color-5)",
     },
     "&.Mui-disabled": {
-      color: "#888", 
+      color: "var(--color-18)",
     },
   },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      borderColor: "#d9d9d9",
+      borderColor: "var(--color-5)",
       fontSize: ".9rem",
     },
     "&:hover fieldset": {
-      borderColor: "#d9d9d9",
+      borderColor: "var(--color-5)",
     },
     "&.Mui-focused fieldset": {
-      borderColor: "#d9d9d9",
+      borderColor: "var(--color-5)",
     },
     "&.Mui-disabled fieldset": {
-      borderColor: "#555",
+      borderColor: "var(--color-19)",
     },
   },
   "& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button":
@@ -59,7 +59,6 @@ export default function Input({ label, value, name, onChange, type, disable }) {
     key: "muirtl",
     stylisPlugins: [prefixer, rtlPlugin],
   });
-
   return (
     <CacheProvider value={cacheRtl}>
       <StyledTextField

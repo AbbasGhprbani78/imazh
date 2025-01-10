@@ -5,8 +5,6 @@ import { Box, Collapse, List, ListItemButton } from "@mui/material";
 import RightSection from "@/components/module/RightSection/RightSection";
 import styles from "./Setting.module.css";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import BasicTab from "@/components/module/Setting/BasicTab/BasicTab";
-import ImageTab from "@/components/module/Setting/ImageTab/ImageTab";
 import VideoTab from "@/components/module/Setting/VideoTab/VideoTab";
 import ManualTab from "@/components/module/Setting/ManualTab/ManualTab";
 import ThemeTab from "@/components/module/Setting/ThemeTab/ThemeTab";
@@ -14,9 +12,11 @@ import LogTab from "@/components/module/Setting/LogTab/LogTab";
 import DataBackupTab from "@/components/module/Setting/DataBackupTab/DataBackupTab";
 import { MyContext } from "@/context/context";
 import LeftSection from "@/components/module/LeftSection/LeftSection";
+import ImageTab from "@/components/module/Setting/ImageTab/ImageTab";
+
 export default function Settings() {
   const [dropdownOpen, setDropdownOpen] = useState(true);
-  const [tab, setTab] = useState(3);
+  const [tab, setTab] = useState(2);
   const { selectTab } = useContext(MyContext);
 
   const handleSubDropdownToggle = () => {
@@ -24,9 +24,8 @@ export default function Settings() {
   };
 
   const tabs = [
-    { title: "پایه", component: <BasicTab /> },
     { title: "ویدئو", component: <VideoTab /> },
-    { title: "عکس", component: <ImageTab /> },
+    { title: "عکس", component: <ImageTab/> },
     { title: "دستی", component: <ManualTab /> },
     { title: "تم", component: <ThemeTab /> },
     { title: "لاگ", component: <LogTab /> },
@@ -70,7 +69,7 @@ export default function Settings() {
                 </ListItemButton>
                 <Collapse in={dropdownOpen} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
-                    {tabs.slice(0, 4).map((tabItem, index) => (
+                    {tabs.slice(0, 3).map((tabItem, index) => (
                       <li
                         key={index}
                         className={`${styles.record_item} ${
@@ -83,13 +82,13 @@ export default function Settings() {
                     ))}
                   </List>
                 </Collapse>
-                {tabs.slice(4).map((tabItem, index) => (
+                {tabs.slice(3).map((tabItem, index) => (
                   <ListItemButton
                     key={index + 4}
                     className={`${styles.item_setting} ${styles.hover_class} ${
-                      tab === index + 5 && styles.active_Tab
+                      tab === index + 4 && styles.active_Tab
                     }`}
-                    onClick={() => setTab(index + 5)}
+                    onClick={() => setTab(index + 4)}
                   >
                     {tabItem.title}
                   </ListItemButton>

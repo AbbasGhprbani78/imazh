@@ -25,7 +25,7 @@ export default function ToggleInput({ select1, select2, title }) {
       }),
       "&.Mui-checked": {
         transform: "translateX(30px)",
-        color: "#fff",
+        color: "var(--color-5)",
         "& + .MuiSwitch-track": {
           opacity: 1,
           backgroundColor: "#53a7f3",
@@ -54,17 +54,19 @@ export default function ToggleInput({ select1, select2, title }) {
       {title && <span className={styles.title}>{title}</span>}
       <Stack
         direction="row"
-        sx={{ alignItems: "center", display: "flex"}}
+        sx={{ alignItems: "center", display: "flex" }}
         spacing={0}
       >
         <Typography
-          sx={{ color: "#fff", padding: "0 0 0 10px", fontFamily: "vazir" }}
+          sx={{ padding: "0 0 0 10px" }}
+          className={styles.item_toggle}
         >
           {select1}
         </Typography>
         <AntSwitch defaultChecked inputProps={{ "aria-label": "ant design" }} />
         <Typography
-          sx={{ color: "#fff", padding: "0 10px 0 0", fontFamily: "vazir" }}
+          className={styles.item_toggle}
+          sx={{ padding: "0 10px 0 0" }}
         >
           {select2}
         </Typography>

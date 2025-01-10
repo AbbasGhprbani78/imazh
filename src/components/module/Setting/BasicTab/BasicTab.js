@@ -30,7 +30,7 @@ export default function BasicTab() {
             type={"text"}
           />
         </div>
-        <ToggleInput select1={"کابل"} select2={"wifi"} title={"نوع اتصال"} />
+        {/* <ToggleInput select1={"کابل"} select2={"wifi"} title={"نوع اتصال"} /> */}
       </div>
       <div className="wrap-buttom">
         <Button1 text={"ذخیره"} Onclick={""} icon={DoneIcon} />

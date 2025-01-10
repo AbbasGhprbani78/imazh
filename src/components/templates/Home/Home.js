@@ -31,6 +31,9 @@ import SouthIcon from "@mui/icons-material/South";
 import SliderImages from "@/components/module/SliderImages/SliderImages";
 import Preview from "@/components/module/Preview/Preview";
 import CloseIcon from "@mui/icons-material/Close";
+import { convertToFarsiDigits, toEnglishNumber } from "@/utils/helper";
+import dynamic from "next/dynamic";
+const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
 export default function Home() {
   const isDesktop = useMediaQuery("(min-width:900px)");
@@ -668,7 +671,7 @@ export default function Home() {
           );
           if (response.status === 200) {
             setAllImagesArchive(response?.data?.archives?.[0]?.photos);
-            console.log(response?.data?.archives?.[0]?.photos);
+            console.log(response?.data);
           }
         } catch (error) {
           console.log(error);
@@ -677,6 +680,10 @@ export default function Home() {
       getArchiveImage();
     }
   }, [customerInfo.archiveId]);
+
+  const imageUrl = allImagesArchive[0]?.url;
+
+  const isImage = /\.(jpeg|jpg|webp|png|data:image)/i.test(imageUrl);
 
   return (
     <div className={styles.wrapper}>
@@ -774,12 +781,28 @@ export default function Home() {
               {allImagesArchive && allImagesArchive.length > 0 && (
                 <div className={styles.image_archive_wrapper}>
                   <div className={styles.image_archive_box}>
-                    <Image
-                      src={allImagesArchive[0].url}
-                      layout="fill"
-                      alt="image archive"
-                      className={styles.image_archive}
-                    />
+                    {isImage ? (
+                      <Image
+                        src={allImagesArchive[0]?.url}
+                        layout="fill"
+                        alt="image archive"
+                        className={styles.image_archive}
+                      />
+                    ) : (
+                      <ReactPlayer
+                        url={allImagesArchive[0].url}
+                        playing={false}
+                        muted={false}
+                        playsinline
+                        preload="metadata"
+                        className={styles.image_archive}
+                        controls={true}
+                        width="100%"
+                        height="100%"
+                        
+                      />
+                    )}
+
                     <span
                       className={styles.text_view}
                       onClick={showAllImagesArchive}
@@ -798,13 +821,13 @@ export default function Home() {
                 toggleExpand={toggleExpand}
                 isExpanded={isExpanded}
               >
-                {/* <Webcam
+                <Webcam
                   setting={setting}
                   data={data}
                   setPhotos={setPhotos}
                   socket={socket}
                   setSocket={setSocket}
-                /> */}
+                />
 
                 <div className={styles.icons_bottom_wrapper}>
                   <ReplayOutlinedIcon
@@ -876,11 +899,15 @@ export default function Home() {
                       key={index}
                     >
                       <div className={styles.media_box}>
-                        <video
-                          src={file}
-                          controls
+                        <ReactPlayer
+                          url={file}
+                          playing={false}
+                          muted={false}
+                          playsinline
+                          preload="metadata"
                           className={styles.media_preview}
-                        ></video>
+                          controls={true}
+                        />
                       </div>
                     </Grid>
                   );
@@ -940,10 +967,15 @@ export default function Home() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <Input
                     label="شماره تلفن"
-                    value={customerData.phonenumber}
-                    onChange={changeHandler}
+                    value={convertToFarsiDigits(customerData.phonenumber || "")}
+                    onChange={(e) => {
+                      const englishValue = toEnglishNumber(e.target.value);
+                      changeHandler({
+                        target: { name: "phonenumber", value: englishValue },
+                      });
+                    }}
                     name={"phonenumber"}
-                    type={"number"}
+                    type={"text"}
                   />
                   {errors.phonenumber && (
                     <span className="error">{errors.phonenumber}</span>

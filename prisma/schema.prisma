@@ -98,3 +98,29 @@ model Color {
   updatedAt DateTime @updatedAt
   users     User[]   // رابطه معکوس به مدل User
 }
+
+
+
+model SettingVideo {
+  id         Int      @id @default(1) 
+  resolution String  
+  videoDelay Int     
+  format     String 
+  createdAt  DateTime @default(now()) 
+  updatedAt  DateTime @updatedAt 
+}
+
+
+model SettingPhoto {
+  id         Int      @id @default(1)  
+  format     String 
+  createdAt  DateTime @default(now()) 
+  updatedAt  DateTime @updatedAt 
+}
+
+
+
+
+
+
+

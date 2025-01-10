@@ -14,7 +14,7 @@
     width: 45px;
     border-radius: 50%;
     overflow: hidden;
-    background-color: #fff;
+    background-color: var(--color-5);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -36,7 +36,7 @@
     width: 45px;
     border-radius: 8px;
     overflow: hidden;
-    background-color: #fff;
+    background-color: var(--color-5);
     cursor: pointer;
     display: flex;
     align-items: center;

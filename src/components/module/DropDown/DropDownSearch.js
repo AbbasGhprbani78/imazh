@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
 import styles from "./DropDown.module.css";
 import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
@@ -146,29 +145,32 @@ export default function DropDownSearch({
             </div>
           )}
           {filteredItems?.length > 0 ? (
-            filteredItems.map((item) => (
-              <div
-                key={item.id}
-                className={styles.dropdownItem}
-                onClick={() => {
-                  handleSelectItem(item);
-                  if (setIsNewOperation) {
-                    setIsNewOperation(false);
-                  }
-                }}
-              >
-                {name === "archiveId"
-                  ? convertToPersianDate(item[getOptionLabelProp])
-                  : item[getOptionLabelProp]}
+            filteredItems
+              .slice()
+              .reverse()
+              .map((item) => (
+                <div
+                  key={item.id}
+                  className={styles.dropdownItem}
+                  onClick={() => {
+                    handleSelectItem(item);
+                    if (setIsNewOperation) {
+                      setIsNewOperation(false);
+                    }
+                  }}
+                >
+                  {name === "archiveId"
+                    ? convertToPersianDate(item[getOptionLabelProp])
+                    : item[getOptionLabelProp]}
 
-                {isEdit && (
-                  <ModeEditOutlinedIcon
-                    className={styles.icon_edit}
-                    onClick={() => openEditModal(item.id)}
-                  />
-                )}
-              </div>
-            ))
+                  {isEdit && (
+                    <ModeEditOutlinedIcon
+                      className={styles.icon_edit}
+                      onClick={() => openEditModal(item.id)}
+                    />
+                  )}
+                </div>
+              ))
           ) : (
             <div className={styles.noOptions}>گزینه‌ای وجود ندارد</div>
           )}

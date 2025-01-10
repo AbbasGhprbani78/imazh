@@ -27,7 +27,7 @@ export default function CustomerArchive({ id }) {
   const [isVisible, setIsVisible] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [archiveDetails, setArchiveDetails] = useState("");
-  const [displayType, setDisplayType] = useState(1);
+  const [displayType, setDisplayType] = useState("کنارهم");
   const [isHide, setIsHide] = useState(false);
   const [filters, setFilters] = useState({
     contrast: 100,
@@ -162,11 +162,12 @@ export default function CustomerArchive({ id }) {
                     <div style={{ marginBottom: "2rem" }}>
                       <NormalDropDown
                         items={[
-                          { id: 1, name: "کنارهم" },
-                          { id: 2, name: "روی هم" },
-                          { id: 3, name: "قبل عمل" },
-                          { id: 4, name: "بعد عمل" },
+                          { id: "کنارهم", name: "کنارهم" },
+                          { id: "روی هم", name: "روی هم" },
+                          { id: "قبل عمل", name: "قبل عمل" },
+                          { id: "بعد عمل", name: "بعد عمل" },
                         ]}
+                        name={""}
                         onChange={handleChangeDisplay}
                         value={displayType}
                         title="نحوه نمایش عکس‌ها"
@@ -182,7 +183,7 @@ export default function CustomerArchive({ id }) {
             </Grid>
             <Grid size={{ xs: 12, md: 8, lg: 9 }} className={styles.left_sec}>
               <Grid className={styles.wrap_images} container spacing={2.5}>
-                {displayType == 1 ? (
+                {displayType == "کنارهم" ? (
                   <>
                     <Grid
                       size={{ xs: 12, lg: 6 }}
@@ -300,7 +301,7 @@ export default function CustomerArchive({ id }) {
                       </div>
                     </Grid>
                   </>
-                ) : displayType == 2 ? (
+                ) : displayType == "روی هم" ? (
                   <>
                     <Preview
                       toggleExpand={() => toggleExpand(3)}
@@ -316,7 +317,7 @@ export default function CustomerArchive({ id }) {
                       />
                     </Preview>
                   </>
-                ) : displayType == 3 ? (
+                ) : displayType == "قبل عمل" ? (
                   <>
                     <Grid
                       size={{ xs: 12 }}

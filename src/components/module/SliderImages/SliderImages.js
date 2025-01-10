@@ -6,11 +6,16 @@ import "swiper/css/navigation";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 export default function SliderImages({ heightStyle, imagesItem }) {
   const swiperRef = useRef(null);
 
   const handleNextSlide = () => swiperRef.current?.swiper.slideNext();
   const handlePrevSlide = () => swiperRef.current?.swiper.slidePrev();
+
+
+
   return (
     <>
       <div className={styles.slider_container}>
@@ -23,17 +28,38 @@ export default function SliderImages({ heightStyle, imagesItem }) {
         >
           {imagesItem &&
             imagesItem.length > 0 &&
-            imagesItem.map((item) => (
-              <SwiperSlide className={styles.image_item_wrapper} key={item.id}>
-                <Image
-                  width={300}
-                  height={300}
-                  className={`${styles.image_item} `}
-                  src={item.url}
-                  alt="image_operation"
-                />
-              </SwiperSlide>
-            ))}
+            imagesItem.map((item) => {
+              const isImage = /\.(jpeg|jpg|webp|png|data:image)/i.test(item.url);
+
+              return (
+                <SwiperSlide
+                  className={styles.image_item_wrapper}
+                  key={item.id}
+                >
+                  {isImage ? (
+                    <Image
+                      width={300}
+                      height={300}
+                      className={`${styles.image_item} `}
+                      src={item.url}
+                      alt="image_operation"
+                    />
+                  ) : (
+                    <ReactPlayer
+                      url={item.url} 
+                      playing={false}
+                      muted={false}
+                      playsinline
+                      preload="metadata"
+                      className={styles.image_item}
+                      controls={true}
+                      width="100%"
+                      height="100%"
+                    />
+                  )}
+                </SwiperSlide>
+              );
+            })}
         </Swiper>
 
         <div className={styles.custom_buttons}>

@@ -30,10 +30,21 @@
     --color-2: #2a2a2a;
     --color-3: #292d32;
     --color-4: #53a7f3;
-    --color-5: #d9d9d9;
+    --color-5: #fff;
     --color-6: #5796e3;
     --color-7: #667085;
     --color-8: #535353;
+    --color-9: #D32F2F;
+    --color-10: #424242;
+    --color-11: #aaa;
+    --color-12: #5d5e5f;
+    --color-13: #9f9f9f;
+    --color-14: #303030;
+    --color-15: #000;
+    --color-16: #d9d9d9;
+    --color-17: #333;
+    --color-18: #888;
+    --color-19: #555;
     --radius-1: 8px;
 }
 
@@ -42,7 +53,7 @@ body {
     direction: rtl;
     font-family: 'vazir';
     font-weight: 400;
-    background-color: #1b1b1b;
+    background-color: var(--color-1);
 }
 
 
@@ -54,20 +65,20 @@ body {
 .title {
     font-weight: 600;
     font-size: 1rem;
-    color: #fff;
+    color: var(--color-5);
 }
 
 
 .error {
     display: inline-block;
-    color: #D32F2F;
+    color: var(--color-9);
     font-size: .85rem;
     margin-top: 5px;
     width: 100%
 }
 
 .list-offcanvas a.active {
-    background-color: #535353;
+    background-color: var(--color-8);
 }
 
 .no-scrollbar {

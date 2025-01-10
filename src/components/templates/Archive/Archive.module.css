@@ -24,7 +24,7 @@
 }
 
 .text_model {
-    color: #fff;
+    color: var(--color-5);
 }
 
 

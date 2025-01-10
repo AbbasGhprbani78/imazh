@@ -3,14 +3,22 @@ import Button from "@mui/material/Button";
 import styles from "./Button.module.css";
 
 const CustomButton = styled(Button)(() => ({
-  color: "#000",
+  color: "var(--color-5)", 
   fontSize: "1rem",
-  borderRadius: "15px",
+  borderRadius: "15px", 
   fontFamily: "vazir",
   padding: "8px 0",
   minWidth: "42px",
   minHeight: "40px",
-  background: "#53a7f3",
+  background: "var(--color-4)", 
+  "&:hover": {
+    background: "var(--color-6)", 
+  },
+  "&:disabled": {
+    background: "var(--color-8)", 
+    color: "var(--color-7)",
+    cursor: "not-allowed",
+  },
 }));
 
 export default function Button2({ icon: Icon, onClick }) {

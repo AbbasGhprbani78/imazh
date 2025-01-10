@@ -39,7 +39,7 @@
     align-items: center;
     justify-content: center;
     padding: 0 20px;
-    color: #fff;
+    color: var(--color-5);
     font-size: 14px;
     height: 57px;
     min-width: 121px;
@@ -62,8 +62,8 @@
 
 .list_item.active {
     background-color: var(--color-1);
-    border-left: 1px solid #535353;
-    border-right: 1px solid #535353;
+    border-left: 1px solid var(--color-8);
+    border-right: 1px solid var(--color-8);
 }
 
 .Icon_header {
@@ -101,22 +101,22 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    color: #fff;
+    color: var(--color-5);
     padding: 10px 15px;
     cursor: pointer;
     transition: all .3s ease;
 }
 
 .useraction_item:hover {
-    background-color: #535353;
+    background-color: var(--color-8);
 }
 
 .useraction_item:nth-child(1) {
-    border-bottom: 1px solid #535353;
+    border-bottom: 1px solid var(--color-8);
 }
 
 .useraction_item:nth-child(2) {
-    border-bottom: 1px solid #535353;
+    border-bottom: 1px solid var(--color-8);
 }
 
 .icon_action {}
@@ -124,7 +124,7 @@
 .action_text_user {}
 
 .text_model {
-    color: #fff;
+    color: var(--color-5);
 }
 
 .wrap_btn_actions {
@@ -164,7 +164,7 @@
 
     .Icon_header {
         display: block !important;
-        color: #fff;
+        color: var(--color-5);
         cursor: pointer;
     }
 }

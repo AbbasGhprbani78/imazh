@@ -32,3 +32,15 @@
     left: 50%;
     transform: translate(-50%);
 }
+
+
+.table_item {
+    background-color: var(--color-2) !important;
+    color: var(--color-5) !important;
+    font-family: "vazir" !important;
+}
+
+.cell_item {
+    color: var(--color-5) !important;
+    font-family: "vazir" !important;
+}

@@ -1,11 +1,11 @@
 .wrap {
     position: relative;
-    border: 1px solid #fff;
+    border: 1px solid var(--color-5);
     border-radius: 8px;
     padding: 0 15px;
     height: 53.6px;
     line-height: 53.6px;
-    color: #fff;
+    color: var(--color-5);
 }
 
 

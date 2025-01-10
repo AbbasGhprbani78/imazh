@@ -5,8 +5,8 @@
     height: 38px;
     padding: 0 15px;
     border-radius: 50px;
-    background-color: #5d5e5f;
-    color: #9f9f9f;
+    background-color: var(--color-12);
+    color: var(--color-13);
     width: 380px;
     max-width: 380px;
     margin-top: 1rem;
@@ -16,7 +16,7 @@
     background-color: transparent;
     width: 100%;
     font-size: .9rem;
-    color: #fff;
+    color: var(--color-5);
     border: none;
     outline: none;
     font-family: 'vazir';
@@ -24,7 +24,7 @@
 
 .input_search::placeholder {
     font-size: .9rem;
-    color: #9f9f9f;
+    color: var(--color-13);
     font-family: 'vazir';
 }
 

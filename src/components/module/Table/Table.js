@@ -32,10 +32,7 @@ export default function TableUser({
 
   return (
     <div className={styles.table_container}>
-      <TableContainer
-        className={styles.table_content}
-       
-      >
+      <TableContainer className={styles.table_content}>
         <Table
           stickyHeader
           sx={{
@@ -44,94 +41,31 @@ export default function TableUser({
         >
           <TableHead sx={{ zIndex: "12", position: "relative" }}>
             <TableRow>
-              <TableCell
-                align="center"
-                sx={{
-                  background: "#2a2a2a",
-                  color: "#fff",
-                  fontFamily: "vazir",
-                }}
-              >
+              <TableCell align="center" className={styles.table_item}>
                 نام بیمار
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{
-                  background: "#2a2a2a",
-                  color: "#fff",
-                  fontFamily: "vazir",
-                }}
-              >
+              <TableCell align="center" className={styles.table_item}>
                 شماره پرونده
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{
-                  background: "#2a2a2a",
-                  color: "#fff",
-                  fontFamily: "vazir",
-                }}
-              >
+              <TableCell align="center" className={styles.table_item}>
                 کد ملی
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{
-                  background: "#2a2a2a",
-                  color: "#fff",
-                  fontFamily: "vazir",
-                }}
-              >
+              <TableCell align="center" className={styles.table_item}>
                 جراحی
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{
-                  background: "#2a2a2a",
-                  color: "#fff",
-                  fontFamily: "vazir",
-                }}
-              >
+              <TableCell align="center" className={styles.table_item}>
                 حالت ضبط
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{
-                  background: "#2a2a2a",
-                  color: "#fff",
-                  fontFamily: "vazir",
-                }}
-              >
+              <TableCell align="center" className={styles.table_item}>
                 شماره تماس
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{
-                  background: "#2a2a2a",
-                  color: "#fff",
-                  fontFamily: "vazir",
-                }}
-              >
+              <TableCell align="center" className={styles.table_item}>
                 سن
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{
-                  background: "#2a2a2a",
-                  color: "#fff",
-                  fontFamily: "vazir",
-                }}
-              >
+              <TableCell align="center" className={styles.table_item}>
                 جنسیت
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{
-                  background: "#2a2a2a",
-                  color: "#fff",
-                  fontFamily: "vazir",
-                }}
-              >
+              <TableCell align="center" className={styles.table_item}>
                 عملیات
               </TableCell>
             </TableRow>
@@ -140,54 +74,30 @@ export default function TableUser({
             {archives?.length > 0 &&
               archives.map((row, index) => (
                 <TableRow key={index}>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#fff", fontFamily: "vazir" }}
-                  >
+                  <TableCell align="center" className={styles.cell_item}>
                     {row?.customer?.fullname}
                   </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#fff", fontFamily: "vazir" }}
-                  >
+                  <TableCell align="center" className={styles.cell_item}>
                     {convertToFarsiDigits(row?.customer?.filenumber)}
                   </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#fff", fontFamily: "vazir" }}
-                  >
+                  <TableCell align="center" className={styles.cell_item}>
                     {convertToFarsiDigits(row?.customer?.nationalcode)}
                   </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#fff", fontFamily: "vazir" }}
-                  >
+                  <TableCell align="center" className={styles.cell_item}>
                     {row?.operation?.operation}
                   </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#fff", fontFamily: "vazir" }}
-                  >
+                  <TableCell align="center" className={styles.cell_item}>
                     {row?.setting?.name}
                   </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#fff", fontFamily: "vazir" }}
-                  >
+                  <TableCell align="center" className={styles.cell_item}>
                     {convertToFarsiDigits(row?.customer?.phonenumber)}
                   </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#fff", fontFamily: "vazir" }}
-                  >
+                  <TableCell align="center" className={styles.cell_item}>
                     {convertToFarsiDigits(
                       calculateAge(row?.customer?.birthday)
                     )}
                   </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ color: "#fff", fontFamily: "vazir" }}
-                  >
+                  <TableCell align="center" className={styles.cell_item}>
                     {row?.customer?.gender === "men" ? "مرد" : "زن"}
                   </TableCell>
                   <TableCell
@@ -229,10 +139,10 @@ export default function TableUser({
           justifyContent: "center",
           padding: "10px 0",
           "& .MuiPaginationItem-root": {
-            color: "#fff",
+            color: "var(--color-5)",
             "&.Mui-selected": {
               backgroundColor: "#2a2a2a",
-              color: "#fff",
+              color: "var(--color-5)",
             },
           },
         }}
