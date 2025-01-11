@@ -16,7 +16,7 @@ import ImageTab from "@/components/module/Setting/ImageTab/ImageTab";
 
 export default function Settings() {
   const [dropdownOpen, setDropdownOpen] = useState(true);
-  const [tab, setTab] = useState(2);
+  const [tab, setTab] = useState(1);
   const { selectTab } = useContext(MyContext);
 
   const handleSubDropdownToggle = () => {

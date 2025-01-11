@@ -1,5 +1,5 @@
-
 import { PrismaClient } from "@prisma/client";
+import { middleware } from "../../middleware";
 
 const prisma = new PrismaClient();
 
@@ -73,20 +73,21 @@ export async function GET(req, { params }) {
 
     return new Response(JSON.stringify(customer), { status: 200 });
   } catch (error) {
-    console.error("Error retrieving customer:", error);
-    return new Response(JSON.stringify({ error: "مشکلی سمت سرور پیش آمده" }), {
+    console.error(error);
+    return new Response(JSON.stringify({ message: "Internal Server Error" }), {
       status: 500,
     });
   }
 }
 
 export async function PUT(req, context) {
+  const logResponse = await middleware(req);
   try {
     const { params } = context;
     const { id } = await params;
 
     if (!id) {
-      return new Response(JSON.stringify({ error: "ایدی مشتری لازم است" }), {
+      return new Response(JSON.stringify({ error: "ایدی بیمار لازم است" }), {
         status: 400,
       });
     }
@@ -103,16 +104,39 @@ export async function PUT(req, context) {
       data: updatedData,
     });
 
-    return new Response(JSON.stringify(updatedCustomer), { status: 200 });
+    const response = new Response(
+      JSON.stringify({
+        message: "اطلاعات بیمار با موفقیت به‌روزرسانی شد",
+        data: updatedCustomer,
+      }),
+      { status: 200 }
+    );
+
+    if (logResponse) await logResponse(response);
+
+    return response;
   } catch (error) {
-    console.error("Error updating customer:", error);
-    return new Response(JSON.stringify({ error: "مشکلی سمت سرور پیش آمده" }), {
-      status: 500,
-    });
+    const errorResponse = new Response(
+      JSON.stringify({ message: "مشکلی سمت سرور رخ داده" }),
+      {
+        status: 500,
+      }
+    );
+
+    if (logResponse) {
+      const errorDetails = {
+        message: error.message || "مشخصات خطا نامشخص",
+        stack: error.stack || "هیچ اطلاعاتی از پشته موجود نیست",
+      };
+      await logResponse(errorResponse, errorDetails);
+    }
+
+    return errorResponse;
   }
 }
 
 export async function DELETE(req, { params }) {
+  const logResponse = await middleware(req);
   try {
     const { id } = params;
     if (!id || isNaN(Number(id))) {
@@ -126,21 +150,35 @@ export async function DELETE(req, { params }) {
       data: { isDelete: true },
     });
 
-   return new Response(
-     JSON.stringify({
-       message: "بیمار با موفقیت حذف گردید",
-       customer,
-     }),
-     { status: 200 }
-   );
-  } catch (error) {
-    console.error("Error processing GET request:", error.message);
-    return new Response(
+    const response = new Response(
       JSON.stringify({
-        message: "مشکلی سمت سرور پیش آمده",
-        error: error.message,
+        message: "بیمار با موفقیت حذف گردید",
+        customer,
       }),
-      { status: 500 }
+      { status: 200 }
+    )
+
+    if (logResponse) await logResponse(response);
+    return response;
+
+  } catch (error) {
+    console.error(error);
+
+    const errorResponse = new Response(
+      JSON.stringify({ message: "مشکلی سمت سرور رخ داده" }),
+      {
+        status: 500,
+      }
     );
+
+    if (logResponse) {
+      const errorDetails = {
+        message: error.message || "مشخصات خطا نامشخص",
+        stack: error.stack || "هیچ اطلاعاتی از پشته موجود نیست",
+      };
+      await logResponse(errorResponse, errorDetails);
+    }
+
+    return errorResponse;
   }
 }

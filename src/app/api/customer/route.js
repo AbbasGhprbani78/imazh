@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { middleware } from "../middleware";
 
 const prisma = new PrismaClient();
 
@@ -13,13 +14,14 @@ export async function GET(req) {
     return new Response(JSON.stringify(allCustomers), { status: 200 });
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ message: "مشکلی سمت سرور رخ داده" }), {
+    return new Response(JSON.stringify({ message: "Internal Server Error" }), {
       status: 500,
     });
   }
 }
 
 export async function POST(req) {
+  const logResponse = await middleware(req);
   try {
     const body = await req.json();
     const {
@@ -87,7 +89,6 @@ export async function POST(req) {
       );
     }
 
-    // Check for duplicate entries
     const existingCustomer = await prisma.customer.findFirst({
       where: {
         OR: [{ nationalcode }, { phonenumber }, { filenumber }, { email }],
@@ -121,7 +122,6 @@ export async function POST(req) {
       }
     }
 
-    // Create new customer
     const customer = await prisma.customer.create({
       data: {
         fullname,
@@ -135,17 +135,34 @@ export async function POST(req) {
       },
     });
 
-    return new Response(
+    const response = new Response(
       JSON.stringify({
-        message: "مشتری با موفقیت ثبت شد",
+        message: "بیمار جدید با موفقیت ثبت شد",
         data: customer,
       }),
       { status: 201 }
     );
+    if (logResponse) await logResponse(response);
+
+    return response;
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ message: "مشکلی سمت سرور رخ داده" }), {
-      status: 500,
-    });
+
+    const errorResponse = new Response(
+      JSON.stringify({ message: "مشکلی سمت سرور رخ داده" }),
+      {
+        status: 500,
+      }
+    );
+
+    if (logResponse) {
+      const errorDetails = {
+        message: error.message || "مشخصات خطا نامشخص",
+        stack: error.stack || "هیچ اطلاعاتی از پشته موجود نیست",
+      };
+      await logResponse(errorResponse, errorDetails);
+    }
+
+    return errorResponse;
   }
 }

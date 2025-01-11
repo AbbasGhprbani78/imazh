@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { middleware } from "../middleware";
 const prisma = new PrismaClient();
 
 export async function GET(req) {
@@ -15,6 +16,7 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  const logResponse = await middleware(req);
   try {
     const body = await req.json();
 
@@ -26,12 +28,12 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-        if (!description) {
-          return new Response(
-            JSON.stringify({ message: "اسم تنظیمات نمی تواند خالی باشد" }),
-            { status: 400 }
-          );
-        }
+    if (!description) {
+      return new Response(
+        JSON.stringify({ message: "اسم تنظیمات نمی تواند خالی باشد" }),
+        { status: 400 }
+      );
+    }
 
     const newSetting = await prisma.setting.create({
       data: {
@@ -40,17 +42,31 @@ export async function POST(req) {
       },
     });
 
-    return new Response(
+    const response = new Response(
       JSON.stringify({
         message: "تنظیمات جدید با موفقیت اضافه شد",
         data: newSetting,
       }),
       { status: 201 }
     );
+    if (logResponse) await logResponse(response);
+    return response;
   } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ message: "مشکلی سمت سرور رخ داده" }), {
-      status: 500,
-    });
+    const errorResponse = new Response(
+      JSON.stringify({ message: "مشکلی سمت سرور رخ داده" }),
+      {
+        status: 500,
+      }
+    );
+
+    if (logResponse) {
+      const errorDetails = {
+        message: error.message || "مشخصات خطا نامشخص",
+        stack: error.stack || "هیچ اطلاعاتی از پشته موجود نیست",
+      };
+      await logResponse(errorResponse, errorDetails);
+    }
+
+    return errorResponse;
   }
 }

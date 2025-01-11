@@ -41,6 +41,7 @@ export default function Header() {
     img: "",
     username: "",
   });
+
   const [isEdit, setIsEdit] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastInfo, setToastInfo] = useState({
@@ -80,7 +81,6 @@ export default function Header() {
       if (response.status === 200) {
         setMe(response.data);
         profile.username = response.data.username;
-        profile.img = response.data.img;
       }
     } catch (error) {
       console.log(error);
@@ -327,13 +327,7 @@ export default function Header() {
           <>
             <div className={styles.wrap_image_profile}>
               <Image
-                src={
-                  imageProfile
-                    ? imageProfile
-                    : profile?.img
-                    ? profile.img
-                    : "/images/5.svg"
-                }
+                src={me?.img ? me.img : "/images/5.svg"}
                 width={90}
                 height={90}
                 alt="profile"

@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-
+import { middleware } from "../middleware";
 const prisma = new PrismaClient();
 
 export async function GET(req) {
@@ -33,6 +33,7 @@ export async function GET(req) {
 }
 
 export async function PUT(req) {
+  const logResponse = await middleware(req);
   try {
     const body = await req.json();
     const { format } = body;
@@ -44,22 +45,35 @@ export async function PUT(req) {
       },
     });
 
-    return new Response(
+    const response = new Response(
       JSON.stringify({
-        success: "تنظیمات با موفقیت تغییر کرد",
+        message: "تنظیمات عکس با موفقیت تغییر کرد",
         data: updatedSettingPhoto,
       }),
       {
         status: 200,
       }
     );
+    
+    if (logResponse) await logResponse(response);
+
+    return response;
   } catch (error) {
-    console.error("Error updating SettingPhoto:", error);
-    return new Response(
-      JSON.stringify({ success: false, message: "خطا در به‌روزرسانی تنظیمات" }),
+    const errorResponse = new Response(
+      JSON.stringify({ message: "مشکلی سمت سرور رخ داده" }),
       {
         status: 500,
       }
     );
+
+    if (logResponse) {
+      const errorDetails = {
+        message: error.message || "مشخصات خطا نامشخص",
+        stack: error.stack || "هیچ اطلاعاتی از پشته موجود نیست",
+      };
+      await logResponse(errorResponse, errorDetails);
+    }
+
+    return errorResponse;
   }
 }

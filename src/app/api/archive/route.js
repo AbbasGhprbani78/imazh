@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import { promises as fs } from "fs";
 import path from "path";
+import { middleware } from "../middleware";
 
 export async function GET(req) {
   const { searchParams } = req.nextUrl;
@@ -50,6 +51,7 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  const logResponse = await middleware(req);
   try {
     const formData = await req.formData();
     const operationId = formData.get("operationId");
@@ -58,10 +60,17 @@ export async function POST(req) {
     const photos = formData.getAll("photos");
 
     if (!operationId || !settingId || !customerId) {
-      return new Response(
+      const errorResponse = new Response(
         JSON.stringify({ message: "لطفاً تمام فیلدهای الزامی را وارد کنید." }),
         { status: 400 }
       );
+
+      if (logResponse)
+        await logResponse(errorResponse, {
+          message: "لطفاً تمام فیلدهای الزامی را وارد کنید.",
+        });
+
+      return errorResponse;
     }
 
     const uploadsDir = path.join(process.cwd(), "public", "uploads");
@@ -97,17 +106,32 @@ export async function POST(req) {
       },
     });
 
-    return new Response(JSON.stringify(newArchive), { status: 201 });
+    const response = new Response(
+      JSON.stringify({
+        message: `آرشیو جدید با موفقیت اضافه شد: ${newArchive.id}`,
+        archive: newArchive,
+      }),
+      { status: 201 }
+    );
+
+    if (logResponse) await logResponse(response);
+
+    return response;
+    
   } catch (error) {
-    console.error("Error processing request:", error.message, error.stack);
-    return new Response(
+    console.error("Error processing POST request:", error.message, error.stack);
+
+    const errorResponse = new Response(
       JSON.stringify({
         message: "مشکلی سمت سرور پیش آمده",
         error: error.message,
       }),
       { status: 500 }
     );
+
+    if (logResponse)
+      await logResponse(errorResponse, { message: "مشکلی سمت سرور پیش آمده" });
+
+    return errorResponse;
   }
 }
-
-

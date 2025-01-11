@@ -1,7 +1,9 @@
 import { PrismaClient } from "@prisma/client";
+import { middleware } from "../../middleware";
 const prisma = new PrismaClient();
 
 export async function DELETE(req, { params }) {
+  const logResponse = await middleware(req);
   try {
     const { id } = params;
     if (!id || isNaN(Number(id))) {
@@ -15,22 +17,33 @@ export async function DELETE(req, { params }) {
       data: { isDelete: true },
     });
 
-    return new Response(
+    const response = new Response(
       JSON.stringify({
         message: "آرشیو با موفقیت حذف گردید",
         archive,
       }),
       { status: 200 }
     );
+    if (logResponse) await logResponse(response);
+
+    return response;
   } catch (error) {
-    console.error("Error processing delete request:", error.message);
-    return new Response(
-      JSON.stringify({
-        message: "مشکلی سمت سرور پیش آمده",
-        error: error.message,
-      }),
-      { status: 500 }
+    const errorResponse = new Response(
+      JSON.stringify({ message: "مشکلی سمت سرور رخ داده" }),
+      {
+        status: 500,
+      }
     );
+
+    if (logResponse) {
+      const errorDetails = {
+        message: error.message || "مشخصات خطا نامشخص",
+        stack: error.stack || "هیچ اطلاعاتی از پشته موجود نیست",
+      };
+      await logResponse(errorResponse, errorDetails);
+    }
+
+    return errorResponse;
   }
 }
 

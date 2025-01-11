@@ -59,6 +59,12 @@ export default function Input({ label, value, name, onChange, type, disable }) {
     key: "muirtl",
     stylisPlugins: [prefixer, rtlPlugin],
   });
+
+   const handleInput = (event) => {
+     if (type === "number" && event.target.value < 0) {
+       event.target.value = "";
+     }
+   };
   return (
     <CacheProvider value={cacheRtl}>
       <StyledTextField
@@ -68,6 +74,7 @@ export default function Input({ label, value, name, onChange, type, disable }) {
         variant="outlined"
         value={value}
         onChange={onChange}
+        onInput={handleInput}
         className={styles.input}
         autoComplete="off"
         type={type}

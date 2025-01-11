@@ -10,6 +10,7 @@
     justify-content: center;
     background-color: transparent;
     transition: border-color 0.3s ease;
+    color: var(--color-5) !important;
 }
 
 .wrapInputData.focused {
@@ -22,7 +23,7 @@
     right: 16px;
     transform: translateY(-50%);
     font-size: 0.9rem;
-    color: var(--color-5);
+    color: var(--color-5) !important;
     pointer-events: none;
     transition: all 0.3s ease;
 }

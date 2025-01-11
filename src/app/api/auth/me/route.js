@@ -13,8 +13,8 @@ const prisma = new PrismaClient();
 
 export async function GET(req) {
   try {
-      const cookieStore =await cookies(); 
-      const token = cookieStore.get("token");
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token");
     if (!token) {
       return new Response(
         JSON.stringify({ data: null, message: "دسترسی مجاز نیست" }),
@@ -36,7 +36,7 @@ export async function GET(req) {
         id: true,
         username: true,
         role: true,
-        img: true, 
+        img: true,
       },
     });
 
@@ -69,7 +69,6 @@ export async function PUT(req) {
         { status: 401 }
       );
 
-     
       if (logResponse)
         await logResponse(errorResponse, { message: "دسترسی مجاز نیست" });
 
@@ -92,6 +91,7 @@ export async function PUT(req) {
     const formData = await req.formData();
     const username = formData.get("username");
     const img = formData.get("img");
+    console.log("img =>", img);
 
     if (username && typeof username !== "string") {
       const errorResponse = new Response(
@@ -165,8 +165,7 @@ export async function PUT(req) {
       { status: 500 }
     );
 
-    if (logResponse)
-      await logResponse(errorResponse, { message: "خطای سرور رخ داد" });
+    if (logResponse) await logResponse(errorResponse);
 
     return errorResponse;
   }

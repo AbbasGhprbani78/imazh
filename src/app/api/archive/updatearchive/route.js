@@ -2,8 +2,10 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import { promises as fs } from "fs";
 import path from "path";
+import { middleware } from "../../middleware"; 
 
 export async function POST(req) {
+  const logResponse = await middleware(req);
   try {
     const formData = await req.formData();
     const archiveId = formData.get("archiveId");
@@ -50,15 +52,32 @@ export async function POST(req) {
       },
     });
 
-    return new Response(JSON.stringify(updatedArchive), { status: 200 });
+    const response = new Response(
+      JSON.stringify({
+        message: `آرشیو جدید با موفقیت اضافه شد: ${updatedArchive.id}`,
+        archive: updatedArchive,
+      }),
+      {
+        status: 200,
+      }
+    );
+    if (logResponse) await logResponse(response);
+
+    return response;
   } catch (error) {
-    console.error("Error processing PUT request:", error.message, error.stack);
-    return new Response(
+    console.error("Error processing POST request:", error.message, error.stack);
+
+    const errorResponse = new Response(
       JSON.stringify({
         message: "مشکلی سمت سرور پیش آمده",
         error: error.message,
       }),
       { status: 500 }
     );
+
+    if (logResponse)
+      await logResponse(errorResponse, { message: "مشکلی سمت سرور پیش آمده" });
+
+    return errorResponse;
   }
 }

@@ -1,46 +1,5 @@
-// import connectToDB from "../../../../configs/db";
-// import OperationModel from "../../../../models/Operation";
-// export async function GET(req) {
-//   try {
-//     connectToDB();
-//     const allOperation = await OperationModel.find({}, "-__v");
-//     return Response.json( allOperation , { status: 200 });
-//   } catch (error) {
-//     console.error(error);
-//     return new Response(JSON.stringify({ message: "مشکلی سمت سرور رخ داده" }), {
-//       status: 500,
-//     });
-//   }
-// }
-
-// export async function POST(req) {
-//   try {
-//     connectToDB();
-//     const body = await req.json();
-//     const { operation } = body;
-//     if (!operation) {
-//       return Response.json(
-//         { message: "نام عملیات معتبر نمی‌باشد" },
-//         { status: 400 }
-//       );
-//     }
-//     const operationName = await OperationModel.create({
-//       operation,
-//     });
-
-//     return Response.json(
-//       { message: "عملیات جدید با موفقیت اضافه شد", data: operationName },
-//       { status: 201 }
-//     );
-//   } catch (error) {
-//     console.error(error);
-//     return new Response(JSON.stringify({ message: "مشکلی سمت سرور رخ داده" }), {
-//       status: 500,
-//     });
-//   }
-// }
-
 import { PrismaClient } from "@prisma/client";
+import { middleware } from "../middleware";
 const prisma = new PrismaClient();
 
 export async function GET(req) {
@@ -56,6 +15,7 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  const logResponse = await middleware(req);
   try {
     const body = await req.json();
     const { operation } = body;
@@ -74,13 +34,16 @@ export async function POST(req) {
         },
       });
 
-      return new Response(
+      const response = new Response(
         JSON.stringify({
           message: "عملیات جدید با موفقیت اضافه شد",
           data: newOperation,
         }),
         { status: 201 }
       );
+      if (logResponse) await logResponse(response);
+      return response;
+      
     } catch (error) {
       if (error.code === "P2002") {
         return new Response(
@@ -90,12 +53,24 @@ export async function POST(req) {
           { status: 400 }
         );
       }
-      throw error; 
+      throw error;
     }
   } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ message: "مشکلی سمت سرور رخ داده" }), {
-      status: 500,
-    });
+    const errorResponse = new Response(
+      JSON.stringify({ message: "مشکلی سمت سرور رخ داده" }),
+      {
+        status: 500,
+      }
+    );
+
+    if (logResponse) {
+      const errorDetails = {
+        message: error.message || "مشخصات خطا نامشخص",
+        stack: error.stack || "هیچ اطلاعاتی از پشته موجود نیست",
+      };
+      await logResponse(errorResponse, errorDetails);
+    }
+
+    return errorResponse;
   }
 }

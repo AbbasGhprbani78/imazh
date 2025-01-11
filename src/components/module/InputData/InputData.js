@@ -36,6 +36,7 @@ export default function InputData({ label, value, onChange, name }) {
           height: "100%",
           fontFamily: "vazir",
           textAlign: "center",
+          color:"var(--color-5)"
         }}
         containerStyle={{
           width: "100%",
