@@ -18,11 +18,14 @@ export async function GET() {
       });
     }
 
-    return new Response(JSON.stringify(SettingVideo), {status: 200});
+    return new Response(JSON.stringify(SettingVideo), {status: 200 });
   } catch (error) {
     console.error("Error retrieving settings:", error);
     return new Response(
-      JSON.stringify({ success: false, message: "خطا در دریافت تنظیمات" }),
+      JSON.stringify({
+        success: false,
+        message: "خطا در دریافت تنظیمات ویدیو",
+      }),
       {
         status: 500,
       }
@@ -46,7 +49,7 @@ export async function PUT(req) {
 
     return new Response(
       JSON.stringify({
-        success: "تنظیمات با موفقیت تغییر کرد",
+        success: "تنظیمات ویدیو با موفقیت تغییر کرد",
         data: updatedSettingVideo,
       }),
       {
@@ -56,7 +59,10 @@ export async function PUT(req) {
   } catch (error) {
     console.error("Error updating SettingVideos:", error);
     return new Response(
-      JSON.stringify({ success: false, message: "خطا در به‌روزرسانی تنظیمات" }),
+      JSON.stringify({
+        success: false,
+        message: " خطا در به‌روزرسانی تنظیمات ویدیو",
+      }),
       {
         status: 500,
       }

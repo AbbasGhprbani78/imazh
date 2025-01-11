@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET() {
+export async function GET(req) {
   try {
     let SettingPhoto = await prisma.SettingPhoto.findUnique({
       where: { id: 1 },
@@ -16,14 +16,18 @@ export async function GET() {
       });
     }
 
-    return new Response(JSON.stringify(SettingPhoto), { status: 200 });
+    return new Response(JSON.stringify(SettingPhoto), {
+      status: 200,
+    });
   } catch (error) {
     console.error("Error retrieving settings:", error);
+
     return new Response(
-      JSON.stringify({ success: false, message: "خطا در دریافت تنظیمات" }),
-      {
-        status: 500,
-      }
+      JSON.stringify({
+        success: false,
+        message: "خطا در دریافت تنظیمات عکس",
+      }),
+      { status: 500 }
     );
   }
 }
@@ -31,7 +35,7 @@ export async function GET() {
 export async function PUT(req) {
   try {
     const body = await req.json();
-    const {format } = body;
+    const { format } = body;
 
     const updatedSettingPhoto = await prisma.SettingPhoto.update({
       where: { id: 1 },

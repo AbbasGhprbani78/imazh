@@ -76,6 +76,13 @@
 .wrap_get_media {
     display: flex;
     flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.media_preview>video {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
 }
 
 .media_box_wrapper {

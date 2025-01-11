@@ -799,7 +799,6 @@ export default function Home() {
                         controls={true}
                         width="100%"
                         height="100%"
-                        
                       />
                     )}
 
@@ -907,6 +906,8 @@ export default function Home() {
                           preload="metadata"
                           className={styles.media_preview}
                           controls={true}
+                          width={"100%"}
+                          height={"100%"}
                         />
                       </div>
                     </Grid>

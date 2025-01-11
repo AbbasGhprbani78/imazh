@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios"; // برای ارسال درخواست به API
+import axios from "axios";
 import styles from "./Webcam.module.css";
 
 export default function Webcam({
@@ -16,6 +16,7 @@ export default function Webcam({
   const streamRef = useRef(null);
   const [isRecording, setIsRecording] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(null);
+  const [format, setFormat] = useState("");
   const [settingVideo, setSettingVideo] = useState({
     resolution: "",
     videoDelay: "",
@@ -56,7 +57,9 @@ export default function Webcam({
         }
 
         if (selectedDevice) {
-          const { width, height } = getResolutionDimensions(settingVideo.resolution);
+          const { width, height } = getResolutionDimensions(
+            settingVideo.resolution
+          );
           const constraints = {
             video: {
               deviceId: { exact: selectedDevice },
@@ -83,7 +86,8 @@ export default function Webcam({
         canvasRef.current.width = width;
         canvasRef.current.height = height;
         context.drawImage(videoRef.current, 0, 0, width, height);
-        const imageUrl = canvasRef.current.toDataURL("image/png");
+        const imageFormat = format || "png";
+        const imageUrl = canvasRef.current.toDataURL(`image/${imageFormat}`);
         setPhotos((prevPhotos) => [...prevPhotos, imageUrl]);
       }
     };
@@ -185,7 +189,7 @@ export default function Webcam({
   }, [data, selectedDevice, setting, setPhotos, isRecording, socket]);
 
   useEffect(() => {
-    const fetchSettings = async () => {
+    const fetchSettingsVideo = async () => {
       try {
         const response = await axios.get(
           "http://localhost:3000/api/videosetting"
@@ -202,10 +206,22 @@ export default function Webcam({
       }
     };
 
-    fetchSettings();
-  }, []);
+    const fetchSettingsPhoto = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/photosetting"
+        );
+        if (response.status === 200) {
+          setFormat(response?.data.format);
+        }
+      } catch (error) {
+        console.error("Error fetching video settings:", error);
+      }
+    };
 
-  console.log(settingVideo)
+    fetchSettingsVideo();
+    fetchSettingsPhoto();
+  }, []);
 
   return (
     <>

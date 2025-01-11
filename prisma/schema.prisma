@@ -32,7 +32,7 @@ model Operation {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  archives  Archive[] // رابطه معکوس به مدل Archive
+  archives  Archive[] 
 }
 
 model Photo {
@@ -60,7 +60,7 @@ model Customer {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  archives      Archive[] // رابطه معکوس به مدل Archive
+  archives      Archive[] 
 }
 
 
@@ -71,7 +71,7 @@ model Setting {
   description String?   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  archives    Archive[] // رابطه معکوس به مدل Archive
+  archives    Archive[] 
 }
 
 model User {
@@ -87,6 +87,7 @@ model User {
   refreshToken       String?   // nullable
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
+ logs               Log[]
 
 }
 
@@ -96,7 +97,7 @@ model Color {
   color     String  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  users     User[]   // رابطه معکوس به مدل User
+  users     User[]  
 }
 
 
@@ -120,7 +121,19 @@ model SettingPhoto {
 
 
 
-
-
+model Log {
+  id          Int      @id @default(autoincrement())
+  action      String
+  endpoint    String
+  userAgent   String?
+  requestData String?  // تغییر از Json به String
+  ipAddress   String
+  status      Int?
+  responseData String?
+  timestamp   DateTime @default(now())
+   description String?  
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      Int?
+}
 
 

@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 import { writeFile } from "fs/promises";
 import path from "path";
 import crypto from "crypto";
-
+import { middleware } from "../../middleware";
 const prisma = new PrismaClient();
 
 export async function GET(req) {
@@ -57,20 +57,36 @@ export async function GET(req) {
 }
 
 export async function PUT(req) {
+  const logResponse = await middleware(req);
+
   try {
-     const cookieStore =await cookies();
-     const token = cookieStore.get("token");
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token");
+
     if (!token) {
-      return new Response(JSON.stringify({ message: "دسترسی مجاز نیست" }), {
-        status: 401,
-      });
+      const errorResponse = new Response(
+        JSON.stringify({ message: "دسترسی مجاز نیست" }),
+        { status: 401 }
+      );
+
+     
+      if (logResponse)
+        await logResponse(errorResponse, { message: "دسترسی مجاز نیست" });
+
+      return errorResponse;
     }
 
     const tokenPayload = verifyAccessToken(token.value);
     if (!tokenPayload) {
-      return new Response(JSON.stringify({ message: "توکن نامعتبر است" }), {
-        status: 403,
-      });
+      const errorResponse = new Response(
+        JSON.stringify({ message: "توکن نامعتبر است" }),
+        { status: 403 }
+      );
+
+      if (logResponse)
+        await logResponse(errorResponse, { message: "توکن نامعتبر است" });
+
+      return errorResponse;
     }
 
     const formData = await req.formData();
@@ -78,10 +94,15 @@ export async function PUT(req) {
     const img = formData.get("img");
 
     if (username && typeof username !== "string") {
-      return new Response(
+      const errorResponse = new Response(
         JSON.stringify({ message: "نام کاربری نامعتبر است" }),
         { status: 400 }
       );
+
+      if (logResponse)
+        await logResponse(errorResponse, { message: "نام کاربری نامعتبر است" });
+
+      return errorResponse;
     }
 
     let imgUrl;
@@ -113,7 +134,7 @@ export async function PUT(req) {
     });
 
     const tokenMaxAge = 60 * 60 * 24 * 15;
-    const refreshMaxAge = 60 * 60 * 24 * 30; 
+    const refreshMaxAge = 60 * 60 * 24 * 30;
 
     const headers = new Headers();
     headers.append(
@@ -125,17 +146,28 @@ export async function PUT(req) {
       `refresh-token=${refreshToken};path=/;httpOnly=true;Max-Age=${refreshMaxAge}`
     );
 
-    return new Response(
+    const successResponse = new Response(
       JSON.stringify({
         message: "اطلاعات کاربر با موفقیت به‌روزرسانی شد",
         data: updatedUser,
       }),
       { status: 200, headers }
     );
+
+    if (logResponse) await logResponse(successResponse);
+
+    return successResponse;
   } catch (error) {
     console.error("Error updating user:", error);
-    return new Response(JSON.stringify({ message: "خطای سرور رخ داد" }), {
-      status: 500,
-    });
+
+    const errorResponse = new Response(
+      JSON.stringify({ message: "خطای سرور رخ داد" }),
+      { status: 500 }
+    );
+
+    if (logResponse)
+      await logResponse(errorResponse, { message: "خطای سرور رخ داد" });
+
+    return errorResponse;
   }
 }
