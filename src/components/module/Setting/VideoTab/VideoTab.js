@@ -141,18 +141,4 @@ export default function VideoTab() {
   );
 }
 
-{
-  /* <div className={"wrap_row"}>
-          <DropDownSearch
-            items={[]}
-            title={"framerate"}
-            name={"framerate"}
-            onChange={""}
-            getOptionLabelProp={""}
-            value={""}
-            style1={"dropsetting"}
-            style2={"background"}
-          />
-        </div>
-        <ToggleInput select1={"pal"} select2={"NTSC"} /> */
-}
+

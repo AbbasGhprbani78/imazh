@@ -5,7 +5,6 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Pagination from "@mui/material/Pagination";
 import { useRouter } from "next/navigation";
-
 import {
   Table,
   TableBody,

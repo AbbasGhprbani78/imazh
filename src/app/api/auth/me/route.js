@@ -148,7 +148,7 @@ export async function PUT(req) {
 
     const successResponse = new Response(
       JSON.stringify({
-        message: "اطلاعات کاربر با موفقیت به‌روزرسانی شد",
+        message: `اطلاعات کاربر "${updatedUser.username}" با موفقیت به‌روزرسانی شد.`,
         data: updatedUser,
       }),
       { status: 200, headers }

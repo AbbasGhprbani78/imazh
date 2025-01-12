@@ -1,0 +1,53 @@
+.table_content {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow: -moz-scrollbars-none;
+    max-height: calc(90dvh - 100px);
+}
+
+.table_content::-webkit-scrollbar {
+    display: none;
+
+}
+
+.table_item {
+    background-color: var(--color-2) !important;
+    color: var(--color-5) !important;
+    font-family: "vazir" !important;
+}
+
+
+.cell_item {
+    color: var(--color-5) !important;
+    font-family: "vazir" !important;
+}
+
+
+.wrap_loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10%;
+}
+
+.loading {
+    width: 28px;
+    height: 28px;
+    border: 3.5px solid var(--color-4);
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

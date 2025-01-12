@@ -50,6 +50,7 @@ export default function Home() {
     archiveId: "",
   });
   const [showModal, setShowModal] = useState(false);
+  const [emptyInput, setEmptyInput] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [operationsData, setAllOperationsData] = useState([]);
   const [allCustomer, setAllCustomer] = useState();
@@ -453,6 +454,7 @@ export default function Home() {
         });
         setShowModal(false);
         getAllCustomer();
+        setEmptyInput(true);
       }
     } catch (error) {
       setShowToast(true);
@@ -642,6 +644,8 @@ export default function Home() {
     getAllSetting();
   }, []);
 
+
+
   useEffect(() => {
     setCustomerData((prev) => ({
       ...prev,
@@ -720,6 +724,7 @@ export default function Home() {
                   openEditModal={openEditModal}
                   onChange={ChangeCustomerInfoHandler}
                   value={customerInfo.customerId}
+                  emptyInput={emptyInput}
                 />
               </div>
               <div className={styles.wrapdrop}>
@@ -748,6 +753,7 @@ export default function Home() {
                   onChange={ChangeCustomerInfoHandler}
                   value={customerInfo.archiveId}
                   setIsNewOperation={setIsNewOperation}
+                  emptyInput={emptyInput}
                 />
               </div>
               <div className={styles.wrapdrop}>
@@ -820,13 +826,13 @@ export default function Home() {
                 toggleExpand={toggleExpand}
                 isExpanded={isExpanded}
               >
-                <Webcam
+                {/* <Webcam
                   setting={setting}
                   data={data}
                   setPhotos={setPhotos}
                   socket={socket}
                   setSocket={setSocket}
-                />
+                /> */}
 
                 <div className={styles.icons_bottom_wrapper}>
                   <ReplayOutlinedIcon

@@ -19,6 +19,7 @@ export default function DropDownSearch({
   style1,
   style2,
   setSetting,
+  emptyInput,
 }) {
   const [searchValue, setSearchValue] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
@@ -44,14 +45,27 @@ export default function DropDownSearch({
 
   const handleSelectItem = (item) => {
     const selectedLabel = item[getOptionLabelProp];
-    setSearchValue(selectedLabel);
-    setSelectedValue(selectedLabel);
-    if (setSetting) {
-      setSetting(selectedLabel);
-    }
-    setIsOpen(false);
-    if (onChange) {
-      onChange({ target: { name, value: item.id } });
+    if (name === "archiveId") {
+      const farsiValue = convertToPersianDate(selectedLabel);
+      setSearchValue(farsiValue);
+      setSelectedValue(selectedLabel);
+      if (setSetting) {
+        setSetting(selectedLabel);
+      }
+      setIsOpen(false);
+      if (onChange) {
+        onChange({ target: { name, value: item.id } });
+      }
+    } else {
+      setSearchValue(selectedLabel);
+      setSelectedValue(selectedLabel);
+      if (setSetting) {
+        setSetting(selectedLabel);
+      }
+      setIsOpen(false);
+      if (onChange) {
+        onChange({ target: { name, value: item.id } });
+      }
     }
   };
 
@@ -63,9 +77,9 @@ export default function DropDownSearch({
 
   const handleBlur = () => {
     setIsFocused(false);
-
     if (
-      !filteredItems.some((item) => item[getOptionLabelProp] === searchValue)
+      !filteredItems.some((item) => item[getOptionLabelProp] === searchValue) &&
+      searchValue !== "عملیات جدید"
     ) {
       setSearchValue("");
     }
@@ -97,6 +111,12 @@ export default function DropDownSearch({
     }
   }, [value]);
 
+  useEffect(() => {
+    if (emptyInput) {
+      setSearchValue("");
+    }
+  }, [emptyInput]);
+
   return (
     <div
       className={`${styles.wrapDropSearch} ${styles[style1]}`}
@@ -110,11 +130,7 @@ export default function DropDownSearch({
       >
         <input
           type="text"
-          value={
-            name === "archiveId"
-              ? convertToPersianDate(searchValue)
-              : searchValue
-          }
+          value={searchValue}
           onChange={handleInputChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -144,6 +160,7 @@ export default function DropDownSearch({
               {firstoptiontext}
             </div>
           )}
+
           {filteredItems?.length > 0 ? (
             filteredItems
               .slice()

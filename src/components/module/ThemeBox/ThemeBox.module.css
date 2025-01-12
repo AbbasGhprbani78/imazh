@@ -1,0 +1,57 @@
+.theme_box_container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.theme_box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 20px;
+    padding: 20px;
+    width: 250px;
+    max-width: 250px;
+    height: 100px;
+    cursor: pointer;
+}
+
+.text_theme {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btn_theme {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    background-color: #aec3b0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    padding: 8px 0;
+    min-Width: 42px;
+    min-height: 40px;
+}
+
+.btn_theme::before {
+    content: '';
+    position: absolute;
+    width: 56px;
+    height: 43px;
+    background-color: var(--before-bg);
+    border-radius: 50%;
+    top: 17px;
+    right: -15px;
+}
+
+.icon_theme {
+    position: relative;
+    color: #fff;
+    z-index: 3;
+}
+
+
+.active {
+    box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
+}

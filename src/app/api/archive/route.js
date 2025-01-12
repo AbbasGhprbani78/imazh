@@ -103,12 +103,13 @@ export async function POST(req) {
       },
       include: {
         photos: true,
+        customer: true,
       },
     });
 
     const response = new Response(
       JSON.stringify({
-        message: `آرشیو جدید با موفقیت اضافه شد: ${newArchive.id}`,
+        message: `آرشیو جدید با موفقیت اضافه شد برای مشتری ${newArchive.customer.fullname}`,
         archive: newArchive,
       }),
       { status: 201 }

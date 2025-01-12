@@ -106,7 +106,7 @@ export async function PUT(req, context) {
 
     const response = new Response(
       JSON.stringify({
-        message: "اطلاعات بیمار با موفقیت به‌روزرسانی شد",
+        message: `اطلاعات بیمار ${updatedCustomer.fullname} با موفقیت به روز رسانی شد`,
         data: updatedCustomer,
       }),
       { status: 200 }
@@ -152,15 +152,14 @@ export async function DELETE(req, { params }) {
 
     const response = new Response(
       JSON.stringify({
-        message: "بیمار با موفقیت حذف گردید",
+        message: `بیمار ${customer.fullname} با موفقیت حذف گردید`,
         customer,
       }),
       { status: 200 }
-    )
+    );
 
     if (logResponse) await logResponse(response);
     return response;
-
   } catch (error) {
     console.error(error);
 

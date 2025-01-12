@@ -1,3 +1,13 @@
+.wrapper {
+    margin: 20px 20px 0 20px;
+    height: 100%;
+}
+
+.setting_wrapper {
+    height: 100%;
+    overflow: hidden;
+}
+
 .record_list {
     display: flex;
     align-items: center;

@@ -16,7 +16,7 @@ import ImageTab from "@/components/module/Setting/ImageTab/ImageTab";
 
 export default function Settings() {
   const [dropdownOpen, setDropdownOpen] = useState(true);
-  const [tab, setTab] = useState(1);
+  const [tab, setTab] = useState(5);
   const { selectTab } = useContext(MyContext);
 
   const handleSubDropdownToggle = () => {
@@ -25,7 +25,7 @@ export default function Settings() {
 
   const tabs = [
     { title: "ویدئو", component: <VideoTab /> },
-    { title: "عکس", component: <ImageTab/> },
+    { title: "عکس", component: <ImageTab /> },
     { title: "دستی", component: <ManualTab /> },
     { title: "تم", component: <ThemeTab /> },
     { title: "لاگ", component: <LogTab /> },
@@ -39,7 +39,7 @@ export default function Settings() {
   }, [selectTab]);
 
   return (
-    <div className="wrapper">
+    <div className={"wrapper"}>
       <Box sx={{ flexGrow: 1, height: "100%" }}>
         <Grid
           container

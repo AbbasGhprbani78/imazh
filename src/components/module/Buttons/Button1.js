@@ -5,20 +5,20 @@ import { styled } from "@mui/material/styles";
 
 const CustomButton = styled(Button)(() => ({
   fontSize: ".9rem",
-  borderRadius: "15px", 
+  borderRadius: "15px",
   fontFamily: "vazir",
   paddingLeft: "20px",
   paddingRight: "20px",
   position: "relative",
-  background: "var(--color-4)", 
-  color: "var(--color-5)", 
+  background: "var(--color-4)",
+  color: "var(--color-20)",
   width: "100%",
   "&:hover": {
     background: "var(--color-6)",
   },
   "&:disabled": {
     cursor: "not-allowed",
-    background: "var(--color-8)", 
+    background: "var(--color-8)",
     color: "var(--color-7)",
   },
 }));

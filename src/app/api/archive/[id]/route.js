@@ -6,24 +6,40 @@ export async function DELETE(req, { params }) {
   const logResponse = await middleware(req);
   try {
     const { id } = params;
+
     if (!id || isNaN(Number(id))) {
       return new Response(JSON.stringify({ message: "ایدی معتبر نیست" }), {
         status: 400,
       });
     }
 
-    const archive = await prisma.archive.update({
+    const archive = await prisma.archive.findUnique({
+      where: { id: Number(id) },
+      include: {
+        operation: true,
+        customer: true,
+      },
+    });
+
+    if (!archive) {
+      return new Response(JSON.stringify({ message: "آرشیو یافت نشد" }), {
+        status: 404,
+      });
+    }
+
+    const updatedArchive = await prisma.archive.update({
       where: { id: Number(id) },
       data: { isDelete: true },
     });
 
     const response = new Response(
       JSON.stringify({
-        message: "آرشیو با موفقیت حذف گردید",
-        archive,
+        message: `آرشیو با عملیات "${archive.operation.operation}" برای مشتری "${archive.customer.fullname}" حذف شد.`,
+        archive: updatedArchive,
       }),
       { status: 200 }
     );
+
     if (logResponse) await logResponse(response);
 
     return response;

@@ -3,19 +3,19 @@ import Button from "@mui/material/Button";
 import styles from "./Button.module.css";
 
 const CustomButton = styled(Button)(() => ({
-  color: "var(--color-5)", 
+  color: "var(--color-20)",
   fontSize: "1rem",
-  borderRadius: "15px", 
+  borderRadius: "15px",
   fontFamily: "vazir",
   padding: "8px 0",
   minWidth: "42px",
   minHeight: "40px",
-  background: "var(--color-4)", 
+  background: "var(--color-4)",
   "&:hover": {
-    background: "var(--color-6)", 
+    background: "var(--color-6)",
   },
   "&:disabled": {
-    background: "var(--color-8)", 
+    background: "var(--color-8)",
     color: "var(--color-7)",
     cursor: "not-allowed",
   },

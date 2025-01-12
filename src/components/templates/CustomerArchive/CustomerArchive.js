@@ -1,5 +1,4 @@
 "use client";
-import DropDownSearch from "@/components/module/DropDown/DropDownSearch";
 import RightSection from "@/components/module/RightSection/RightSection";
 import Grid from "@mui/material/Grid2";
 import React, { useEffect, useState } from "react";
@@ -19,6 +18,8 @@ import AditPicture from "@/components/module/AditPicture/AditPicture";
 import NormalDropDown from "@/components/module/DropDown/NormalDropDown";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 import { FaDownload } from "react-icons/fa6";
+import dynamic from "next/dynamic";
+const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
 export default function CustomerArchive({ id }) {
   const [isLoadingGroup1, setIsLoadingGroup1] = useState(true);
@@ -133,6 +134,18 @@ export default function CustomerArchive({ id }) {
   `,
   });
 
+  const imageUrl = group1Images[currentIndexes?.group1]?.url;
+  const imageUrl2 = group2Images[currentIndexes?.group2]?.url;
+  const isImage = /\.(jpeg|jpg|webp|png|data:image)/i.test(imageUrl);
+  const isImage2 = /\.(jpeg|jpg|webp|png|data:image)/i.test(imageUrl2);
+
+  useEffect(() => {
+    if (imageUrl || imageUrl2) {
+      setIsLoadingGroup1(false);
+      setIsLoadingGroup2(false);
+    }
+  }, [imageUrl]);
+
   return (
     <>
       <div className="wrapper">
@@ -161,12 +174,20 @@ export default function CustomerArchive({ id }) {
                   <div className={styles.wrap_display}>
                     <div style={{ marginBottom: "2rem" }}>
                       <NormalDropDown
-                        items={[
-                          { id: "کنارهم", name: "کنارهم" },
-                          { id: "روی هم", name: "روی هم" },
-                          { id: "قبل عمل", name: "قبل عمل" },
-                          { id: "بعد عمل", name: "بعد عمل" },
-                        ]}
+                        items={
+                          isImage || isImage2
+                            ? [
+                                { id: "کنارهم", name: "کنارهم" },
+                                { id: "روی هم", name: "روی هم" },
+                                { id: "قبل عمل", name: "قبل عمل" },
+                                { id: "بعد عمل", name: "بعد عمل" },
+                              ]
+                            : [
+                                { id: "کنارهم", name: "کنارهم" },
+                                { id: "قبل عمل", name: "قبل عمل" },
+                                { id: "بعد عمل", name: "بعد عمل" },
+                              ]
+                        }
                         name={""}
                         onChange={handleChangeDisplay}
                         value={displayType}
@@ -208,39 +229,56 @@ export default function CustomerArchive({ id }) {
                             />
                           </div>
                         )}
-                        <Image
-                          id="group1-image"
-                          src={group1Images[currentIndexes?.group1]?.url}
-                          alt={`Group 1 - ${currentIndexes?.group1}`}
-                          layout="fill"
-                          className={styles.image_archive}
-                          onLoad={() => setIsLoadingGroup1(false)}
-                          style={{
-                            display: isLoadingGroup1 ? "none" : "block",
-                            ...getFilterStyle(),
-                          }}
-                        />
+                        {isImage ? (
+                          <Image
+                            id="group1-image"
+                            src={group1Images[currentIndexes?.group1]?.url}
+                            alt={`Group 1 - ${currentIndexes?.group1}`}
+                            layout="fill"
+                            className={styles.image_archive}
+                            style={{
+                              display: isLoadingGroup1 ? "none" : "block",
+                              ...getFilterStyle(),
+                            }}
+                          />
+                        ) : (
+                          <>
+                            <ReactPlayer
+                              url={group1Images[currentIndexes?.group1]?.url}
+                              playing={false}
+                              muted={false}
+                              playsinline
+                              preload="metadata"
+                              className={styles.image_archive}
+                              controls={true}
+                              width="100%"
+                              height="100%"
+                            />
+                          </>
+                        )}
                       </Preview>
-                      <div className={styles.wrap_action_image}>
-                        <div
-                          className={styles.option_item_img}
-                          onClick={() => toggleExpand(1)}
-                        >
-                          <ZoomOutMapIcon className={styles.icon_option} />
-                          <span className={styles.text_option_item_img}>
-                            بزرگنمایی
-                          </span>
+                      {isImage && (
+                        <div className={styles.wrap_action_image}>
+                          <div
+                            className={styles.option_item_img}
+                            onClick={() => toggleExpand(1)}
+                          >
+                            <ZoomOutMapIcon className={styles.icon_option} />
+                            <span className={styles.text_option_item_img}>
+                              بزرگنمایی
+                            </span>
+                          </div>
+                          <div
+                            className={styles.option_item_img}
+                            onClick={() => saveImage("group1-image")}
+                          >
+                            <FaDownload className={styles.icon_option} />
+                            <span className={styles.text_option_item_img}>
+                              دانلود
+                            </span>
+                          </div>
                         </div>
-                        <div
-                          className={styles.option_item_img}
-                          onClick={() => saveImage("group1-image")}
-                        >
-                          <FaDownload className={styles.icon_option} />
-                          <span className={styles.text_option_item_img}>
-                            دانلود
-                          </span>
-                        </div>
-                      </div>
+                      )}
                     </Grid>
                     <Grid
                       size={{ xs: 12, lg: 6 }}
@@ -265,40 +303,57 @@ export default function CustomerArchive({ id }) {
                             />
                           </div>
                         )}
-                        <Image
-                          id="group2-image"
-                          src={group2Images[currentIndexes?.group2]?.url}
-                          alt={`Group 2 - ${currentIndexes?.group2}`}
-                          layout="fill"
-                          className={styles.image_archive}
-                          onLoad={() => setIsLoadingGroup2(false)}
-                          style={{
-                            display: isLoadingGroup2 ? "none" : "block",
-                            ...getFilterStyle(),
-                          }}
-                        />
+                        {isImage2 ? (
+                          <Image
+                            id="group2-image"
+                            src={group2Images[currentIndexes?.group2]?.url}
+                            alt={`Group 2 - ${currentIndexes?.group2}`}
+                            layout="fill"
+                            className={styles.image_archive}
+                            style={{
+                              display: isLoadingGroup2 ? "none" : "block",
+                              ...getFilterStyle(),
+                            }}
+                          />
+                        ) : (
+                          <>
+                            <ReactPlayer
+                              url={group2Images[currentIndexes?.group2]?.url}
+                              playing={false}
+                              muted={false}
+                              playsinline
+                              preload="metadata"
+                              className={styles.image_archive}
+                              controls={true}
+                              width="100%"
+                              height="100%"
+                            />
+                          </>
+                        )}
                       </Preview>
-                      <div className={styles.wrap_action_image}>
-                        <div
-                          className={styles.option_item_img}
-                          onClick={() => toggleExpand(2)}
-                        >
-                          <ZoomOutMapIcon className={styles.icon_option} />
-                          <span className={styles.text_option_item_img}>
-                            بزرگنمایی
-                          </span>
-                        </div>
+                      {isImage2 && (
+                        <div className={styles.wrap_action_image}>
+                          <div
+                            className={styles.option_item_img}
+                            onClick={() => toggleExpand(2)}
+                          >
+                            <ZoomOutMapIcon className={styles.icon_option} />
+                            <span className={styles.text_option_item_img}>
+                              بزرگنمایی
+                            </span>
+                          </div>
 
-                        <div
-                          className={styles.option_item_img}
-                          onClick={() => saveImage("group2-image")}
-                        >
-                          <FaDownload className={styles.icon_option} />
-                          <span className={styles.text_option_item_img}>
-                            دانلود
-                          </span>
+                          <div
+                            className={styles.option_item_img}
+                            onClick={() => saveImage("group2-image")}
+                          >
+                            <FaDownload className={styles.icon_option} />
+                            <span className={styles.text_option_item_img}>
+                              دانلود
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </Grid>
                   </>
                 ) : displayType == "روی هم" ? (
@@ -342,39 +397,56 @@ export default function CustomerArchive({ id }) {
                             />
                           </div>
                         )}
-                        <Image
-                          id="group1-image"
-                          src={group1Images[currentIndexes?.group1]?.url}
-                          alt={`Group 1 - ${currentIndexes?.group1}`}
-                          layout="fill"
-                          className={styles.image_archive}
-                          onLoad={() => setIsLoadingGroup1(false)}
-                          style={{
-                            display: isLoadingGroup1 ? "none" : "block",
-                            ...getFilterStyle(),
-                          }}
-                        />
+                        {isImage ? (
+                          <Image
+                            id="group1-image"
+                            src={group1Images[currentIndexes?.group1]?.url}
+                            alt={`Group 1 - ${currentIndexes?.group1}`}
+                            layout="fill"
+                            className={styles.image_archive}
+                            style={{
+                              display: isLoadingGroup1 ? "none" : "block",
+                              ...getFilterStyle(),
+                            }}
+                          />
+                        ) : (
+                          <>
+                            <ReactPlayer
+                              url={group1Images[currentIndexes?.group1]?.url}
+                              playing={false}
+                              muted={false}
+                              playsinline
+                              preload="metadata"
+                              className={styles.image_archive}
+                              controls={true}
+                              width="100%"
+                              height="100%"
+                            />
+                          </>
+                        )}
                       </Preview>
-                      <div className={styles.wrap_action_image}>
-                        <div
-                          className={styles.option_item_img}
-                          onClick={() => toggleExpand(1)}
-                        >
-                          <ZoomOutMapIcon className={styles.icon_option} />
-                          <span className={styles.text_option_item_img}>
-                            بزرگنمایی
-                          </span>
+                      {isImage && (
+                        <div className={styles.wrap_action_image}>
+                          <div
+                            className={styles.option_item_img}
+                            onClick={() => toggleExpand(1)}
+                          >
+                            <ZoomOutMapIcon className={styles.icon_option} />
+                            <span className={styles.text_option_item_img}>
+                              بزرگنمایی
+                            </span>
+                          </div>
+                          <div
+                            className={styles.option_item_img}
+                            onClick={() => saveImage("group1-image")}
+                          >
+                            <FaDownload className={styles.icon_option} />
+                            <span className={styles.text_option_item_img}>
+                              دانلود
+                            </span>
+                          </div>
                         </div>
-                        <div
-                          className={styles.option_item_img}
-                          onClick={() => saveImage("group1-image")}
-                        >
-                          <FaDownload className={styles.icon_option} />
-                          <span className={styles.text_option_item_img}>
-                            دانلود
-                          </span>
-                        </div>
-                      </div>
+                      )}
                     </Grid>
                   </>
                 ) : (
@@ -402,40 +474,57 @@ export default function CustomerArchive({ id }) {
                             />
                           </div>
                         )}
-                        <Image
-                          id="group2-image"
-                          src={group2Images[currentIndexes?.group2]?.url}
-                          alt={`Group 2 - ${currentIndexes?.group2}`}
-                          layout="fill"
-                          className={styles.image_archive}
-                          onLoad={() => setIsLoadingGroup2(false)}
-                          style={{
-                            display: isLoadingGroup2 ? "none" : "block",
-                            ...getFilterStyle(),
-                          }}
-                        />
+                        {isImage2 ? (
+                          <Image
+                            id="group2-image"
+                            src={group2Images[currentIndexes?.group2]?.url}
+                            alt={`Group 2 - ${currentIndexes?.group2}`}
+                            layout="fill"
+                            className={styles.image_archive}
+                            style={{
+                              display: isLoadingGroup2 ? "none" : "block",
+                              ...getFilterStyle(),
+                            }}
+                          />
+                        ) : (
+                          <>
+                            <ReactPlayer
+                              url={group2Images[currentIndexes?.group2]?.url}
+                              playing={false}
+                              muted={false}
+                              playsinline
+                              preload="metadata"
+                              className={styles.image_archive}
+                              controls={true}
+                              width="100%"
+                              height="100%"
+                            />
+                          </>
+                        )}
                       </Preview>
-                      <div className={styles.wrap_action_image}>
-                        <div
-                          className={styles.option_item_img}
-                          onClick={() => toggleExpand(2)}
-                        >
-                          <ZoomOutMapIcon className={styles.icon_option} />
-                          <span className={styles.text_option_item_img}>
-                            بزرگنمایی
-                          </span>
-                        </div>
+                      {isImage2 && (
+                        <div className={styles.wrap_action_image}>
+                          <div
+                            className={styles.option_item_img}
+                            onClick={() => toggleExpand(2)}
+                          >
+                            <ZoomOutMapIcon className={styles.icon_option} />
+                            <span className={styles.text_option_item_img}>
+                              بزرگنمایی
+                            </span>
+                          </div>
 
-                        <div
-                          className={styles.option_item_img}
-                          onClick={() => saveImage("group2-image")}
-                        >
-                          <FaDownload className={styles.icon_option} />
-                          <span className={styles.text_option_item_img}>
-                            دانلود
-                          </span>
+                          <div
+                            className={styles.option_item_img}
+                            onClick={() => saveImage("group2-image")}
+                          >
+                            <FaDownload className={styles.icon_option} />
+                            <span className={styles.text_option_item_img}>
+                              دانلود
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </Grid>
                   </>
                 )}

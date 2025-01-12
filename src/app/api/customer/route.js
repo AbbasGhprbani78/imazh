@@ -137,7 +137,7 @@ export async function POST(req) {
 
     const response = new Response(
       JSON.stringify({
-        message: "بیمار جدید با موفقیت ثبت شد",
+        message: `بیمار جدید ${fullname} با موفقیت اضافه شد`,
         data: customer,
       }),
       { status: 201 }

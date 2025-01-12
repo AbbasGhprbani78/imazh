@@ -45,6 +45,7 @@
     --color-17: #333;
     --color-18: #888;
     --color-19: #555;
+    --color-20: #fff;
     --radius-1: 8px;
 }
 
@@ -171,6 +172,7 @@ div[style*="border-width: 6px"]:nth-of-type(1) {
     margin-left: -20px !important;
     margin-right: 1px !important;
 }
+
 
 @media(max-width:1171px) {
     .wrap-buttom {

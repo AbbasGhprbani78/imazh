@@ -49,7 +49,9 @@ export async function PUT(req) {
     }
 
     const response = new Response(
-      JSON.stringify({ message: "رمز عبور با موفقیت تغییر کرد" }),
+      JSON.stringify({
+        message: `رمز عبور ${updatedUser.username} با موفقیت تغییر کرد`,
+      }),
       { status: 200 }
     );
     if (logResponse) await logResponse(response);
