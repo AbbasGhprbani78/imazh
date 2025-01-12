@@ -34,7 +34,7 @@
 .icon_camera,
 .icon_refresh {
     cursor: pointer;
-    color: var(--color-5);
+    color: var(--color-20);
 }
 
 .wrap_camera {

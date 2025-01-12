@@ -44,7 +44,7 @@ export async function POST(req) {
 
     const response = new Response(
       JSON.stringify({
-        message: "تنظیمات جدید با موفقیت اضافه شد",
+        message: "تنظیمات جدید دوربین با موفقیت اضافه شد",
         data: newSetting,
       }),
       { status: 201 }

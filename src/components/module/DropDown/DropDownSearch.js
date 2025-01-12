@@ -117,6 +117,18 @@ export default function DropDownSearch({
     }
   }, [emptyInput]);
 
+  useEffect(() => {
+    if (value) {
+      const selectedItem = items.find((item) => item.id === value);
+      if (selectedItem) {
+        const selectedLabel = selectedItem[getOptionLabelProp];
+        setSearchValue(selectedLabel);
+        setSelectedValue(selectedLabel);
+      }
+    }
+  }, [value, items]);
+
+
   return (
     <div
       className={`${styles.wrapDropSearch} ${styles[style1]}`}

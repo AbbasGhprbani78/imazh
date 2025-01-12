@@ -53,8 +53,8 @@ export default function Home() {
   const [emptyInput, setEmptyInput] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [operationsData, setAllOperationsData] = useState([]);
-  const [allCustomer, setAllCustomer] = useState();
-  const [allSettings, setAllSettings] = useState();
+  const [allCustomer, setAllCustomer] = useState([]);
+  const [allSettings, setAllSettings] = useState([]);
   const [dateReferenceValue, setDateReferenceValue] = useState("");
   const [typeModal, setTypeModal] = useState(1);
   const [dataBirthdaty, setDataBirthdaty] = useState("");
@@ -225,15 +225,19 @@ export default function Home() {
           customerData
         );
         if (response.status === 201) {
+          const newCustomer = response.data.data;
+          setAllCustomer((prev) => [...prev, newCustomer]);
+          setCustomerInfo((prev) => ({
+            ...prev,
+            customerId: newCustomer.id,
+          }));
           setShowModal(false);
-          getAllCustomer();
           setShowToast(true);
           setToastInfo({
             type: "success",
             title: "عملیات موفقیت آمیز",
             message: "بیمار با موفقیت اضافه شد",
           });
-
           setCustomerData({
             fullname: "",
             email: "",
@@ -307,7 +311,12 @@ export default function Home() {
           }
         );
         if (response.status === 201) {
-          getAllOperation();
+          const newOperation = response.data.data;
+          setAllOperationsData((prev) => [...prev, newOperation]);
+          setCustomerInfo((prev) => ({
+            ...prev,
+            operationId: newOperation.id,
+          }));
           setShowModal(false);
           setOperation("");
           setShowToast(true);
@@ -348,9 +357,16 @@ export default function Home() {
           description: settingDes,
         });
         if (response.status === 201) {
-          getAllSetting();
+          const newSetting = response.data.data;
+          console.log(newSetting)
+          setAllSettings((prev) => [...prev, newSetting]);
+          setCustomerInfo((prev) => ({
+            ...prev,
+            settingId: newSetting.id
+          }));
           setShowModal(false);
           setSetting("");
+          setSettingDes("")
           setShowToast(true);
           setToastInfo({
             type: "success",
@@ -643,8 +659,6 @@ export default function Home() {
     getAllCustomer();
     getAllSetting();
   }, []);
-
-
 
   useEffect(() => {
     setCustomerData((prev) => ({
