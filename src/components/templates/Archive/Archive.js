@@ -124,8 +124,8 @@ export default function Archive() {
 
         <SearchBox value={search} onChange={searchHandler} />
         {loading ? (
-          <div className={styles.wrap_loading}>
-            <span className={styles.loading}></span>
+          <div className={`wrap_loading`}>
+            <span className={`loading`}></span>
           </div>
         ) : (
           <TableUser

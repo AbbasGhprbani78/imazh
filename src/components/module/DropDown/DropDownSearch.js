@@ -19,6 +19,7 @@ export default function DropDownSearch({
   style1,
   style2,
   setSetting,
+  resetSearchValue,
   emptyInput,
 }) {
   const [searchValue, setSearchValue] = useState("");
@@ -45,12 +46,12 @@ export default function DropDownSearch({
 
   const handleSelectItem = (item) => {
     const selectedLabel = item[getOptionLabelProp];
-    if (name === "archiveId") {
+    if (name == "archiveId") {
       const farsiValue = convertToPersianDate(selectedLabel);
       setSearchValue(farsiValue);
       setSelectedValue(selectedLabel);
       if (setSetting) {
-        setSetting(selectedLabel);
+        setSetting(item.name);
       }
       setIsOpen(false);
       if (onChange) {
@@ -60,7 +61,7 @@ export default function DropDownSearch({
       setSearchValue(selectedLabel);
       setSelectedValue(selectedLabel);
       if (setSetting) {
-        setSetting(selectedLabel);
+        setSetting(item.name);
       }
       setIsOpen(false);
       if (onChange) {
@@ -112,13 +113,7 @@ export default function DropDownSearch({
   }, [value]);
 
   useEffect(() => {
-    if (emptyInput) {
-      setSearchValue("");
-    }
-  }, [emptyInput]);
-
-  useEffect(() => {
-    if (value) {
+    if (value && name !== "archiveId") {
       const selectedItem = items.find((item) => item.id === value);
       if (selectedItem) {
         const selectedLabel = selectedItem[getOptionLabelProp];
@@ -128,6 +123,19 @@ export default function DropDownSearch({
     }
   }, [value, items]);
 
+  useEffect(() => {
+    if (name === "archiveId") {
+      setSearchValue("");
+      setSelectedValue("");
+    }
+  }, [resetSearchValue]);
+
+  useEffect(() => {
+    if (emptyInput) {
+      setSearchValue("");
+      setSelectedValue("");
+    }
+  }, [emptyInput]);
 
   return (
     <div

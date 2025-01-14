@@ -35,8 +35,8 @@ export default function LogTab() {
     <div className="animationcome">
       <TableContainer className={styles.table_content}>
         {loading ? (
-          <div className={styles.wrap_loading}>
-            <span className={styles.loading}></span>
+          <div className={`wrap_loading`}>
+            <span className={`loading`}></span>
           </div>
         ) : logs.length ? (
           <Table

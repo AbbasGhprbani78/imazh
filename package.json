@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.726.1",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@img-comparison-slider/react": "^8.0.2",
     "@mui/icons-material": "^6.2.0",
     "@mui/material": "^6.2.0",
     "@prisma/client": "^6.1.0",
+    "archiver": "^7.0.1",
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
@@ -30,7 +32,8 @@
     "socket.io-client": "^4.8.1",
     "stylis": "^4.3.4",
     "stylis-plugin-rtl": "^2.1.1",
-    "swiper": "^11.1.15"
+    "swiper": "^11.1.15",
+    "unzipper": "^0.12.3"
   },
   "devDependencies": {
     "cross-env": "^7.0.3"

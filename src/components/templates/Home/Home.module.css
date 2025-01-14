@@ -228,6 +228,17 @@
     color: var(--color-5);
 }
 
+.radio{
+    margin-right: 0;
+    color: var(--color-5);
+    
+}
+
+.radio>span {
+    font-family: "vazir";
+
+}
+
 @media (max-width:900px) {
 
     .wrapper {

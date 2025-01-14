@@ -33,6 +33,10 @@ import Preview from "@/components/module/Preview/Preview";
 import CloseIcon from "@mui/icons-material/Close";
 import { convertToFarsiDigits, toEnglishNumber } from "@/utils/helper";
 import dynamic from "next/dynamic";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
 export default function Home() {
@@ -66,6 +70,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [allImagesArchive, setAllImagesArchive] = useState([]);
   const [showListImages, setShowListImages] = useState(false);
+  const [vlaueRadio, setValueRadio] = useState(null);
   const [customerData, setCustomerData] = useState({
     fullname: "",
     email: "",
@@ -358,15 +363,15 @@ export default function Home() {
         });
         if (response.status === 201) {
           const newSetting = response.data.data;
-          console.log(newSetting)
+          console.log(newSetting);
           setAllSettings((prev) => [...prev, newSetting]);
           setCustomerInfo((prev) => ({
             ...prev,
-            settingId: newSetting.id
+            settingId: newSetting.id,
           }));
           setShowModal(false);
           setSetting("");
-          setSettingDes("")
+          setSettingDes("");
           setShowToast(true);
           setToastInfo({
             type: "success",
@@ -471,6 +476,7 @@ export default function Home() {
         setShowModal(false);
         getAllCustomer();
         setEmptyInput(true);
+        setTimeout(() => setEmptyInput(false), 0);
       }
     } catch (error) {
       setShowToast(true);
@@ -525,6 +531,8 @@ export default function Home() {
       }
 
       try {
+        setShowModal(true);
+        setTypeModal(6);
         setLoading(true);
         const response = await axios.post(
           "http://localhost:3000/api/archive",
@@ -551,6 +559,7 @@ export default function Home() {
         });
       } finally {
         setLoading(false);
+        setShowModal(false);
       }
     } else {
       const formData = new FormData();
@@ -571,6 +580,8 @@ export default function Home() {
         }
       }
       try {
+        setShowModal(true);
+        setTypeModal(6);
         setLoading(true);
         const response = await axios.post(
           "http://localhost:3000/api/archive/updatearchive",
@@ -597,6 +608,7 @@ export default function Home() {
         });
       } finally {
         setLoading(false);
+        setShowModal(false);
       }
     }
   };
@@ -681,15 +693,27 @@ export default function Home() {
   }, [customerInfo.customerId, customerInfo.operationId]);
 
   useEffect(() => {
-    if (customerInfo.archiveId) {
+    if (
+      customerInfo.customerId &&
+      customerInfo.operationId &&
+      customerInfo.archiveId
+    ) {
       const getArchiveImage = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:3000/api/archive/${customerInfo.archiveId}?group=1`
+            `http://localhost:3000/api/archive/archiveinfo`,
+            {
+              params: {
+                customerId: customerInfo.customerId,
+                operationId: customerInfo.operationId,
+                archiveId: customerInfo.archiveId,
+                group: 1,
+              },
+            }
           );
           if (response.status === 200) {
-            setAllImagesArchive(response?.data?.archives?.[0]?.photos);
-            console.log(response?.data);
+            setAllImagesArchive(response?.data?.archive.photos);
+            console.log(response.data.archive);
           }
         } catch (error) {
           console.log(error);
@@ -697,9 +721,13 @@ export default function Home() {
       };
       getArchiveImage();
     }
-  }, [customerInfo.archiveId]);
+  }, [
+    customerInfo.archiveId,
+    customerInfo.customerId,
+    customerInfo.operationId,
+  ]);
 
-  const imageUrl = allImagesArchive[0]?.url;
+  const imageUrl = allImagesArchive?.length > 0 && allImagesArchive[0]?.url;
 
   const isImage = /\.(jpeg|jpg|webp|png|data:image)/i.test(imageUrl);
 
@@ -718,7 +746,7 @@ export default function Home() {
           }}
         >
           <Grid
-            size={{ xs: 0, md: 4, lg: 2.7 }}
+            size={{ xs: 0, md: 4, lg: 2.3 }}
             sx={{
               display: isDesktop && "flex",
               flexDirection: "column",
@@ -756,20 +784,69 @@ export default function Home() {
                   value={customerInfo.operationId}
                 />
               </div>
-              <div className={styles.wrapdrop}>
-                <DropDownSearch
-                  title={"تاریخ عملیات"}
-                  firstoptiontext="عملیات جدید"
-                  firstoptionclick={() => setIsNewOperation(true)}
-                  items={historyOperation}
-                  name={"archiveId"}
-                  getOptionLabelProp="date1"
-                  onChange={ChangeCustomerInfoHandler}
-                  value={customerInfo.archiveId}
-                  setIsNewOperation={setIsNewOperation}
-                  emptyInput={emptyInput}
-                />
-              </div>
+              <FormControl className={styles.wrapdrop}>
+                <RadioGroup
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  defaultValue=""
+                  name="radio-buttons-group"
+                >
+                  <FormControlLabel
+                    className={styles.radio}
+                    value="1"
+                    onChange={(e) => {
+                      setValueRadio(e.target.value);
+                      setIsNewOperation(true);
+                    }}
+                    control={
+                      <Radio
+                        sx={{
+                          fontFamily: "Vazir",
+                          color: "var(--color-5)",
+                          "&.Mui-checked": {
+                            color: "var(--color-5)",
+                          },
+                        }}
+                      />
+                    }
+                    label="عملیات جدید"
+                  />
+                  <FormControlLabel
+                    className={styles.radio}
+                    value="2"
+                    onChange={(e) => setValueRadio(e.target.value)}
+                    control={
+                      <Radio
+                        sx={{
+                          fontFamily: "Vazir",
+                          color: "var(--color-5)",
+                          "&.Mui-checked": {
+                            color: "var(--color-5)",
+                          },
+                        }}
+                      />
+                    }
+                    label="ویرایش قبل"
+                  />
+                </RadioGroup>
+              </FormControl>
+              {vlaueRadio == 2 && (
+                <div className={styles.wrapdrop}>
+                  <DropDownSearch
+                    title={"تاریخ عملیات"}
+                    items={historyOperation}
+                    name={"archiveId"}
+                    getOptionLabelProp="date1"
+                    onChange={ChangeCustomerInfoHandler}
+                    value={customerInfo.archiveId}
+                    setIsNewOperation={setIsNewOperation}
+                    resetSearchValue={
+                      customerInfo.customerId +
+                      customerInfo.operationId +
+                      vlaueRadio
+                    }
+                  />
+                </div>
+              )}
               <div className={styles.wrapdrop}>
                 <DropDownSearch
                   title={"حالت ضبط"}
@@ -780,7 +857,7 @@ export default function Home() {
                   }}
                   items={allSettings}
                   name={"settingId"}
-                  getOptionLabelProp="name"
+                  getOptionLabelProp="description"
                   onChange={ChangeCustomerInfoHandler}
                   value={customerInfo.settingId}
                   setSetting={setSetting}
@@ -795,10 +872,10 @@ export default function Home() {
                   icon={SouthIcon}
                   onClick={() => fetchDataFromServer("#MKE27$M11*")}
                 />
-                <Button2 icon={EastIcon} onClick={""} />
-                <Button2 icon={WestIcon} onClick={""} />
+                {/* <Button2 icon={EastIcon} onClick={""} />
+                <Button2 icon={WestIcon} onClick={""} /> */}
               </div>
-              {allImagesArchive && allImagesArchive.length > 0 && (
+              {allImagesArchive?.length > 0 && vlaueRadio == 2 && (
                 <div className={styles.image_archive_wrapper}>
                   <div className={styles.image_archive_box}>
                     {isImage ? (
@@ -833,20 +910,20 @@ export default function Home() {
               )}
             </RightSection>
           </Grid>
-          <Grid size={{ xs: 12, md: 8, lg: 9.3 }} sx={{ height: "100%" }}>
+          <Grid size={{ xs: 12, md: 8, lg: 9.7 }} sx={{ height: "100%" }}>
             <LeftSection>
               <Preview
                 toggleModalBottom={toggleModalBottom}
                 toggleExpand={toggleExpand}
                 isExpanded={isExpanded}
               >
-                {/* <Webcam
+                <Webcam
                   setting={setting}
                   data={data}
                   setPhotos={setPhotos}
                   socket={socket}
                   setSocket={setSocket}
-                /> */}
+                />
 
                 <div className={styles.icons_bottom_wrapper}>
                   <ReplayOutlinedIcon
@@ -1275,6 +1352,13 @@ export default function Home() {
               </div>
             </form>
           </>
+        ) : typeModal === 6 ? (
+          <>
+            <p className={styles.text_model}>در حال ایجاد ارشیو</p>
+            <div className="wrap_loading">
+              <span className={`loading`}></span>
+            </div>
+          </>
         ) : (
           <>
             <p className={styles.text_model}>
@@ -1319,6 +1403,7 @@ export default function Home() {
                 openEditModal={openEditModal}
                 onChange={ChangeCustomerInfoHandler}
                 value={customerInfo.customerId}
+                emptyInput={emptyInput}
               />
             </div>
             <div className={styles.wrapdrop}>
@@ -1336,19 +1421,69 @@ export default function Home() {
                 value={customerInfo.operationId}
               />
             </div>
-            <div className={styles.wrapdrop}>
-              <DropDownSearch
-                title={"تاریخ عملیات"}
-                firstoptiontext="عملیات جدید"
-                firstoptionclick={() => setIsNewOperation(true)}
-                items={historyOperation}
-                name={"archiveId"}
-                getOptionLabelProp="date1"
-                onChange={ChangeCustomerInfoHandler}
-                value={customerInfo.archiveId}
-                setIsNewOperation={setIsNewOperation}
-              />
-            </div>
+            <FormControl className={styles.wrapdrop}>
+              <RadioGroup
+                aria-labelledby="demo-radio-buttons-group-label"
+                defaultValue=""
+                name="radio-buttons-group"
+              >
+                <FormControlLabel
+                  className={styles.radio}
+                  value="1"
+                  onChange={(e) => {
+                    setValueRadio(e.target.value);
+                    setIsNewOperation(true);
+                  }}
+                  control={
+                    <Radio
+                      sx={{
+                        fontFamily: "Vazir",
+                        color: "var(--color-5)",
+                        "&.Mui-checked": {
+                          color: "var(--color-5)",
+                        },
+                      }}
+                    />
+                  }
+                  label="عملیات جدید"
+                />
+                <FormControlLabel
+                  className={styles.radio}
+                  value="2"
+                  onChange={(e) => setValueRadio(e.target.value)}
+                  control={
+                    <Radio
+                      sx={{
+                        fontFamily: "Vazir",
+                        color: "var(--color-5)",
+                        "&.Mui-checked": {
+                          color: "var(--color-5)",
+                        },
+                      }}
+                    />
+                  }
+                  label="ویرایش قبل"
+                />
+              </RadioGroup>
+            </FormControl>
+            {vlaueRadio == 2 && (
+              <div className={styles.wrapdrop}>
+                <DropDownSearch
+                  title={"تاریخ عملیات"}
+                  items={historyOperation}
+                  name={"archiveId"}
+                  getOptionLabelProp="date1"
+                  onChange={ChangeCustomerInfoHandler}
+                  value={customerInfo.archiveId}
+                  setIsNewOperation={setIsNewOperation}
+                  resetSearchValue={
+                    customerInfo.customerId +
+                    customerInfo.operationId +
+                    vlaueRadio
+                  }
+                />
+              </div>
+            )}
             <div className={styles.wrapdrop}>
               <DropDownSearch
                 title={"حالت ضبط"}
@@ -1359,7 +1494,7 @@ export default function Home() {
                 }}
                 items={allSettings}
                 name={"settingId"}
-                getOptionLabelProp="name"
+                getOptionLabelProp="description"
                 onChange={ChangeCustomerInfoHandler}
                 value={customerInfo.settingId}
                 setSetting={setSetting}
@@ -1376,10 +1511,10 @@ export default function Home() {
           </div>
           {!showListImages && (
             <div className={styles.wrap_controls}>
-              <Button2 icon={EastIcon} />
+              {/* <Button2 icon={EastIcon} /> */}
               <Button2 icon={NorthIcon} />
               <Button2 icon={SouthIcon} />
-              <Button2 icon={WestIcon} />
+              {/* <Button2 icon={WestIcon} /> */}
             </div>
           )}
         </div>

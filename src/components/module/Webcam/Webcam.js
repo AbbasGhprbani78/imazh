@@ -153,6 +153,7 @@ export default function Webcam({
 
     startCamera();
 
+    // 180 deg
     if (setting === "#MKE01$A11*") {
       if (data === "AG5" && !isRecording) {
         startRecording();
@@ -161,6 +162,7 @@ export default function Webcam({
         cleanup();
       }
     }
+    //270 deg
 
     if (setting === "#MKE02$A22*") {
       if (data === "AD7" && !isRecording) {
@@ -171,6 +173,7 @@ export default function Webcam({
       }
     }
 
+    // 5 picture
     if (setting === "#MKE03$A33*") {
       if (data === "AF1" && !isRecording) {
         captureImage();
@@ -179,6 +182,7 @@ export default function Webcam({
       }
     }
 
+    // 7 picture
     if (setting === "#MKE04$A44*") {
       if (data === "AF1" && !isRecording) {
         captureImage();
