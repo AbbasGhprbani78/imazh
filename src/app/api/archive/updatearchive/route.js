@@ -54,7 +54,7 @@ export async function POST(req) {
 
     const response = new Response(
       JSON.stringify({
-        message: `آرشیو جدید با موفقیت اضافه شد: ${updatedArchive.id}`,
+        message: `آرشیو جدید با موفقیت اضافه شد`,
         archive: updatedArchive,
       }),
       {

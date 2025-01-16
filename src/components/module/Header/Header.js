@@ -172,6 +172,7 @@ export default function Header() {
         }
       } catch (error) {
         console.log(error);
+        setShowToast(true);
         setToastInfo({
           type: "error",
           title: "خطا در تغییر پروفایل",
@@ -327,7 +328,13 @@ export default function Header() {
           <>
             <div className={styles.wrap_image_profile}>
               <Image
-                src={me?.img ? me.img : "/images/5.svg"}
+                src={
+                  imageProfile
+                    ? imageProfile
+                    : me?.img
+                    ? me.img
+                    : "/images/5.svg"
+                }
                 width={90}
                 height={90}
                 alt="profile"

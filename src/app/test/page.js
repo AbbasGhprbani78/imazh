@@ -19,13 +19,18 @@ const handleSubmit = async (e) => {
   }
 
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("backup", file);
 
   try {
     setStatus("Uploading...");
     const response = await axios.post(
       "http://localhost:3000/api/backup/restorebackup",
-      formData
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
 
     if (response.status === 200) {

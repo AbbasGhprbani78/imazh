@@ -92,46 +92,49 @@ export default function Webcam({
       }
     };
 
-    const startRecording = () => {
-      const stream = streamRef.current;
-      if (!stream) {
-        console.error("No MediaStream available for recording.");
-        return;
-      }
+   const startRecording = () => {
+     const format = `video/${settingVideo.format}`;
+     if (!MediaRecorder.isTypeSupported(format)) {
+       console.error(
+         `The format ${format} is not supported. Defaulting to 'video/webm'.`
+       );
+       settingVideo.format = "webm";
+     }
 
-      try {
-        const options = {
-          mimeType: `video/${settingVideo.format}`,
-        };
-        mediaRecorderRef.current = new MediaRecorder(stream, options);
+     const stream = streamRef.current;
+     if (!stream) {
+       console.error("No MediaStream available for recording.");
+       return;
+     }
 
-        const chunks = [];
+     try {
+       const options = {
+         mimeType: `video/${settingVideo.format}`,
+       };
+       mediaRecorderRef.current = new MediaRecorder(stream, options);
 
-        mediaRecorderRef.current.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            chunks.push(event.data);
-          }
-        };
+       const chunks = [];
+       mediaRecorderRef.current.ondataavailable = (event) => {
+         if (event.data.size > 0) {
+           chunks.push(event.data);
+         }
+       };
 
-        mediaRecorderRef.current.onstop = () => {
-          const blob = new Blob(chunks, {
-            type: `video/${settingVideo.format}`,
-          });
-          const videoURL = URL.createObjectURL(blob);
-          setPhotos((prevPhotos) => [...prevPhotos, videoURL]);
-        };
+       mediaRecorderRef.current.onstop = () => {
+         const blob = new Blob(chunks, {
+           type: `video/${settingVideo.format}`,
+         });
+         const videoURL = URL.createObjectURL(blob);
+         setPhotos((prevPhotos) => [...prevPhotos, videoURL]);
+       };
 
-        mediaRecorderRef.current.onerror = (event) => {
-          console.error("MediaRecorder error:", event.error);
-        };
-
-        mediaRecorderRef.current.start();
-        console.log("Recording started...");
-        setIsRecording(true);
-      } catch (error) {
-        console.error("Error starting MediaRecorder:", error);
-      }
-    };
+       mediaRecorderRef.current.start();
+       console.log("Recording started...");
+       setIsRecording(true);
+     } catch (error) {
+       console.error("Error starting MediaRecorder:", error);
+     }
+   };
 
     const stopRecording = () => {
       if (mediaRecorderRef.current && isRecording) {
@@ -234,3 +237,46 @@ export default function Webcam({
     </>
   );
 }
+
+
+
+  //  const startRecording = () => {
+  //    const stream = streamRef.current;
+  //    if (!stream) {
+  //      console.error("No MediaStream available for recording.");
+  //      return;
+  //    }
+
+  //    try {
+  //      const options = {
+  //        mimeType: `video/${settingVideo.format}`,
+  //      };
+  //      mediaRecorderRef.current = new MediaRecorder(stream, options);
+
+  //      const chunks = [];
+
+  //      mediaRecorderRef.current.ondataavailable = (event) => {
+  //        if (event.data.size > 0) {
+  //          chunks.push(event.data);
+  //        }
+  //      };
+
+  //      mediaRecorderRef.current.onstop = () => {
+  //        const blob = new Blob(chunks, {
+  //          type: `video/${settingVideo.format}`,
+  //        });
+  //        const videoURL = URL.createObjectURL(blob);
+  //        setPhotos((prevPhotos) => [...prevPhotos, videoURL]);
+  //      };
+
+  //      mediaRecorderRef.current.onerror = (event) => {
+  //        console.error("MediaRecorder error:", event.error);
+  //      };
+
+  //      mediaRecorderRef.current.start();
+  //      console.log("Recording started...");
+  //      setIsRecording(true);
+  //    } catch (error) {
+  //      console.error("Error starting MediaRecorder:", error);
+  //    }
+  //  };

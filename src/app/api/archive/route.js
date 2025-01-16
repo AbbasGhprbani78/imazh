@@ -109,7 +109,7 @@ export async function POST(req) {
 
     const response = new Response(
       JSON.stringify({
-        message: `آرشیو جدید با موفقیت اضافه شد برای مشتری ${newArchive.customer.fullname}`,
+        message: `آرشیو جدید با موفقیت اضافه شد برای بیمار ${newArchive.customer.fullname}`,
         archive: newArchive,
       }),
       { status: 201 }

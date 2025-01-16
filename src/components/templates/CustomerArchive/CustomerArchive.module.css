@@ -45,6 +45,11 @@
 
 .icon_option {
     font-size: 1.5rem;
+    color: #fff;
+}
+
+.text_option_item_img {
+    color: #fff;
 }
 
 .hidden {
@@ -85,7 +90,7 @@
 }
 
 
-.image_archive>video{
+.image_archive>video {
     object-fit: contain;
     width: 100%;
     height: 100%;
@@ -120,6 +125,43 @@
     z-index: 3;
 }
 
+.fullScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    background-color: var(--color-8);
+}
+
+
+.full_btn {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    outline: none;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: max-content;
+    height: max-content;
+    cursor: pointer;
+    font-size: 1.5rem;
+
+}
+
+.wrap_btn_camera {
+    transform: translateX(-50%);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 10;
+}
 
 @media (min-width: 900px) and (max-width: 1024px) {
     .Preview_item {
@@ -149,6 +191,10 @@
 
     .Preview_item {
         height: calc(50dvh - 40px)
+    }
+
+    .full_btn {
+        display: none;
     }
 }
 

@@ -1,0 +1,29 @@
+.table_content {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow: -moz-scrollbars-none;
+    max-height: calc(90dvh - 100px);
+}
+
+.table_content::-webkit-scrollbar {
+    display: none;
+
+}
+
+.table_item {
+    background-color: var(--color-2) !important;
+    color: var(--color-5) !important;
+    font-family: "vazir" !important;
+}
+
+
+.cell_item {
+    color: var(--color-5) !important;
+    font-family: "vazir" !important;
+}
+
+.wrap_btn {
+    width: 200px;
+    margin-bottom: 1.5rem;
+}

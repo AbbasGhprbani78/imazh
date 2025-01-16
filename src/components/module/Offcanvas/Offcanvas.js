@@ -55,10 +55,9 @@ export default function Offcanvas({
 
   const handleGoToSetting = (tabNumber) => {
     setSelectTab(tabNumber);
-    handleDrawerToggle()
+    handleDrawerToggle();
     router.push("/setting");
   };
-
 
   return (
     <>
@@ -80,7 +79,7 @@ export default function Offcanvas({
             width: 250,
             "& .MuiDrawer-paper": {
               width: 250,
-              background: "#2a2a2a",
+              background: "var(--color-2)",
             },
           }}
         >
@@ -89,7 +88,9 @@ export default function Offcanvas({
               sx={{ marginBottom: "1.5rem", padding: "0" }}
               onClick={handleSubDropdownToggle}
             >
-              <li className={styles.link_offcanvas}>
+              <li
+                className={`${styles.link_offcanvas} ${styles.item_distance}`}
+              >
                 <Image
                   src={me.img ? me.img : "/images/5.svg"}
                   alt="profile"
@@ -97,6 +98,7 @@ export default function Offcanvas({
                   height={50}
                   className={styles.image_profile}
                 />
+                {dropdownOpen ? <ExpandLess /> : <ExpandMore />}
               </li>
             </ListItemButton>
             <Collapse in={dropdownOpen} timeout="auto" unmountOnExit>
@@ -194,7 +196,7 @@ export default function Offcanvas({
                           onClick={() => handleGoToSetting(1)}
                         >
                           <li className={styles.link_offcanvas}>
-                            <span className={styles.link_text}>پایه</span>
+                            <span className={styles.link_text}>ویدئو</span>
                           </li>
                         </ListItemButton>
                         <ListItemButton
@@ -202,30 +204,14 @@ export default function Offcanvas({
                           onClick={() => handleGoToSetting(2)}
                         >
                           <li className={styles.link_offcanvas}>
-                            <span className={styles.link_text}>ویدئو</span>
-                          </li>
-                        </ListItemButton>
-                        <ListItemButton
-                          sx={{ marginBottom: "1rem", padding: "0 4rem 0 0" }}
-                          onClick={() => handleGoToSetting(3)}
-                        >
-                          <li className={styles.link_offcanvas}>
                             <span className={styles.link_text}>عکس</span>
-                          </li>
-                        </ListItemButton>
-                        <ListItemButton
-                          sx={{ marginBottom: "1rem", padding: "0 4rem 0 0" }}
-                          onClick={() => handleGoToSetting(4)}
-                        >
-                          <li className={styles.link_offcanvas}>
-                            <span className={styles.link_text}>دستی</span>
                           </li>
                         </ListItemButton>
                       </List>
                     </Collapse>
                     <ListItemButton
                       sx={{ marginBottom: "1rem", padding: "0 2rem 0 0" }}
-                      onClick={() => handleGoToSetting(5)}
+                      onClick={() => handleGoToSetting(3)}
                     >
                       <li className={styles.link_offcanvas}>
                         <span className={styles.link_text}>تم</span>
@@ -233,7 +219,7 @@ export default function Offcanvas({
                     </ListItemButton>
                     <ListItemButton
                       sx={{ marginBottom: "1rem", padding: "0 2rem 0 0" }}
-                      onClick={() => handleGoToSetting(6)}
+                      onClick={() => handleGoToSetting(4)}
                     >
                       <li className={styles.link_offcanvas}>
                         <span className={styles.link_text}>لاگ</span>
@@ -241,7 +227,7 @@ export default function Offcanvas({
                     </ListItemButton>
                     <ListItemButton
                       sx={{ marginBottom: "1rem", padding: "0 2rem 0 0" }}
-                      onClick={() => handleGoToSetting(7)}
+                      onClick={() => handleGoToSetting(5)}
                     >
                       <li className={styles.link_offcanvas}>
                         <span className={styles.link_text}>

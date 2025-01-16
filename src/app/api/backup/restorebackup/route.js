@@ -1,89 +1,77 @@
-// import fs from "fs";
-// import path from "path";
-// import { NextResponse } from "next/server";
-// import formidable from "formidable";
-// import unzipper from "unzipper";
+import fs from "fs";
+import path from "path";
+import unzipper from "unzipper";
+import { NextResponse } from "next/server";
 
-// export const config = {
-//   api: {
-//     bodyParser: false, // Disable built-in body parsing
-//   },
-// };
+export async function POST(req) {
+  const backupFolderPath = path.join(process.cwd(), "backups"); 
+  const dbPath = path.join(process.cwd(), "prisma", "dev.db"); 
+  const uploadsPath = path.join(process.cwd(), "public", "uploads"); 
+  try {
+    if (!fs.existsSync(backupFolderPath)) {
+      return NextResponse.json(
+        { error: "Backups folder not found." },
+        { status: 404 }
+      );
+    }
 
-// // Helper function to parse form data using formidable
-// const parseForm = (req) => {
-//   return new Promise((resolve, reject) => {
-//     const form = new formidable.IncomingForm({
-//       multiples: false,
-//       keepExtensions: true,
-//       uploadDir: path.join(process.cwd(), "temp"),
-//     });
+    const formData = await req.formData();
+    const file = formData.get("backup");
 
-//     form.parse(req, (err, fields, files) => {
-//       if (err) reject(err);
-//       resolve({ fields, files });
-//     });
-//   });
-// };
+  if (!file || !file.name.endsWith(".zip")) {
+    return NextResponse.json(
+      { error: "Invalid file type. Please upload a valid .zip file." },
+      { status: 400 }
+    );
+  }
+    const tempBackupPath = path.join(backupFolderPath, "temp_backup.zip");
 
-// // POST method to restore backup
-// export async function POST(req) {
-//   const dbPath = path.join(process.cwd(), "prisma", "dev.db");
-//   const uploadsPath = path.join(process.cwd(), "public", "uploads");
+    const buffer = Buffer.from(await file.arrayBuffer());
+    fs.writeFileSync(tempBackupPath, buffer);
 
-//   try {
-//     // Validate Content-Type
-//     const contentType = req.headers.get("content-type");
-//     if (!contentType || !contentType.startsWith("multipart/form-data")) {
-//       return NextResponse.json(
-//         { error: "Invalid content-type. Expected multipart/form-data." },
-//         { status: 400 }
-//       );
-//     }
+    const extractPath = path.join(backupFolderPath, "temp_extracted");
+    if (fs.existsSync(extractPath)) {
+      fs.rmSync(extractPath, { recursive: true, force: true });
+    }
+    fs.mkdirSync(extractPath, { recursive: true });
 
-//     // Create temporary directory if it doesn't exist
-//     const tempPath = path.join(process.cwd(), "temp");
-//     if (!fs.existsSync(tempPath)) {
-//       fs.mkdirSync(tempPath, { recursive: true });
-//     }
+    await fs
+      .createReadStream(tempBackupPath)
+      .pipe(unzipper.Extract({ path: extractPath }))
+      .promise();
 
-//     // Parse the form data using formidable
-//     const { files } = await parseForm(req);
-//     if (!files || !files.file) {
-//       return NextResponse.json({ error: "No file uploaded." }, { status: 400 });
-//     }
+    const restoredDbPath = path.join(extractPath, "prisma", "dev.db");
+    if (fs.existsSync(restoredDbPath)) {
+      fs.copyFileSync(restoredDbPath, dbPath); 
+    } else {
+      return NextResponse.json(
+        { error: "Database file missing in backup." },
+        { status: 400 }
+      );
+    }
 
-//     const uploadedFilePath = files.file.path;
+    const restoredUploadsPath = path.join(extractPath, "uploads");
+    if (fs.existsSync(restoredUploadsPath)) {
+      if (fs.existsSync(uploadsPath)) {
+        fs.rmSync(uploadsPath, { recursive: true, force: true }); 
+      }
+      fs.mkdirSync(uploadsPath, { recursive: true });
+      fs.cpSync(restoredUploadsPath, uploadsPath, { recursive: true }); 
+    } else {
+      return NextResponse.json(
+        { error: "Uploads folder missing in backup." },
+        { status: 400 }
+      );
+    }
 
-//     // Open and extract the zip file
-//     const directory = await unzipper.Open.file(uploadedFilePath);
+    fs.unlinkSync(tempBackupPath);
+    fs.rmSync(extractPath, { recursive: true, force: true });
 
-//     for (const file of directory.files) {
-//       if (file.path === "prisma/dev.db") {
-//         // Restore database file
-//         const buffer = await file.buffer();
-//         fs.writeFileSync(dbPath, buffer);
-//       } else if (file.path.startsWith("uploads/")) {
-//         // Restore uploaded files
-//         const uploadDestination = path.join(
-//           uploadsPath,
-//           file.path.replace("uploads/", "")
-//         );
-//         const buffer = await file.buffer();
-//         fs.mkdirSync(path.dirname(uploadDestination), { recursive: true });
-//         fs.writeFileSync(uploadDestination, buffer);
-//       }
-//     }
-
-//     // Clean up temporary uploaded file
-//     fs.unlinkSync(uploadedFilePath);
-
-//     return NextResponse.json({ message: "Backup restored successfully." });
-//   } catch (error) {
-//     console.error("Restore failed:", error);
-//     return NextResponse.json(
-//       { error: "Restore failed.", details: error.message },
-//       { status: 500 }
-//     );
-//   }
-// }
+    return NextResponse.json({ success: true, message: "Restore completed." });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Restore failed.", details: error.message },
+      { status: 500 }
+    );
+  }
+}

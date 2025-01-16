@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DoneIcon from "@mui/icons-material/Done";
 import Input from "../../Input/Input";
-import ToggleInput from "../../ToggleInput/ToggleInput";
 import Button1 from "../../Buttons/Button1";
 import NormalDropDown from "../../DropDown/NormalDropDown";
 import axios from "axios";
@@ -64,7 +63,6 @@ export default function VideoTab() {
           "http://localhost:3000/api/videosetting"
         );
         if (response.status === 200) {
-          console.log(response.data);
           setSettingVideo({
             resolution: response?.data.resolution,
             videoDelay: response?.data.videoDelay,
@@ -112,6 +110,7 @@ export default function VideoTab() {
                 { id: "mp4", name: "mp4" },
                 { id: "webm", name: "webm" },
                 { id: "avi", name: "avi" },
+                { id: "h264", name: "H.264" },
               ]}
               title={"پسوند"}
               value={settingVideo.format}
@@ -140,5 +139,3 @@ export default function VideoTab() {
     </>
   );
 }
-
-

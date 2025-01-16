@@ -68,7 +68,7 @@ export default function ImageTab() {
     <>
       <div className="animationcome">
         <form className="form-tab" onSubmit={saveSettingPhoto}>
-          <Box sx={{ flexGrow: 1, height: "100%" }}>
+          <Box sx={{ flexGrow: 1, height: "100%", width: "100%" }}>
             <Grid
               container
               spacing={2.5}

@@ -63,3 +63,52 @@ export async function DELETE(req, { params }) {
   }
 }
 
+export async function GET(req, { params }) {
+  try {
+    const { id } = params;
+    const { searchParams } = new URL(req.url);
+    const group = searchParams.get("group");
+
+    if (!id || isNaN(Number(id))) {
+      return new Response(JSON.stringify({ message: "ایدی معتبر نیست" }), {
+        status: 400,
+      });
+    }
+
+    const archive = await prisma.archive.findUnique({
+      where: {
+        id: Number(id),
+        isDelete: false,
+      },
+      include: {
+        customer: true,
+        operation: true,
+        setting: true,
+        photos: true,
+      },
+    });
+
+    if (!archive) {
+      return new Response(JSON.stringify({ message: "آرشیو یافت نشد" }), {
+        status: 404,
+      });
+    }
+
+    return new Response(
+      JSON.stringify({
+        message: "آرشیو با موفقیت یافت شد",
+        archive,
+      }),
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error processing GET request:", error.message);
+    return new Response(
+      JSON.stringify({
+        message: "مشکلی سمت سرور پیش آمده",
+        error: error.message,
+      }),
+      { status: 500 }
+    );
+  }
+} 

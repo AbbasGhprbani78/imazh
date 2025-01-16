@@ -5,7 +5,7 @@
 }
 
 .container_drop {
-    max-width: 350px;
+    width: 350px;
 }
 
 .container_toggle {
@@ -15,6 +15,7 @@
 
 @media (max-width:900px) {
     .container_drop {
+        width: 100%;
         max-width: 100%;
     }
 

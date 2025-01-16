@@ -34,7 +34,9 @@ export default function Button1({
 }) {
   return (
     <CustomButton
-      startIcon={Icon ? <Icon className={styles.icon} /> : null}
+      startIcon={
+        disable ? null : Icon ? <Icon className={styles.icon} /> : null
+      }
       dir="ltr"
       className={`${styles.button} ${styles[backstyle]}`}
       type={type}

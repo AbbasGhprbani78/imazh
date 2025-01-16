@@ -1,9 +1,9 @@
 "use client";
 import RightSection from "@/components/module/RightSection/RightSection";
 import Grid from "@mui/material/Grid2";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./CustomerArchive.module.css";
-import { Box } from "@mui/material";
+import { Box, buttonBaseClasses } from "@mui/material";
 import Modal from "@/components/module/Modal/Modal";
 import DisplayPhoto from "@/components/module/DisplayPhoto/DisplayPhoto";
 import axios from "axios";
@@ -19,6 +19,9 @@ import NormalDropDown from "@/components/module/DropDown/NormalDropDown";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 import { FaDownload } from "react-icons/fa6";
 import dynamic from "next/dynamic";
+import Button2 from "@/components/module/Buttons/Button2";
+import { MdTune } from "react-icons/md";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
 export default function CustomerArchive({ id }) {
@@ -28,7 +31,9 @@ export default function CustomerArchive({ id }) {
   const [isVisible, setIsVisible] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [archiveDetails, setArchiveDetails] = useState("");
-  const [displayType, setDisplayType] = useState("کنارهم");
+  const [displayType, setDisplayType] = useState("");
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [items, setItems] = useState([]);
   const [isHide, setIsHide] = useState(false);
   const [filters, setFilters] = useState({
     contrast: 100,
@@ -43,6 +48,7 @@ export default function CustomerArchive({ id }) {
     group1: 0,
     group2: 0,
   });
+  const playerRef = useRef(null);
 
   const handleSlide = (direction) => {
     setCurrentIndexes((prev) => {
@@ -77,27 +83,59 @@ export default function CustomerArchive({ id }) {
     setDisplayType(value);
   };
 
-  const saveImage = (idImage) => {
-    const imgElement = document.getElementById(idImage);
+  const saveImage = (id) => {
+    const element = document.getElementById(id);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
+    const imgElement = element;
     canvas.width = imgElement.naturalWidth;
     canvas.height = imgElement.naturalHeight;
 
     ctx.filter = `
-      contrast(${filters.contrast}%) brightness(${filters.brightness}%) grayscale(${filters.grayscale}%) 
-      saturate(${filters.saturation}%) sepia(${filters.sepia}%) hue-rotate(${filters.hue}deg) opacity(${filters.opacity}%)
-    `;
+  contrast(${filters.contrast}%) brightness(${filters.brightness}%) grayscale(${filters.grayscale}%) 
+  saturate(${filters.saturation}%) sepia(${filters.sepia}%) hue-rotate(${filters.hue}deg) opacity(${filters.opacity}%)
+`;
 
     ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
+
+    const extension = imgElement.src.split(".").pop().toLowerCase();
+
+    const downloadFilename = `edited-image.${extension}`;
 
     canvas.toBlob((blob) => {
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "edited-image.png";
+      link.download = downloadFilename;
       link.click();
     });
+  };
+
+  const fullContrastGrayscale = () => {
+    setFilters((prev) => ({
+      ...prev,
+      contrast: 200,
+      grayscale: 100,
+    }));
+  };
+
+  const captureScreenshot = () => {
+    const video = playerRef.current.getInternalPlayer();
+    if (video && video.videoWidth && video.videoHeight) {
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const dataURL = canvas.toDataURL("image/png");
+
+      const link = document.createElement("a");
+      link.href = dataURL;
+      link.download = "screenshot.png";
+      link.click();
+    }
   };
 
   useEffect(() => {
@@ -117,11 +155,6 @@ export default function CustomerArchive({ id }) {
     getArchiveDetails();
   }, []);
 
-  const group1Images =
-    archiveDetails?.photos?.filter((img) => img.group === 1) || [];
-  const group2Images =
-    archiveDetails?.photos?.filter((img) => img.group === 2) || [];
-
   const getFilterStyle = () => ({
     filter: `
     contrast(${filters.contrast}%)
@@ -134,17 +167,41 @@ export default function CustomerArchive({ id }) {
   `,
   });
 
+  const group1Images =
+    archiveDetails?.photos?.filter((img) => img.group === 1) || [];
+  const group2Images =
+    archiveDetails?.photos?.filter((img) => img.group === 2) || [];
+
   const imageUrl = group1Images[currentIndexes?.group1]?.url;
   const imageUrl2 = group2Images[currentIndexes?.group2]?.url;
   const isImage = /\.(jpeg|jpg|webp|png|data:image)/i.test(imageUrl);
   const isImage2 = /\.(jpeg|jpg|webp|png|data:image)/i.test(imageUrl2);
 
   useEffect(() => {
-    if (imageUrl || imageUrl2) {
-      setIsLoadingGroup1(false);
-      setIsLoadingGroup2(false);
+    if (imageUrl) setIsLoadingGroup1(false);
+    if (imageUrl2) setIsLoadingGroup2(false);
+
+    let newItems = [];
+    if (group2Images.length === 0) {
+      newItems = [{ id: "قبل عمل", name: "قبل عمل" }];
+    } else if (!isImage || !isImage2) {
+      newItems = [
+        { id: "کنارهم", name: "کنارهم" },
+        { id: "قبل عمل", name: "قبل عمل" },
+        { id: "بعد عمل", name: "بعد عمل" },
+      ];
+    } else {
+      newItems = [
+        { id: "کنارهم", name: "کنارهم" },
+        { id: "روی هم", name: "روی هم" },
+        { id: "قبل عمل", name: "قبل عمل" },
+        { id: "بعد عمل", name: "بعد عمل" },
+      ];
     }
-  }, [imageUrl]);
+
+    setItems(newItems);
+    setDisplayType(newItems[0]?.id || "");
+  }, [imageUrl2, imageUrl, isImage, isImage2]);
 
   return (
     <>
@@ -162,50 +219,63 @@ export default function CustomerArchive({ id }) {
             }}
           >
             <Grid
-              size={{ xs: 12, md: 4, lg: 3 }}
+              size={{ xs: 12, md: 4, lg: 2.3 }}
               sx={{ display: "flex", flexDirection: "column" }}
             >
               <RightSection style={"archive"}>
                 <div className={styles.content_right}>
                   <TextComponent
-                    text={archiveDetails?.setting?.name}
+                    text={archiveDetails?.setting?.description}
                     lable={"حالت ضبط"}
                   />
                   <div className={styles.wrap_display}>
                     <div style={{ marginBottom: "2rem" }}>
                       <NormalDropDown
-                        items={
-                          isImage || isImage2
-                            ? [
-                                { id: "کنارهم", name: "کنارهم" },
-                                { id: "روی هم", name: "روی هم" },
-                                { id: "قبل عمل", name: "قبل عمل" },
-                                { id: "بعد عمل", name: "بعد عمل" },
-                              ]
-                            : [
-                                { id: "کنارهم", name: "کنارهم" },
-                                { id: "قبل عمل", name: "قبل عمل" },
-                                { id: "بعد عمل", name: "بعد عمل" },
-                              ]
-                        }
+                        items={items}
                         name={""}
                         onChange={handleChangeDisplay}
                         value={displayType}
-                        title="نحوه نمایش عکس‌ها"
+                        title="نحوه نمایش "
                       />
                     </div>
-                    <DisplayPhoto title={"گرید"} item={"2"} />
                   </div>
-                  <div className={styles.wrap_actions}>
-                    <AditPicture filters={filters} setFilters={setFilters} />
-                  </div>
+                  {(isImage || isImage2) && (
+                    <>
+                      <div className={styles.wrap_actions}>
+                        <AditPicture
+                          filters={filters}
+                          setFilters={setFilters}
+                        />
+                      </div>
+                      <div>
+                        <Button2
+                          onClick={fullContrastGrayscale}
+                          icon={MdTune}
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
               </RightSection>
             </Grid>
-            <Grid size={{ xs: 12, md: 8, lg: 9 }} className={styles.left_sec}>
-              <Grid className={styles.wrap_images} container spacing={2.5}>
+            <Grid size={{ xs: 12, md: 8, lg: 9.7 }} className={styles.left_sec}>
+              <Grid
+                className={`${styles.wrap_images} ${
+                  isFullScreen && styles.fullScreen
+                }`}
+                container
+                spacing={2.5}
+              >
                 {displayType == "کنارهم" ? (
                   <>
+                    {isImage && isImage2 && (
+                      <div className={styles.full_btn}>
+                        <Button2
+                          onClick={() => setIsFullScreen((prev) => !prev)}
+                          icon={ZoomOutMapIcon}
+                        />
+                      </div>
+                    )}
                     <Grid
                       size={{ xs: 12, lg: 6 }}
                       className={`${styles.Preview_item}`}
@@ -244,17 +314,26 @@ export default function CustomerArchive({ id }) {
                         ) : (
                           <>
                             <ReactPlayer
+                              ref={playerRef}
                               url={group1Images[currentIndexes?.group1]?.url}
                               playing={false}
                               muted={false}
                               playsinline
-                              preload="metadata"
+                              preload="auto"
                               className={styles.image_archive}
                               controls={true}
                               width="100%"
                               height="100%"
                             />
                           </>
+                        )}
+                        {!isImage && (
+                          <div className={styles.wrap_btn_camera}>
+                            <Button2
+                              onClick={captureScreenshot}
+                              icon={CameraAltIcon}
+                            />
+                          </div>
                         )}
                       </Preview>
                       {isImage && (
@@ -268,6 +347,7 @@ export default function CustomerArchive({ id }) {
                               بزرگنمایی
                             </span>
                           </div>
+
                           <div
                             className={styles.option_item_img}
                             onClick={() => saveImage("group1-image")}
@@ -354,6 +434,14 @@ export default function CustomerArchive({ id }) {
                           </div>
                         </div>
                       )}
+                      {!isImage2 && (
+                        <div className={styles.wrap_btn_camera}>
+                          <Button2
+                            onClick={captureScreenshot}
+                            icon={CameraAltIcon}
+                          />
+                        </div>
+                      )}
                     </Grid>
                   </>
                 ) : displayType == "روی هم" ? (
@@ -425,6 +513,7 @@ export default function CustomerArchive({ id }) {
                           </>
                         )}
                       </Preview>
+
                       {isImage && (
                         <div className={styles.wrap_action_image}>
                           <div
@@ -445,6 +534,14 @@ export default function CustomerArchive({ id }) {
                               دانلود
                             </span>
                           </div>
+                        </div>
+                      )}
+                      {!isImage && (
+                        <div className={styles.wrap_btn_camera}>
+                          <Button2
+                            onClick={captureScreenshot}
+                            icon={CameraAltIcon}
+                          />
                         </div>
                       )}
                     </Grid>
@@ -525,6 +622,14 @@ export default function CustomerArchive({ id }) {
                           </div>
                         </div>
                       )}
+                      {!isImage2 && (
+                        <div className={styles.wrap_btn_camera}>
+                          <Button2
+                            onClick={captureScreenshot}
+                            icon={CameraAltIcon}
+                          />
+                        </div>
+                      )}
                     </Grid>
                   </>
                 )}
@@ -554,24 +659,18 @@ export default function CustomerArchive({ id }) {
       ></Modal>
       <ModalBottom isVisible={isVisible} setIsVisible={setIsVisible}>
         <TextComponent
-          text={archiveDetails?.setting?.name}
+          text={archiveDetails?.setting?.description}
           lable={"حالت ضبط"}
         />
         <div className={styles.wrap_display}>
           <div style={{ marginBottom: "2rem" }}>
             <NormalDropDown
-              items={[
-                { id: 1, name: "کنارهم" },
-                { id: 2, name: "روی هم" },
-                { id: 3, name: "قبل عمل" },
-                { id: 4, name: "بعد عمل" },
-              ]}
+              items={items}
               onChange={handleChangeDisplay}
               value={displayType}
-              title="نحوه نمایش عکس‌ها"
+              title="نحوه نمایش "
             />
           </div>
-          <DisplayPhoto title={"گرید"} item={"2"} />
         </div>
         <div className={styles.wrap_actions}>
           <AditPicture filters={filters} setFilters={setFilters} />
@@ -580,3 +679,14 @@ export default function CustomerArchive({ id }) {
     </>
   );
 }
+
+// () => {
+//   const videoUrl = group1Images[currentIndexes?.group1]?.url;
+
+//   const fileExtension = videoUrl.split(".").pop();
+
+//   const a = document.createElement("a");
+//   a.href = videoUrl;
+//   a.download = `group1-video-${currentIndexes?.group1}.${fileExtension}`;
+//   a.click();
+// };

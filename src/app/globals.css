@@ -130,8 +130,6 @@ body::-webkit-scrollbar {
     display: none;
 }
 
-
-
 * {
     scrollbar-width: thin;
     scrollbar-color: #888 var(--color-3);
@@ -191,6 +189,16 @@ div[style*="border-width: 6px"]:nth-of-type(1) {
     display: inline-block;
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 

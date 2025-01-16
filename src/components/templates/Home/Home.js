@@ -137,7 +137,7 @@ export default function Home() {
       setToastInfo({
         type: "error",
         title: "خطا",
-        message: "عکس باید انتخاب شود",
+        message: "ویدیو یا تصویر باید انتخاب شود",
       });
       return false;
     }
@@ -917,13 +917,13 @@ export default function Home() {
                 toggleExpand={toggleExpand}
                 isExpanded={isExpanded}
               >
-                <Webcam
+                {/* <Webcam
                   setting={setting}
                   data={data}
                   setPhotos={setPhotos}
                   socket={socket}
                   setSocket={setSocket}
-                />
+                /> */}
 
                 <div className={styles.icons_bottom_wrapper}>
                   <ReplayOutlinedIcon

@@ -6,7 +6,6 @@ import RightSection from "@/components/module/RightSection/RightSection";
 import styles from "./Setting.module.css";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import VideoTab from "@/components/module/Setting/VideoTab/VideoTab";
-import ManualTab from "@/components/module/Setting/ManualTab/ManualTab";
 import ThemeTab from "@/components/module/Setting/ThemeTab/ThemeTab";
 import LogTab from "@/components/module/Setting/LogTab/LogTab";
 import DataBackupTab from "@/components/module/Setting/DataBackupTab/DataBackupTab";
@@ -16,7 +15,7 @@ import ImageTab from "@/components/module/Setting/ImageTab/ImageTab";
 
 export default function Settings() {
   const [dropdownOpen, setDropdownOpen] = useState(true);
-  const [tab, setTab] = useState(6);
+  const [tab, setTab] = useState(5);
   const { selectTab } = useContext(MyContext);
 
   const handleSubDropdownToggle = () => {
@@ -26,7 +25,6 @@ export default function Settings() {
   const tabs = [
     { title: "ویدئو", component: <VideoTab /> },
     { title: "عکس", component: <ImageTab /> },
-    { title: "دستی", component: <ManualTab /> },
     { title: "تم", component: <ThemeTab /> },
     { title: "لاگ", component: <LogTab /> },
     { title: "پشتیبان‌گیری اطلاعات", component: <DataBackupTab /> },
@@ -69,7 +67,7 @@ export default function Settings() {
                 </ListItemButton>
                 <Collapse in={dropdownOpen} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
-                    {tabs.slice(0, 3).map((tabItem, index) => (
+                    {tabs.slice(0, 2).map((tabItem, index) => (
                       <li
                         key={index}
                         className={`${styles.record_item} ${
@@ -82,13 +80,13 @@ export default function Settings() {
                     ))}
                   </List>
                 </Collapse>
-                {tabs.slice(3).map((tabItem, index) => (
+                {tabs.slice(2).map((tabItem, index) => (
                   <ListItemButton
-                    key={index + 4}
+                    key={index + 3}
                     className={`${styles.item_setting} ${styles.hover_class} ${
-                      tab === index + 4 && styles.active_Tab
+                      tab === index + 3 && styles.active_Tab
                     }`}
-                    onClick={() => setTab(index + 4)}
+                    onClick={() => setTab(index + 3)}
                   >
                     {tabItem.title}
                   </ListItemButton>

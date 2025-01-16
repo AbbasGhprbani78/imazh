@@ -86,7 +86,7 @@ export default function TableUser({
                     {row?.operation?.operation}
                   </TableCell>
                   <TableCell align="center" className={styles.cell_item}>
-                    {row?.setting?.name}
+                    {row?.setting?.description}
                   </TableCell>
                   <TableCell align="center" className={styles.cell_item}>
                     {convertToFarsiDigits(row?.customer?.phonenumber)}
