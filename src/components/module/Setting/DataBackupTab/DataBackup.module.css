@@ -4,6 +4,7 @@
     -ms-overflow-style: none;
     overflow: -moz-scrollbars-none;
     max-height: calc(90dvh - 100px);
+    margin-top: 1.5rem;
 }
 
 .table_content::-webkit-scrollbar {
@@ -15,15 +16,17 @@
     background-color: var(--color-2) !important;
     color: var(--color-5) !important;
     font-family: "vazir" !important;
+
 }
 
 
 .cell_item {
     color: var(--color-5) !important;
     font-family: "vazir" !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .wrap_btn {
-    width: 200px;
-    margin-bottom: 1.5rem;
+    width: 150px;
 }

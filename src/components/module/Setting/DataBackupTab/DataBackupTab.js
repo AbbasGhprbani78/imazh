@@ -13,6 +13,8 @@ import Button1 from "../../Buttons/Button1";
 import axios from "axios";
 import Toast from "../../Toast/Toast";
 import { convertToPersianDate } from "@/utils/helper";
+import Button2 from "../../Buttons/Button2";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 export default function DataBackupTab() {
   const [loading, setLoading] = useState(false);
@@ -118,6 +120,33 @@ export default function DataBackupTab() {
     }
   };
 
+  const deleteBackup = async (fileName) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/backup/${fileName}`
+      );
+
+      if (response.status === 200) {
+        getBackups();
+        setShowToast(true);
+        setToastInfo({
+          type: "success",
+          title: "حذف موفقیت آمیز",
+          message: `پشتیبان ${fileName} با موفقیت حذف شد`,
+        });
+      }
+    } catch (error) {
+      console.log("Error deleting backup:", error);
+      setShowToast(true);
+      setToastInfo({
+        type: "error",
+        title: "خطا در حذف پشتیبان",
+        message:
+          error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
+      });
+    }
+  };
+
   useEffect(() => {
     getBackups();
   }, []);
@@ -167,12 +196,26 @@ export default function DataBackupTab() {
                       {convertToPersianDate(item.createdAt)}
                     </TableCell>
 
-                    <TableCell align="center" className={styles.cell_item}>
-                      <Button1
-                        icon={ReplayOutlinedIcon}
-                        text={"باز گردانی"}
-                        Onclick={() => restoreHandler(item.name)}
-                        disable={loadingForFile[item.name]}
+                    <TableCell
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "20px",
+                      }}
+                      align="center"
+                      className={styles.cell_item}
+                    >
+                      <div className={styles.wrap_btn}>
+                        <Button1
+                          icon={ReplayOutlinedIcon}
+                          text={"باز گردانی"}
+                          Onclick={() => restoreHandler(item.name)}
+                          disable={loadingForFile[item.name]}
+                        />
+                      </div>
+                      <Button2
+                        onClick={() => deleteBackup(item.name)}
+                        icon={DeleteOutlineIcon}
                       />
                     </TableCell>
                   </TableRow>
