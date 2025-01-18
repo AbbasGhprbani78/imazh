@@ -1,4 +1,3 @@
-
 .top {
     display: flex;
     align-items: center;
@@ -23,8 +22,127 @@
     color: var(--color-5);
 }
 
+.top_archive {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
 
 
+.list_user_wrapper {
+    margin-top: 1.3rem;
+    width: 100%;
+}
+
+.list_user {
+    list-style: none;
+    height: 400px;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    padding: 10px 0;
+    padding-left: 10px;
+}
+
+.user_item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: var(--color-14);
+    color: var(--color-5);
+    font-size: 1rem;
+    width: 100%;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all .3s ease;
+}
+
+.user_item:hover {
+    background-color: var(--color-7);
+}
+
+.user_active {
+    background-color: var(--color-7);
+}
+
+.searchBox_wrapper {
+    width: 380px;
+    max-width: 380px;
+    margin-top: 1rem;
+}
+
+.wrap_btns_add {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.not_found_text {
+    color: var(--color-5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wrapdrop {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.css-1usuzwp-MuiButtonBase-root-MuiTab-root.Mui-selected {
+    font-family: "vazir" !important;
+}
+
+.box_add {
+    background-color: var(--color-5);
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.icon_add {
+    color: var(--color-4);
+    font-size: 3rem;
+}
+
+.wrap_archive_file {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.wrap_archive_file {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.coverFile_file {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: #0000006c;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
 
 @keyframes rotation {
     0% {
@@ -36,12 +154,17 @@
     }
 }
 
-@media (max-width:900px) {
-    /* .container {
-        padding: 20px;
-    } */
+@media (max-width:600px) {
+    .top_archive {
+        gap: 20px;
+    }
 
-    /* .wrapper {
-        margin: 0;
-    } */
+    .searchBox_wrapper {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .btn_add_archive {
+        width: 100%;
+    }
 }

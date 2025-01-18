@@ -1,57 +1,62 @@
 "use client";
-import axios from "axios";
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import ReactPlayer from "react-player";
 
-export default function page() {
-  const [file, setFile] = useState(null);
-  const [status, setStatus] = useState("");
+export default function Page() {
+ const playerRef = useRef(null);
+  const [zoom, setZoom] = useState(1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+  const handleFullscreenChange = () => {
+    if (document.fullscreenElement) {
+      setIsFullscreen(true);
+    } else {
+      setIsFullscreen(false);
+    }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleZoomIn = () => {
+    setZoom((prevZoom) => Math.min(prevZoom + 0.1, 3)); // Max zoom level = 3
+  };
 
-  if (!file) {
-    setStatus("Please select a file.");
-    return;
-  }
+  const handleZoomOut = () => {
+    setZoom((prevZoom) => Math.max(prevZoom - 0.1, 1)); // Min zoom level = 1
+  };
 
-  const formData = new FormData();
-  formData.append("backup", file);
+  const playerStyle = {
+    transform: `scale(${zoom})`,
+    transformOrigin: 'center center',
+    transition: 'transform 0.2s ease-in-out',
+    width: '100%',
+    height: '100%',
+  };
 
-  try {
-    setStatus("Uploading...");
-    const response = await axios.post(
-      "http://localhost:3000/api/backup/restorebackup",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+  // Add event listener to detect fullscreen change
+  React.useEffect(() => {
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
 
-    if (response.status === 200) {
-      setStatus("Backup restored successfully!");
-    } else {
-      setStatus(`Error: ${response.data.error || "Something went wrong"}`);
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    setStatus(`Error: ${error.response?.data?.error || "Server error"}`);
-  }
-};
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
 
   return (
-    <div>
-      <h1>Restore Backup</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="file" accept=".zip" onChange={handleFileChange} required />
-        <button type="submit">Restore</button>
-      </form>
-      {status && <p>{status}</p>}
+    <div className="player-wrapper" style={{ position: 'relative', }}>
+      <ReactPlayer
+        ref={playerRef}
+        url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" // Example video URL
+        width="400px"
+        height="400px"
+        style={playerStyle}
+        playing
+      />
+      {isFullscreen && (
+        <div className="zoom-controls" style={{ position: 'absolute', top: '10px', right: '10px' }}>
+          <button onClick={handleZoomIn}>+</button>
+          <button onClick={handleZoomOut}>-</button>
+        </div>
+      )}
     </div>
   );
-}
+};

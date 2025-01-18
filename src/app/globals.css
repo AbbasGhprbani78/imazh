@@ -171,6 +171,16 @@ div[style*="border-width: 6px"]:nth-of-type(1) {
     margin-right: 1px !important;
 }
 
+[class*="transform-component-module_wrapper"] {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+[class*="transform-component-module_content"] {
+    height: 100% !important;
+    width: 100% !important;
+}
+
 
 
 .wrap_loading {

@@ -20,7 +20,7 @@ export default function TableUser({
   totalPage,
   handlePageChange,
   page,
-  setShowModal,
+  openModalDelete,
   setArchiveId,
 }) {
   const router = useRouter();
@@ -117,7 +117,7 @@ export default function TableUser({
                     <Button2
                       icon={DeleteOutlineIcon}
                       onClick={() => {
-                        setShowModal(true);
+                        openModalDelete();
                         setArchiveId(row?.id);
                       }}
                     />

@@ -3,7 +3,7 @@ import RightSection from "@/components/module/RightSection/RightSection";
 import Grid from "@mui/material/Grid2";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./CustomerArchive.module.css";
-import { Box, buttonBaseClasses } from "@mui/material";
+import { Box } from "@mui/material";
 import Modal from "@/components/module/Modal/Modal";
 import DisplayPhoto from "@/components/module/DisplayPhoto/DisplayPhoto";
 import axios from "axios";
@@ -48,6 +48,7 @@ export default function CustomerArchive({ id }) {
     group1: 0,
     group2: 0,
   });
+  const videoContainerRef = useRef(null);
   const playerRef = useRef(null);
 
   const handleSlide = (direction) => {
@@ -138,23 +139,6 @@ export default function CustomerArchive({ id }) {
     }
   };
 
-  useEffect(() => {
-    const getArchiveDetails = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/api/archive/${id}`
-        );
-        if (response.status === 200) {
-          setArchiveDetails(response.data.archive);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getArchiveDetails();
-  }, []);
-
   const getFilterStyle = () => ({
     filter: `
     contrast(${filters.contrast}%)
@@ -202,6 +186,25 @@ export default function CustomerArchive({ id }) {
     setItems(newItems);
     setDisplayType(newItems[0]?.id || "");
   }, [imageUrl2, imageUrl, isImage, isImage2]);
+
+  useEffect(() => {
+    const getArchiveDetails = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/archive/${id}`
+        );
+        if (response.status === 200) {
+          setArchiveDetails(response.data.archive);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getArchiveDetails();
+  }, []);
+
+
 
   return (
     <>
@@ -468,6 +471,7 @@ export default function CustomerArchive({ id }) {
                       style={{
                         display: expandedIndex === 2 ? "none" : "block",
                       }}
+                      ref={videoContainerRef}
                     >
                       <Preview
                         toggleExpand={() => toggleExpand(1)}
@@ -679,6 +683,8 @@ export default function CustomerArchive({ id }) {
     </>
   );
 }
+
+//download video
 
 // () => {
 //   const videoUrl = group1Images[currentIndexes?.group1]?.url;

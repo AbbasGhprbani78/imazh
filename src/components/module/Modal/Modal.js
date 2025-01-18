@@ -1,6 +1,6 @@
 import styles from "./Modal.module.css";
 import CloseIcon from "@mui/icons-material/Close";
-export default function Modal({ title, children, onClick, showModal }) {
+export default function Modal({ title, children, onClick, showModal, height }) {
   return (
     <div
       className={`${styles.modal_container} ${showModal && styles.showModal}`}
@@ -11,7 +11,7 @@ export default function Modal({ title, children, onClick, showModal }) {
           <span className={styles.lable}>{title}</span>
           <CloseIcon className={styles.icon_close} onClick={onClick} />
         </div>
-        <div className={styles.bottom_modal}>{children}</div>
+        <div className={`${styles.bottom_modal} ${styles[height]}`}>{children}</div>
       </div>
     </div>
   );

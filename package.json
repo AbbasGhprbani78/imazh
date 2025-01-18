@@ -33,7 +33,9 @@
     "stylis": "^4.3.4",
     "stylis-plugin-rtl": "^2.1.1",
     "swiper": "^11.1.15",
-    "unzipper": "^0.12.3"
+    "unzipper": "^0.12.3",
+    "video.js": "^8.21.0",
+    "videojs-panorama": "^0.1.7"
   },
   "devDependencies": {
     "cross-env": "^7.0.3"

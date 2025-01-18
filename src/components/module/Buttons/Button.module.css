@@ -7,6 +7,9 @@
     font-size: 1.5rem;
 }
 
+.button {
+    min-width: 130px;
+}
 
 .button,
 .button2 {

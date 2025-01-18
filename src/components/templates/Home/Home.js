@@ -10,7 +10,7 @@ import Modal from "@/components/module/Modal/Modal";
 import InputData from "@/components/module/InputData/InputData";
 import Button1 from "@/components/module/Buttons/Button1";
 import styles from "./Home.module.css";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import Toast from "@/components/module/Toast/Toast";
 import { isRequired, validateNationalCode } from "@/utils/validate";
@@ -37,6 +37,7 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
+import { MyContext } from "@/context/context";
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
 export default function Home() {
@@ -56,9 +57,6 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false);
   const [emptyInput, setEmptyInput] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [operationsData, setAllOperationsData] = useState([]);
-  const [allCustomer, setAllCustomer] = useState([]);
-  const [allSettings, setAllSettings] = useState([]);
   const [dateReferenceValue, setDateReferenceValue] = useState("");
   const [typeModal, setTypeModal] = useState(1);
   const [dataBirthdaty, setDataBirthdaty] = useState("");
@@ -101,6 +99,15 @@ export default function Home() {
     setting: "",
     setting_des: "",
   });
+  
+  const {
+    allCustomer,
+    setAllCustomer,
+    operationsData,
+    setAllOperationsData,
+    allSettings,
+    setAllSettings,
+  } = useContext(MyContext);
 
   const validateCustomerInfo = () => {
     if (!isRequired(customerInfo.customerId)) {
@@ -263,39 +270,6 @@ export default function Home() {
           message: error?.response?.data?.message,
         });
       }
-    }
-  };
-
-  const getAllOperation = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/api/operation");
-      if (response.status === 200) {
-        setAllOperationsData(response.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getAllCustomer = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/api/customer");
-      if (response.status === 200) {
-        setAllCustomer(response.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getAllSetting = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/api/setting");
-      if (response.status === 200) {
-        setAllSettings(response.data);
-      }
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -474,7 +448,6 @@ export default function Home() {
           message: "بیمار با موفقیت حذف شد",
         });
         setShowModal(false);
-        getAllCustomer();
         setEmptyInput(true);
         setTimeout(() => setEmptyInput(false), 0);
       }
@@ -667,12 +640,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    getAllOperation();
-    getAllCustomer();
-    getAllSetting();
-  }, []);
-
-  useEffect(() => {
     setCustomerData((prev) => ({
       ...prev,
       datereference: dateReferenceValue
@@ -726,6 +693,7 @@ export default function Home() {
     customerInfo.customerId,
     customerInfo.operationId,
   ]);
+
 
   const imageUrl = allImagesArchive?.length > 0 && allImagesArchive[0]?.url;
 
@@ -924,7 +892,6 @@ export default function Home() {
                   socket={socket}
                   setSocket={setSocket}
                 /> */}
-
                 <div className={styles.icons_bottom_wrapper}>
                   <ReplayOutlinedIcon
                     className={`${styles.icon_refresh} ${styles.icon}`}

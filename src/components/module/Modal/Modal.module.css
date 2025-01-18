@@ -91,6 +91,10 @@
         max-height: 250px;
         overflow: auto;
     }
+
+    .height {
+        max-height: 100%;
+    }
 }
 
 @media (max-width: 768px) {
@@ -101,6 +105,10 @@
     .bottom_modal {
         max-height: 400px;
         overflow: auto;
+    }
+
+    .height {
+        max-height: 100%;
     }
 }
 
