@@ -57,6 +57,7 @@ export default function Archive() {
   });
   const [activeUser, setActiveUser] = useState("");
   const [mainuser, setMainUser] = useState("");
+  const [setting, setSetting] = useState("");
 
   const searchHandler = (e) => {
     const searchTerm = e.target.value.toLowerCase();
@@ -142,6 +143,7 @@ export default function Archive() {
       media1: [],
       media2: [],
     });
+    setActiveUser("");
     setTabModal(1);
     setShowModal(true);
     setTypeModal(2);
@@ -175,21 +177,107 @@ export default function Archive() {
   };
 
   const handleChangeFileOne = (e) => {
-    if (e.target.files) {
-      setUserInfo((prevUserInfo) => ({
-        ...prevUserInfo,
-        media1: [...prevUserInfo.media1, ...Array.from(e.target.files)],
-      }));
+    const files = Array.from(e.target.files);
+    let valid = true;
+    let errorMessage = "";
+
+    const updatedMedia1 = [...(userInfo.media1 || []), ...files];
+
+    if (setting === "#MKE03$A33*") {
+      if (updatedMedia1.length !== 5) {
+        valid = false;
+        errorMessage = "باید دقیقا 5 فایل انتخاب کنید.";
+      }
+      if (!files.every((file) => file.type.startsWith("image/"))) {
+        valid = false;
+        errorMessage = "فقط فایل تصویر مجاز است.";
+      }
+    } else if (setting === "#MKE04$A44*") {
+      if (updatedMedia1.length !== 7) {
+        valid = false;
+        errorMessage = "باید دقیقا 7 فایل انتخاب کنید.";
+      }
+      if (!files.every((file) => file.type.startsWith("image/"))) {
+        valid = false;
+        errorMessage = "فقط فایل تصویر مجاز است.";
+      }
+    } else if (setting === "#MKE02$A22*" || setting === "#MKE01$A11*") {
+      if (updatedMedia1.length !== 1) {
+        valid = false;
+        errorMessage = "باید فقط یک فایل انتخاب کنید.";
+      }
+
+      if (!files.every((file) => file.type.startsWith("video/"))) {
+        valid = false;
+        errorMessage = "فقط فایل ویدیو مجاز است.";
+      }
     }
+
+    if (!valid) {
+      setToastInfo({
+        type: "error",
+        title: "خطا",
+        message: errorMessage,
+      });
+      setShowToast(true);
+      e.target.value = "";
+      return;
+    }
+
+    setUserInfo((prev) => ({ ...prev, media1: updatedMedia1 }));
   };
 
   const handleChangeFileTwo = (e) => {
-    if (e.target.files) {
-      setUserInfo((prevUserInfo) => ({
-        ...prevUserInfo,
-        media2: [...prevUserInfo.media2, ...Array.from(e.target.files)],
-      }));
+    const files = Array.from(e.target.files);
+    let valid = true;
+    let errorMessage = "";
+
+    const updatedMedia2 = [...(userInfo.media2 || []), ...files];
+
+    if (setting === "#MKE03$A33*") {
+      if (updatedMedia2.length !== 5) {
+        valid = false;
+        errorMessage = "برای این حالت، باید دقیقا ۵ فایل تصویری انتخاب کنید.";
+      }
+      if (!files.every((file) => file.type.startsWith("image/"))) {
+        valid = false;
+        errorMessage = "برای این حالت، فقط فایل تصویر مجاز است.";
+      }
+    } else if (setting === "#MKE04$A44*") {
+      if (updatedMedia2.length !== 7) {
+        valid = false;
+        errorMessage = "برای این حالت، باید دقیقا ۷ فایل تصویری انتخاب کنید.";
+      }
+      if (!files.every((file) => file.type.startsWith("image/"))) {
+        valid = false;
+        errorMessage = "برای این حالت، فقط فایل تصویر مجاز است.";
+      }
+    } else if (setting === "#MKE02$A22*" || setting === "#MKE01$A11*") {
+      if (updatedMedia2.length !== 1) {
+        valid = false;
+        errorMessage = "برای این حالت، باید دقیقا ۱ فایل ویدیویی انتخاب کنید.";
+      }
+      if (!files.every((file) => file.type.startsWith("video/"))) {
+        valid = false;
+        errorMessage = "برای این حالت، فقط فایل ویدیویی مجاز است.";
+      }
     }
+
+    if (!valid) {
+      setToastInfo({
+        type: "error",
+        title: "خطا",
+        message: errorMessage,
+      });
+      setShowToast(true);
+      e.target.value = "";
+      return;
+    }
+
+    setUserInfo((prevUserInfo) => ({
+      ...prevUserInfo,
+      media2: updatedMedia2,
+    }));
   };
 
   const handleFileRemove = (mediaType, index) => {
@@ -268,6 +356,45 @@ export default function Archive() {
         message: "حداقل یک رسانه باید انتخاب کنید",
       });
       return false;
+    }
+    if (setting === "#MKE03$A33*") {
+      if (
+        userInfo.media1.length !== 5 ||
+        (userInfo.media2.length > 0 && userInfo.media2.length !== 5)
+      ) {
+        setToastInfo({
+          type: "error",
+          title: "خطا",
+          message: "برای این حالت، باید ۵ فایل تصویری انتخاب کنید.",
+        });
+        return false;
+      }
+    }
+    if (setting === "#MKE04$A44*") {
+      if (
+        userInfo.media1.length !== 7 ||
+        (userInfo.media2.length > 0 && userInfo.media2.length !== 7)
+      ) {
+        setToastInfo({
+          type: "error",
+          title: "خطا",
+          message: "برای این حالت، باید ۷ فایل تصویری انتخاب کنید.",
+        });
+        return false;
+      }
+    }
+    if (setting === "#MKE02$A22*" || setting === "#MKE01$A11*") {
+      if (
+        userInfo.media1.length !== 1 ||
+        (userInfo.media2.length > 0 && userInfo.media2.length !== 1)
+      ) {
+        setToastInfo({
+          type: "error",
+          title: "خطا",
+          message: "برای این حالت، باید دقیقا ۱ فایل ویدیویی انتخاب کنید.",
+        });
+        return false;
+      }
     }
     return true;
   };
@@ -407,9 +534,10 @@ export default function Archive() {
         media1,
         media2,
       });
+
+      setSetting(mainuser?.setting.name);
     }
   }, [mainuser]);
-
 
   return (
     <>
@@ -499,6 +627,7 @@ export default function Archive() {
                     getOptionLabelProp="description"
                     onChange={ChangeCustomerInfoHandler}
                     value={userInfo.settingId}
+                    setSetting={setSetting}
                   />
                 </div>
               </>
@@ -520,7 +649,6 @@ export default function Archive() {
                       sx={{ fontFamily: "vazir", color: "var(--color-5)" }}
                     />
                   </Tabs>
-
                   <TabPanel value={activeTab} index={0}>
                     <div className={styles.wrap_archive_file}>
                       <div className={styles.box_add}>
@@ -595,7 +723,6 @@ export default function Archive() {
                       accept="image/*,video/*"
                     />
                   </TabPanel>
-
                   <TabPanel value={activeTab} index={1}>
                     <div className={styles.wrap_archive_file}>
                       <div className={styles.box_add}>
