@@ -58,6 +58,7 @@ export async function POST(req) {
     const settingId = formData.get("settingId");
     const customerId = formData.get("customerId");
     const photos = formData.getAll("photos");
+    const photo2 = formData.getAll("photos2");
 
     if (!operationId || !settingId || !customerId) {
       const errorResponse = new Response(
@@ -77,6 +78,7 @@ export async function POST(req) {
     await fs.mkdir(uploadsDir, { recursive: true });
 
     const allPhotos = [];
+    const group2Photos = [];
 
     for (const file of photos) {
       const fileName = `${Date.now()}-${file.name}`;
@@ -91,14 +93,32 @@ export async function POST(req) {
       });
     }
 
+    for (const file of photo2) {
+      const fileName = `${Date.now()}-${file.name}`;
+      const filePath = path.join(uploadsDir, fileName);
+
+      const buffer = await file.arrayBuffer();
+      await fs.writeFile(filePath, Buffer.from(buffer));
+
+      group2Photos.push({
+        url: `http://localhost:3000/uploads/${fileName}`,
+        group: 2,
+      });
+    }
+
+    const combinedPhotos = [...allPhotos, ...group2Photos];
+
+    const status = group2Photos.length > 0 ? 2 : 1;
+
     const newArchive = await prisma.archive.create({
       data: {
         operationId: parseInt(operationId),
         settingId: parseInt(settingId),
         customerId: parseInt(customerId),
-        status: 1,
+        date2: status === 2 ? new Date() : null,
+        status: status,
         photos: {
-          create: allPhotos,
+          create: combinedPhotos,
         },
       },
       include: {
@@ -118,7 +138,6 @@ export async function POST(req) {
     if (logResponse) await logResponse(response);
 
     return response;
-    
   } catch (error) {
     console.error("Error processing POST request:", error.message, error.stack);
 

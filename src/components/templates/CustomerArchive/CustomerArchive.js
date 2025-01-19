@@ -22,6 +22,7 @@ import dynamic from "next/dynamic";
 import Button2 from "@/components/module/Buttons/Button2";
 import { MdTune } from "react-icons/md";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
+import { isImageUrl } from "@/utils/helper";
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 
 export default function CustomerArchive({ id }) {
@@ -158,8 +159,8 @@ export default function CustomerArchive({ id }) {
 
   const imageUrl = group1Images[currentIndexes?.group1]?.url;
   const imageUrl2 = group2Images[currentIndexes?.group2]?.url;
-  const isImage = /\.(jpeg|jpg|webp|png|data:image)/i.test(imageUrl);
-  const isImage2 = /\.(jpeg|jpg|webp|png|data:image)/i.test(imageUrl2);
+  const isImage = isImageUrl(imageUrl);
+  const isImage2 = isImageUrl(imageUrl2);
 
   useEffect(() => {
     if (imageUrl) setIsLoadingGroup1(false);
@@ -204,7 +205,7 @@ export default function CustomerArchive({ id }) {
     getArchiveDetails();
   }, []);
 
-
+  
 
   return (
     <>

@@ -31,7 +31,11 @@ import SouthIcon from "@mui/icons-material/South";
 import SliderImages from "@/components/module/SliderImages/SliderImages";
 import Preview from "@/components/module/Preview/Preview";
 import CloseIcon from "@mui/icons-material/Close";
-import { convertToFarsiDigits, toEnglishNumber } from "@/utils/helper";
+import {
+  convertToFarsiDigits,
+  isImageUrl,
+  toEnglishNumber,
+} from "@/utils/helper";
 import dynamic from "next/dynamic";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -99,7 +103,7 @@ export default function Home() {
     setting: "",
     setting_des: "",
   });
-  
+
   const {
     allCustomer,
     setAllCustomer,
@@ -134,7 +138,7 @@ export default function Home() {
       setToastInfo({
         type: "error",
         title: "خطا",
-        message: "تنظیمات باید مشخص گردد",
+        message: "حالت ضبط باید مشخص گردد",
       });
       return false;
     }
@@ -694,10 +698,9 @@ export default function Home() {
     customerInfo.operationId,
   ]);
 
-
   const imageUrl = allImagesArchive?.length > 0 && allImagesArchive[0]?.url;
 
-  const isImage = /\.(jpeg|jpg|webp|png|data:image)/i.test(imageUrl);
+  const isImage = isImageUrl(imageUrl);
 
   return (
     <div className={styles.wrapper}>

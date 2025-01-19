@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@mui/material";
 import { calculateAge, convertToFarsiDigits } from "../../../utils/helper";
+import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 
 export default function TableUser({
   archives,
@@ -22,6 +23,8 @@ export default function TableUser({
   page,
   openModalDelete,
   setArchiveId,
+  openEditModal,
+  setMainUser,
 }) {
   const router = useRouter();
   const goToArchiveCustomer = (name, id) => {
@@ -119,6 +122,13 @@ export default function TableUser({
                       onClick={() => {
                         openModalDelete();
                         setArchiveId(row?.id);
+                      }}
+                    />
+                    <Button2
+                      icon={ModeEditOutlinedIcon}
+                      onClick={() => {
+                        setMainUser(row);
+                        openEditModal();
                       }}
                     />
                   </TableCell>

@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { middleware } from "../../middleware";
+import path from "path";
+import fs from "fs/promises";
 const prisma = new PrismaClient();
 
 export async function DELETE(req, { params }) {
@@ -111,4 +113,94 @@ export async function GET(req, { params }) {
       { status: 500 }
     );
   }
-} 
+}
+
+export async function PUT(req, { params }) {
+  const { id } = params;
+
+  if (!id || isNaN(Number(id))) {
+    return new Response(JSON.stringify({ message: "ایدی معتبر نیست" }), {
+      status: 400,
+    });
+  }
+
+  try {
+    const formData = await req.formData();
+    const archiveId = formData.get("id");
+    const customerId = formData.get("customerId");
+    const newPhotos = formData.getAll("newPhotos");
+    const newPhotoGroups = formData.getAll("newPhotoGroups");
+    const existingPhotos = formData.getAll("existingPhotos");
+
+    if (!archiveId || !customerId) {
+      return new Response(
+        JSON.stringify({ message: "لطفاً تمام فیلدهای الزامی را وارد کنید." }),
+        { status: 400 }
+      );
+    }
+
+    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    await fs.mkdir(uploadsDir, { recursive: true });
+
+    const uploadedPhotos = [];
+    for (let i = 0; i < newPhotos.length; i++) {
+      const file = newPhotos[i];
+      const group = Number(newPhotoGroups[i]);
+
+      const fileName = `${Date.now()}-${file.name}`;
+      const filePath = path.join(uploadsDir, fileName);
+
+      const buffer = await file.arrayBuffer();
+      await fs.writeFile(filePath, Buffer.from(buffer));
+
+      uploadedPhotos.push({
+        url: `http://localhost:3000/uploads/${fileName}`,
+        group,
+      });
+    }
+
+   
+    const parsedExistingPhotos = existingPhotos.map((photo) =>
+      JSON.parse(photo)
+    );
+
+ 
+    const updatedArchive = await prisma.archive.update({
+      where: { id: Number(archiveId) },
+      data: {
+        customerId: Number(customerId),
+        photos: {
+          deleteMany: {}, 
+          create: [
+            ...uploadedPhotos, 
+            ...parsedExistingPhotos.map((photo) => ({
+              url: photo.url,
+              group: photo.group,
+            })), 
+          ],
+        },
+      },
+      include: {
+        photos: true, 
+      },
+    });
+
+    return new Response(
+      JSON.stringify({
+        message: "آرشیو با موفقیت به‌روزرسانی شد.",
+        archive: updatedArchive,
+      }),
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error in PUT /api/archive/:id:", error.message, error.stack);
+
+    return new Response(
+      JSON.stringify({
+        message: "مشکلی سمت سرور پیش آمده است.",
+        error: error.message,
+      }),
+      { status: 500 }
+    );
+  }
+}

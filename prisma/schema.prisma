@@ -59,7 +59,6 @@ model Customer {
   isDelete    Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-
   archives      Archive[] 
 }
 

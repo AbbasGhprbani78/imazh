@@ -87,7 +87,7 @@
 .profile_image_wrapper:hover .wrap_useraction {
     opacity: 1;
     visibility: visible;
-    z-index: 1000;
+    z-index: 10000;
 }
 
 .list_useraction {

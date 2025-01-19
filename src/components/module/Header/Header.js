@@ -198,7 +198,6 @@ export default function Header() {
     setShowModal(true);
     setTypeModal(3);
   };
-
   const closeModal = () => {
     setProfile({ ...originalProfile });
     setShowModal(false);

@@ -36,3 +36,10 @@ export function calculateAge(birthDateString) {
 
   return age;
 }
+
+export const isImageUrl = (url) => {
+  const imageRegex = /\.(jpeg|jpg|webp|png|data:image)/i;
+  return imageRegex.test(url);
+};
+
+export const isImageFile = (file) => file.type.startsWith("image/");
