@@ -357,6 +357,18 @@ export default function Archive() {
       });
       return false;
     }
+    return true;
+  };
+
+  const validateType = () => {
+    if (userInfo.media1.length === 0) {
+      setToastInfo({
+        type: "error",
+        title: "خطا",
+        message: "حداقل یک رسانه باید انتخاب کنید",
+      });
+      return false;
+    }
     if (setting === "#MKE03$A33*") {
       if (
         userInfo.media1.length !== 5 ||
@@ -404,6 +416,10 @@ export default function Archive() {
       setShowToast(true);
       return;
     }
+    if (!validateType()) {
+      setShowToast(true);
+      return;
+    }
     try {
       setLoading(true);
       const formData = new FormData();
@@ -435,6 +451,7 @@ export default function Archive() {
           title: "عملیات موفقیت آمیز",
           message: "آرشیو بیمار با موفقیت اضافه شد",
         });
+        setActiveTab(0);
       }
     } catch (error) {
       setShowToast(true);
@@ -450,6 +467,10 @@ export default function Archive() {
   };
 
   const ediArchive = async () => {
+    if (!validateType()) {
+      setShowToast(true);
+      return;
+    }
     try {
       setLoading(true);
       const formData = new FormData();
@@ -471,7 +492,7 @@ export default function Archive() {
       }
 
       if (userInfo.media2) {
-        for (const photo of userInfo.media1) {
+        for (const photo of userInfo.media2) {
           if (photo instanceof File) {
             formData.append("newPhotos", photo);
             formData.append("newPhotoGroups", "2");
@@ -499,6 +520,7 @@ export default function Archive() {
           title: "عملیات موفقیت آمیز",
           message: "آرشیو بیمار با تغییر کرد  ",
         });
+        setActiveTab(0);
       }
     } catch (error) {
       setShowToast(true);
@@ -538,6 +560,8 @@ export default function Archive() {
       setSetting(mainuser?.setting.name);
     }
   }, [mainuser]);
+
+ 
 
   return (
     <>

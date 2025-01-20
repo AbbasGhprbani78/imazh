@@ -72,7 +72,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [allImagesArchive, setAllImagesArchive] = useState([]);
   const [showListImages, setShowListImages] = useState(false);
-  const [vlaueRadio, setValueRadio] = useState(null);
+  const [vlaueRadio, setValueRadio] = useState(1);
   const [customerData, setCustomerData] = useState({
     fullname: "",
     email: "",
@@ -111,6 +111,7 @@ export default function Home() {
     setAllOperationsData,
     allSettings,
     setAllSettings,
+    user,
   } = useContext(MyContext);
 
   const validateCustomerInfo = () => {
@@ -266,7 +267,6 @@ export default function Home() {
           });
         }
       } catch (error) {
-        console.log(error);
         setShowToast(true);
         setToastInfo({
           type: "error",
@@ -310,7 +310,6 @@ export default function Home() {
           });
         }
       } catch (error) {
-        console.log(error);
         setShowToast(true);
         setToastInfo({
           type: "error",
@@ -341,7 +340,6 @@ export default function Home() {
         });
         if (response.status === 201) {
           const newSetting = response.data.data;
-          console.log(newSetting);
           setAllSettings((prev) => [...prev, newSetting]);
           setCustomerInfo((prev) => ({
             ...prev,
@@ -381,6 +379,7 @@ export default function Home() {
         );
         if (response.status === 200) {
           setHistoryOperation(response.data);
+          console.log(response.data);
         }
       } catch (error) {
         console.error(error);
@@ -428,7 +427,6 @@ export default function Home() {
         setShowModal(false);
       }
     } catch (error) {
-      console.log(error);
       setShowToast(true);
       setToastInfo({
         type: "error",
@@ -683,8 +681,12 @@ export default function Home() {
             }
           );
           if (response.status === 200) {
-            setAllImagesArchive(response?.data?.archive.photos);
-            console.log(response.data.archive);
+            setAllImagesArchive(response?.data?.archive?.photos);
+            setCustomerInfo((prev) => ({
+              ...prev,
+              settingId: response.data?.archive?.setting?.id,
+            }));
+            setSetting(response.data?.archive?.setting?.name);
           }
         } catch (error) {
           console.log(error);
@@ -699,8 +701,23 @@ export default function Home() {
   ]);
 
   const imageUrl = allImagesArchive?.length > 0 && allImagesArchive[0]?.url;
-
   const isImage = isImageUrl(imageUrl);
+
+  useEffect(() => {
+    if (user) {
+      setCustomerInfo((prev) => ({
+        ...prev,
+        customerId: user?.customerId,
+        operationId: user?.operationId,
+        settingId: user?.settingId,
+        archiveId: user?.id,
+      }));
+      setValueRadio(2);
+      setIsNewOperation(false);
+    }
+  }, [user]);
+
+  console.log(vlaueRadio);
 
   return (
     <div className={styles.wrapper}>
@@ -758,7 +775,7 @@ export default function Home() {
               <FormControl className={styles.wrapdrop}>
                 <RadioGroup
                   aria-labelledby="demo-radio-buttons-group-label"
-                  defaultValue=""
+                  value={vlaueRadio}
                   name="radio-buttons-group"
                 >
                   <FormControlLabel
@@ -777,6 +794,7 @@ export default function Home() {
                             color: "var(--color-5)",
                           },
                         }}
+                        checked={vlaueRadio == "1"}
                       />
                     }
                     label="عملیات جدید"
@@ -794,6 +812,7 @@ export default function Home() {
                             color: "var(--color-5)",
                           },
                         }}
+                        checked={vlaueRadio == "2"}
                       />
                     }
                     label="ویرایش قبل"
@@ -888,13 +907,13 @@ export default function Home() {
                 toggleExpand={toggleExpand}
                 isExpanded={isExpanded}
               >
-                {/* <Webcam
+                <Webcam
                   setting={setting}
                   data={data}
                   setPhotos={setPhotos}
                   socket={socket}
                   setSocket={setSocket}
-                /> */}
+                />
                 <div className={styles.icons_bottom_wrapper}>
                   <ReplayOutlinedIcon
                     className={`${styles.icon_refresh} ${styles.icon}`}

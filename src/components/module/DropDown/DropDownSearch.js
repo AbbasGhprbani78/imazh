@@ -113,10 +113,18 @@ export default function DropDownSearch({
   }, [value]);
 
   useEffect(() => {
+    const selectedItem = items.find((item) => item.id === value);
     if (value && name !== "archiveId") {
-      const selectedItem = items.find((item) => item.id === value);
       if (selectedItem) {
         const selectedLabel = selectedItem[getOptionLabelProp];
+        setSearchValue(selectedLabel);
+        setSelectedValue(selectedLabel);
+      }
+    } else if (value && name == "archiveId") {
+      if (selectedItem) {
+        const selectedLabel = convertToPersianDate(
+          selectedItem[getOptionLabelProp]
+        );
         setSearchValue(selectedLabel);
         setSelectedValue(selectedLabel);
       }

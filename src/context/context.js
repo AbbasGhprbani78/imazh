@@ -10,6 +10,7 @@ export const MyProvider = ({ children }) => {
   const [operationsData, setAllOperationsData] = useState([]);
   const [allSettings, setAllSettings] = useState([]);
   const [selectTab, setSelectTab] = useState(null);
+  const [user, setUser] = useState("");
   const [theme, setTheme] = useState("dark");
 
   const applyTheme = (themeName) => {
@@ -42,7 +43,7 @@ export const MyProvider = ({ children }) => {
       console.log(error);
     }
   };
-  
+
   const getAllSetting = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/setting");
@@ -84,6 +85,8 @@ export const MyProvider = ({ children }) => {
         setAllOperationsData,
         allSettings,
         setAllSettings,
+        user,
+        setUser,
       }}
     >
       {children}

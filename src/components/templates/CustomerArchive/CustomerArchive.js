@@ -166,7 +166,7 @@ export default function CustomerArchive({ id }) {
     if (imageUrl) setIsLoadingGroup1(false);
     if (imageUrl2) setIsLoadingGroup2(false);
 
-    let newItems = [];
+     let newItems = [];
     if (group2Images.length === 0) {
       newItems = [{ id: "قبل عمل", name: "قبل عمل" }];
     } else if (!isImage || !isImage2) {
@@ -205,7 +205,7 @@ export default function CustomerArchive({ id }) {
     getArchiveDetails();
   }, []);
 
-  
+
 
   return (
     <>
@@ -258,7 +258,7 @@ export default function CustomerArchive({ id }) {
                         />
                       </div>
                     </>
-                  )}
+                  )} 
                 </div>
               </RightSection>
             </Grid>

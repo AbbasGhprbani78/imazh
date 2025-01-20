@@ -1,8 +1,5 @@
 "use client";
 import styles from "./Table.module.css";
-import Button2 from "../Buttons/Button2";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import Pagination from "@mui/material/Pagination";
 import { useRouter } from "next/navigation";
 import {
@@ -14,8 +11,9 @@ import {
   TableRow,
 } from "@mui/material";
 import { calculateAge, convertToFarsiDigits } from "../../../utils/helper";
-import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
-
+import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
+import { useContext } from "react";
+import { MyContext } from "@/context/context";
 export default function TableUser({
   archives,
   totalPage,
@@ -26,6 +24,7 @@ export default function TableUser({
   openEditModal,
   setMainUser,
 }) {
+  const { setUser } = useContext(MyContext);
   const router = useRouter();
   const goToArchiveCustomer = (name, id) => {
     const formattedName = name.replace(/ /g, "-");
@@ -109,28 +108,48 @@ export default function TableUser({
                       alignItems: "center",
                       gap: "20px",
                       justifyContent: "center",
+                      position: "relative",
                     }}
+                    className={styles.cell_action}
                   >
-                    <Button2
-                      icon={VisibilityIcon}
-                      onClick={() =>
-                        goToArchiveCustomer(row?.customer?.fullname, row?.id)
-                      }
-                    />
-                    <Button2
-                      icon={DeleteOutlineIcon}
-                      onClick={() => {
-                        openModalDelete();
-                        setArchiveId(row?.id);
-                      }}
-                    />
-                    <Button2
-                      icon={ModeEditOutlinedIcon}
-                      onClick={() => {
-                        setMainUser(row);
-                        openEditModal();
-                      }}
-                    />
+                    <MoreHorizOutlinedIcon className={styles.icon_actions} />
+                    <div className={styles.box_actions}>
+                      <p
+                        className={styles.action_item}
+                        onClick={() =>
+                          goToArchiveCustomer(row?.customer?.fullname, row?.id)
+                        }
+                      >
+                        مشاهده
+                      </p>
+                      <p
+                        className={styles.action_item}
+                        onClick={() => {
+                          setMainUser(row);
+                          openEditModal();
+                        }}
+                      >
+                        ویرایش
+                      </p>
+                      <p
+                        className={styles.action_item}
+                        onClick={() => {
+                          openModalDelete();
+                          setArchiveId(row?.id);
+                        }}
+                      >
+                        حذف
+                      </p>
+                      <p
+                        className={styles.action_item}
+                        onClick={() => {
+                          setUser(row);
+                          router.push("/");
+                        }}
+                      >
+                        گرفتن عکس دوم
+                      </p>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

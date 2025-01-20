@@ -1,3 +1,4 @@
+
 .top {
     display: flex;
     align-items: center;
@@ -128,8 +129,6 @@
     max-height: 350px;
     overflow-y: auto;
 }
-
-
 
 .coverFile_file {
     position: absolute;

@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import { promises as fs } from "fs";
 import path from "path";
-import { middleware } from "../../middleware"; 
+import { middleware } from "../../middleware";
 
 export async function POST(req) {
   const logResponse = await middleware(req);
@@ -20,6 +20,21 @@ export async function POST(req) {
 
     const uploadsDir = path.join(process.cwd(), "public", "uploads");
     await fs.mkdir(uploadsDir, { recursive: true });
+
+    const previousPhotos = await prisma.photo.findMany({
+      where: { archiveId: parseInt(archiveId), group: 2 },
+    });
+
+    for (const photo of previousPhotos) {
+      const filePath = path.join(uploadsDir, path.basename(photo.url));
+      await fs.unlink(filePath).catch((err) => {
+        console.error(`خطا در حذف فایل ${filePath}:`, err.message);
+      });
+    }
+
+    await prisma.photo.deleteMany({
+      where: { archiveId: parseInt(archiveId), group: 2 },
+    });
 
     const allPhotos = [];
 
