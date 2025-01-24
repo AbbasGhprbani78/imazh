@@ -10,6 +10,8 @@ export const MyProvider = ({ children }) => {
   const [operationsData, setAllOperationsData] = useState([]);
   const [allSettings, setAllSettings] = useState([]);
   const [selectTab, setSelectTab] = useState(null);
+  const [selectedGroup1, setSelectedGroup1] = useState([]);
+  const [selectedGroup2, setSelectedGroup2] = useState([]);
   const [user, setUser] = useState("");
   const [theme, setTheme] = useState("dark");
 
@@ -87,6 +89,10 @@ export const MyProvider = ({ children }) => {
         setAllSettings,
         user,
         setUser,
+        selectedGroup1,
+        setSelectedGroup1,
+        selectedGroup2,
+        setSelectedGroup2,
       }}
     >
       {children}

@@ -1,0 +1,46 @@
+.icon_info_wrapper {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: var(--color-5);
+    overflow: hidden;
+    position: absolute;
+    left: 1.2rem;
+    top: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);;
+}
+
+.list_actions {
+    position: absolute;
+    left: 1.2rem;
+    top: 4rem;
+    list-style: none;
+    background-color: var(--color-1);
+    color: var(--color-5);
+    border-radius: 5px;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.item_action {
+    padding: 7px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all .3s ease;
+}
+
+.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.item_action:hover {
+    background-color: var(--color-3);
+}

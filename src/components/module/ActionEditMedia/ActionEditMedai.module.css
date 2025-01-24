@@ -1,0 +1,46 @@
+.actions_container {}
+
+.title_action {
+    color: var(--color-5);
+    border-bottom: 1px solid var(--color-5);
+    padding-bottom: 5px;
+    font-size: 14px;
+    margin-bottom: 1rem;
+}
+
+.wrapper_watermark_item {
+    margin-bottom: 2rem;
+}
+
+.wrap_action_top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.delete_icon {}
+
+
+.btn {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--color-5);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon_close {
+    color: var(--color-5);
+    font-size: 1.7rem;
+    cursor: pointer;
+}
+
+.preview_text {
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: "vazir";
+}

@@ -11,8 +11,9 @@ import { MdOutlineOpacity } from "react-icons/md";
 import { IoIosContrast } from "react-icons/io";
 import { LiaTintSolid } from "react-icons/lia";
 import WorkspacesOutlinedIcon from "@mui/icons-material/WorkspacesOutlined";
+import { MdTune } from "react-icons/md";
 
-export default function AditPicture({ filters, setFilters }) {
+export default function AditPicture({ filters, setFilters, onClick }) {
   const [activeParam, setActiveParam] = useState(null);
 
   const handleFilterChange = (param, value) => {
@@ -86,6 +87,7 @@ export default function AditPicture({ filters, setFilters }) {
             </div>
           </Tooltip>
         ))}
+        <Button2 onClick={onClick} icon={MdTune} />
       </div>
       <div className={styles.wrap_input}>
         {activeParam && (

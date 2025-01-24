@@ -1,0 +1,46 @@
+.beforafteredit_container {
+    display: flex;
+    align-items: start;
+    height: 100%;
+}
+
+.content_images {
+    width: 100%;
+}
+
+.beforimage_container {
+    border-left: 1px solid var(--color-5);
+}
+
+.beforimage_container,
+.afterimage_container {
+    height: 100%;
+}
+
+.text_section {
+    color: var(--color-5);
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding: 20px;
+}
+
+.wrap_media {
+    margin-top: 1.5rem;
+    padding: 0 10px;
+}
+
+.box {
+    height: 120px;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.box>img {
+    width: 100%;
+    height: 100%;
+}
+
+.selected{
+    box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
+}

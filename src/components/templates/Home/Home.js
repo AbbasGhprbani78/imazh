@@ -60,6 +60,7 @@ export default function Home() {
   });
   const [showModal, setShowModal] = useState(false);
   const [emptyInput, setEmptyInput] = useState(false);
+  const [clearInput, setClearInput] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [dateReferenceValue, setDateReferenceValue] = useState("");
   const [typeModal, setTypeModal] = useState(1);
@@ -72,6 +73,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [allImagesArchive, setAllImagesArchive] = useState([]);
   const [showListImages, setShowListImages] = useState(false);
+  const [disable, setDisable] = useState(false);
   const [vlaueRadio, setValueRadio] = useState(1);
   const [customerData, setCustomerData] = useState({
     fullname: "",
@@ -379,7 +381,6 @@ export default function Home() {
         );
         if (response.status === 200) {
           setHistoryOperation(response.data);
-          console.log(response.data);
         }
       } catch (error) {
         console.error(error);
@@ -481,8 +482,134 @@ export default function Home() {
     return new Blob([uintArray], { type: mimeString });
   };
 
+  // const saveCustomerInfo = async () => {
+  //   if (!validateCustomerInfo()) return;
+  //   if (isNewOperation) {
+  //     const formData = new FormData();
+  //     formData.append("operationId", customerInfo.operationId);
+  //     formData.append("settingId", customerInfo.settingId);
+  //     formData.append("customerId", customerInfo.customerId);
+
+  //     for (const photo of photos) {
+  //       if (photo.startsWith("data:image")) {
+  //         const imageBlob = dataURItoBlob(photo);
+  //         const uniqueFileName = `${Date.now()}-${Math.random()
+  //           .toString(36)
+  //           .substr(2, 9)}.png`;
+  //         formData.append("photos", imageBlob, uniqueFileName);
+  //       } else {
+  //         const uniqueFileName = `${Date.now()}-${Math.random()
+  //           .toString(36)
+  //           .substr(2, 9)}.mp4`;
+  //         const file = await convertBlobToFile(photo, uniqueFileName);
+  //         formData.append("photos", file);
+  //       }
+  //     }
+
+  //     try {
+  //       setShowModal(true);
+  //       setTypeModal(6);
+  //       setLoading(true);
+  //       const response = await axios.post(
+  //         "http://localhost:3000/api/archive",
+  //         formData
+  //       );
+
+  //       if (response.status === 201) {
+  //         setPhotos([]);
+  //         setShowToast(true);
+  //         fetchData();
+  //         setToastInfo({
+  //           type: "success",
+  //           title: "عملیات موفقیت آمیز",
+  //           message: "آرشیو بیمار با موفقیت اضافه شد",
+  //         });
+  //       }
+  //     } catch (error) {
+  //       setShowToast(true);
+  //       setToastInfo({
+  //         type: "error",
+  //         title: "خطا در اضافه کردن آرشیو",
+  //         message:
+  //           error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
+  //       });
+  //     } finally {
+  //       setLoading(false);
+  //       setShowModal(false);
+  //     }
+  //   } else {
+  //     const formData = new FormData();
+  //     formData.append("archiveId", customerInfo.archiveId);
+  //     for (const photo of photos) {
+  //       if (photo.startsWith("data:image")) {
+  //         const imageBlob = dataURItoBlob(photo);
+  //         const uniqueFileName = `${Date.now()}-${Math.random()
+  //           .toString(36)
+  //           .substr(2, 9)}.png`;
+  //         formData.append("photos", imageBlob, uniqueFileName);
+  //       } else {
+  //         const uniqueFileName = `${Date.now()}-${Math.random()
+  //           .toString(36)
+  //           .substr(2, 9)}.mp4`;
+  //         const file = await convertBlobToFile(photo, uniqueFileName);
+  //         formData.append("photos", file);
+  //       }
+  //     }
+  //     try {
+  //       setShowModal(true);
+  //       setTypeModal(6);
+  //       setLoading(true);
+  //       const response = await axios.post(
+  //         "http://localhost:3000/api/archive/updatearchive",
+  //         formData
+  //       );
+
+  //       if (response.status === 200) {
+  //         setPhotos([]);
+  //         setShowToast(true);
+  //         fetchData();
+  //         setToastInfo({
+  //           type: "success",
+  //           title: "عملیات موفقیت آمیز",
+  //           message: "آرشیو بیمار با موفقیت اضافه شد",
+  //         });
+  //       }
+  //     } catch (error) {
+  //       setShowToast(true);
+  //       setToastInfo({
+  //         type: "error",
+  //         title: "خطا در اضافه کردن آرشیو",
+  //         message:
+  //           error.response?.data?.message || "مشکلی در سمت سرور رخ داده است",
+  //       });
+  //     } finally {
+  //       setLoading(false);
+  //       setShowModal(false);
+  //     }
+  //   }
+  // };
+
   const saveCustomerInfo = async () => {
     if (!validateCustomerInfo()) return;
+
+    const appendFile = async (formData, photo) => {
+      const uniqueFileName = `${Date.now()}-${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
+
+      if (photo.startsWith("data:image")) {
+        const fileType = photo.split(";")[0].split("/")[1];
+        const imageBlob = dataURItoBlob(photo);
+        formData.append("photos", imageBlob, `${uniqueFileName}.${fileType}`);
+      } else if (photo.startsWith("data:video")) {
+        const fileType = photo.split(";")[0].split("/")[1];
+        const videoBlob = dataURItoBlob(photo);
+        formData.append("photos", videoBlob, `${uniqueFileName}.${fileType}`);
+      } else {
+        const file = await convertBlobToFile(photo, uniqueFileName);
+        formData.append("photos", file);
+      }
+    };
     if (isNewOperation) {
       const formData = new FormData();
       formData.append("operationId", customerInfo.operationId);
@@ -490,19 +617,7 @@ export default function Home() {
       formData.append("customerId", customerInfo.customerId);
 
       for (const photo of photos) {
-        if (photo.startsWith("data:image")) {
-          const imageBlob = dataURItoBlob(photo);
-          const uniqueFileName = `${Date.now()}-${Math.random()
-            .toString(36)
-            .substr(2, 9)}.png`;
-          formData.append("photos", imageBlob, uniqueFileName);
-        } else {
-          const uniqueFileName = `${Date.now()}-${Math.random()
-            .toString(36)
-            .substr(2, 9)}.mp4`;
-          const file = await convertBlobToFile(photo, uniqueFileName);
-          formData.append("photos", file);
-        }
+        await appendFile(formData, photo);
       }
 
       try {
@@ -540,19 +655,7 @@ export default function Home() {
       const formData = new FormData();
       formData.append("archiveId", customerInfo.archiveId);
       for (const photo of photos) {
-        if (photo.startsWith("data:image")) {
-          const imageBlob = dataURItoBlob(photo);
-          const uniqueFileName = `${Date.now()}-${Math.random()
-            .toString(36)
-            .substr(2, 9)}.png`;
-          formData.append("photos", imageBlob, uniqueFileName);
-        } else {
-          const uniqueFileName = `${Date.now()}-${Math.random()
-            .toString(36)
-            .substr(2, 9)}.mp4`;
-          const file = await convertBlobToFile(photo, uniqueFileName);
-          formData.append("photos", file);
-        }
+        await appendFile(formData, photo);
       }
       try {
         setShowModal(true);
@@ -687,6 +790,7 @@ export default function Home() {
               settingId: response.data?.archive?.setting?.id,
             }));
             setSetting(response.data?.archive?.setting?.name);
+            setDisable(true);
           }
         } catch (error) {
           console.log(error);
@@ -717,8 +821,7 @@ export default function Home() {
     }
   }, [user]);
 
-  console.log(vlaueRadio);
-
+  
   return (
     <div className={styles.wrapper}>
       <Box sx={{ flexGrow: 1, height: "100%" }}>
@@ -784,6 +887,15 @@ export default function Home() {
                     onChange={(e) => {
                       setValueRadio(e.target.value);
                       setIsNewOperation(true);
+                      setCustomerInfo((prev) => ({
+                        ...prev,
+                        settingId: "",
+                        archiveId: "",
+                      }));
+                      setClearInput(true);
+                      setDisable(false);
+                      setAllImagesArchive([]);
+                      setTimeout(() => setClearInput(false), 0);
                     }}
                     control={
                       <Radio
@@ -851,6 +963,8 @@ export default function Home() {
                   onChange={ChangeCustomerInfoHandler}
                   value={customerInfo.settingId}
                   setSetting={setSetting}
+                  clearInput={clearInput}
+                  disable={disable}
                 />
               </div>
               <div className={styles.wraparrowactions}>
@@ -907,13 +1021,13 @@ export default function Home() {
                 toggleExpand={toggleExpand}
                 isExpanded={isExpanded}
               >
-                <Webcam
+                {/* <Webcam
                   setting={setting}
                   data={data}
                   setPhotos={setPhotos}
                   socket={socket}
                   setSocket={setSocket}
-                />
+                /> */}
                 <div className={styles.icons_bottom_wrapper}>
                   <ReplayOutlinedIcon
                     className={`${styles.icon_refresh} ${styles.icon}`}

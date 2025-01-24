@@ -21,6 +21,8 @@ export default function DropDownSearch({
   setSetting,
   resetSearchValue,
   emptyInput,
+  clearInput,
+  disable,
 }) {
   const [searchValue, setSearchValue] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
@@ -145,6 +147,13 @@ export default function DropDownSearch({
     }
   }, [emptyInput]);
 
+  useEffect(() => {
+    if (clearInput) {
+      setSearchValue("");
+      setSelectedValue("");
+    }
+  }, [clearInput]);
+
   return (
     <div
       className={`${styles.wrapDropSearch} ${styles[style1]}`}
@@ -166,6 +175,7 @@ export default function DropDownSearch({
           name={name}
           autoComplete="off"
           placeholder=""
+          disabled={disable}
         />
         <label className={`${styles.floatingLabel} ${styles[style2]}`}>
           {title}
