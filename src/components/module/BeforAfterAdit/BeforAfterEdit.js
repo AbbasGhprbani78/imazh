@@ -10,7 +10,6 @@ export default function BeforAfterEdit({ group1Images, group2Images }) {
     selectedGroup2,
   } = useContext(MyContext);
 
-  console.log(group1Images);
 
   const toggleSelectImage = (group, item) => {
     if (group === "group1") {

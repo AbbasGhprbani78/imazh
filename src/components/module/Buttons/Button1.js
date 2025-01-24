@@ -31,6 +31,7 @@ export default function Button1({
   Onclick,
   style,
   backstyle,
+  notloading,
 }) {
   return (
     <CustomButton
@@ -44,7 +45,7 @@ export default function Button1({
       onClick={Onclick}
       style={style}
     >
-      {disable ? (
+      {(disable && !notloading) ? (
         <span className={styles.loader}></span>
       ) : (
         <span className={styles.text_btn}>{text}</span>

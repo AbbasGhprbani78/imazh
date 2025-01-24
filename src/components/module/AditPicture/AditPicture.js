@@ -87,7 +87,11 @@ export default function AditPicture({ filters, setFilters, onClick }) {
             </div>
           </Tooltip>
         ))}
-        <Button2 onClick={onClick} icon={MdTune} />
+        <Tooltip arrow placement="top" title={"کنتراست و سیاه سفید"}>
+          <div>
+            <Button2 onClick={onClick} icon={MdTune} />
+          </div>
+        </Tooltip>
       </div>
       <div className={styles.wrap_input}>
         {activeParam && (

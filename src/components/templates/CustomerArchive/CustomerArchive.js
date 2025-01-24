@@ -36,6 +36,8 @@ export default function CustomerArchive({ id }) {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [archiveDetails, setArchiveDetails] = useState("");
   const [displayType, setDisplayType] = useState("");
+  const [statusArchiveOne, setStatusArchiveOne] = useState("قبل");
+  const [statusArchiveTwo, setStatusArchiveTwo] = useState("قبل");
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [items, setItems] = useState([]);
   const [isHide, setIsHide] = useState(false);
@@ -61,6 +63,9 @@ export default function CustomerArchive({ id }) {
   const [user, SetUser] = useState("");
   const [filteredUser, setFiltredUser] = useState([]);
   const [userComparison, setUserComparison] = useState("");
+  const [images1Comparison, setImages1Comparison] = useState([]);
+  const [images2Comparison, setImages2Comparison] = useState([]);
+  const [useCustomUrls, setUseCustomUrls] = useState(false);
   const handleSlide = (direction) => {
     setCurrentIndexes((prev) => {
       const newIndexes = { ...prev };
@@ -92,6 +97,16 @@ export default function CustomerArchive({ id }) {
   const handleChangeDisplay = (e) => {
     const { name, value } = e.target;
     setDisplayType(value);
+  };
+
+  const handleChangeTimeImage1 = (e) => {
+    const { name, value } = e.target;
+    setStatusArchiveOne(value);
+  };
+
+  const handleChangeTimeImage2 = (e) => {
+    const { name, value } = e.target;
+    setStatusArchiveTwo(value);
   };
 
   const saveMedia = (id, url) => {
@@ -195,7 +210,6 @@ export default function CustomerArchive({ id }) {
         }
       );
       if (response.status === 200) {
-        console.log(response.data);
         setAllCustomer(response.data);
         setFiltredUser(response.data);
         setShowModal(true);
@@ -205,8 +219,21 @@ export default function CustomerArchive({ id }) {
     }
   };
 
-  // console.log(archiveDetails)
-  console.log(userComparison);
+  useEffect(() => {
+    const getArchiveDetails = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/archive/${id}`
+        );
+        if (response.status === 200) {
+          setArchiveDetails(response.data.archive);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getArchiveDetails();
+  }, []);
 
   const group1Images =
     archiveDetails?.photos?.filter((img) => img.group === 1) || [];
@@ -217,6 +244,26 @@ export default function CustomerArchive({ id }) {
   const imageUrl2 = group2Images[currentIndexes?.group2]?.url;
   const isImage = isImageUrl(imageUrl);
   const isImage2 = isImageUrl(imageUrl2);
+
+  const getImageUrlGrid1 = () => {
+    return statusArchiveOne === "قبل"
+      ? group1Images[currentIndexes?.group1]?.url
+      : group2Images[currentIndexes?.group2]?.url;
+  };
+
+  const getImageUrlGrid2 = () => {
+    return statusArchiveTwo === "قبل"
+      ? images1Comparison[currentIndexes?.group1]?.url
+      : images2Comparison[currentIndexes?.group2]?.url;
+  };
+
+  const grid1Url = useCustomUrls
+    ? getImageUrlGrid1()
+    : group1Images[currentIndexes?.group1]?.url;
+
+  const grid2Url = useCustomUrls
+    ? getImageUrlGrid2()
+    : group2Images[currentIndexes?.group2]?.url;
 
   useEffect(() => {
     let newItems = [];
@@ -242,20 +289,15 @@ export default function CustomerArchive({ id }) {
   }, [isImage, isImage2]);
 
   useEffect(() => {
-    const getArchiveDetails = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/api/archive/${id}`
-        );
-        if (response.status === 200) {
-          setArchiveDetails(response.data.archive);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getArchiveDetails();
-  }, []);
+    if (userComparison) {
+      setImages1Comparison(
+        userComparison?.photos?.filter((img) => img.group === 1) || []
+      );
+      setImages2Comparison(
+        userComparison?.photos?.filter((img) => img.group === 2) || []
+      );
+    }
+  }, [userComparison]);
 
   return (
     <>
@@ -316,24 +358,76 @@ export default function CustomerArchive({ id }) {
                   icon={isEditTab ? "" : InstagramIcon}
                   Onclick={() => setIsEditTab((prev) => !prev)}
                 />
-                <div style={{ marginTop: "20px" }}>
-                  <Button1
-                    text={"مقایسه"}
-                    icon={FaPeopleArrows}
-                    Onclick={getAllSameCodeCustomer}
-                  />
-                </div>
+                {!isEditTab && (
+                  <div style={{ marginTop: "20px" }}>
+                    <Button1
+                      text={useCustomUrls ? "برگشت" : "مقایسه"}
+                      icon={useCustomUrls ? "" : FaPeopleArrows}
+                      Onclick={
+                        useCustomUrls
+                          ? () => setUseCustomUrls(false)
+                          : getAllSameCodeCustomer
+                      }
+                    />
+                  </div>
+                )}
               </RightSection>
             </Grid>
             <Grid size={{ xs: 12, md: 8, lg: 9.7 }} className={styles.left_sec}>
               <div style={{ display: "flex", justifyContent: "end" }}>
-                <p
-                  className={styles.text_back}
-                  onClick={() => router.push("/archive")}
-                >
-                  بازگشت
-                  <WestIcon />
-                </p>
+                {useCustomUrls ? (
+                  <>
+                    <Grid
+                      container
+                      spacing={2.5}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        width: "100%",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      <Grid size={{ xs: 12, lg: 6 }}>
+                        <div style={{ width: "60%", margin: "0 auto" }}>
+                          <NormalDropDown
+                            onChange={handleChangeTimeImage1}
+                            value={statusArchiveOne}
+                            title={"زمان رسانه"}
+                            style2={"background"}
+                            items={[
+                              { id: "قبل", name: "قبل" },
+                              { id: "بعد", name: "بعد" },
+                            ]}
+                            name={""}
+                          />
+                        </div>
+                      </Grid>
+                      <Grid size={{ xs: 12, lg: 6 }}>
+                        <div style={{ width: "60%", margin: "0 auto" }}>
+                          <NormalDropDown
+                            onChange={handleChangeTimeImage2}
+                            value={statusArchiveTwo}
+                            title={"زمان رسانه"}
+                            style2={"background"}
+                            items={[
+                              { id: "قبل", name: "قبل" },
+                              { id: "بعد", name: "بعد" },
+                            ]}
+                            name={""}
+                          />
+                        </div>
+                      </Grid>
+                    </Grid>
+                  </>
+                ) : (
+                  <p
+                    className={styles.text_back}
+                    onClick={() => router.push("/archive")}
+                  >
+                    بازگشت
+                    <WestIcon />
+                  </p>
+                )}
               </div>
               <Grid
                 className={`${styles.wrap_images} ${
@@ -366,11 +460,11 @@ export default function CustomerArchive({ id }) {
                             toggleModalBottom={toggleModalBottom}
                             isHide={isHide}
                           >
-                            {isImage ? (
+                            {isImageUrl(grid1Url) ? (
                               <Image
                                 id="group1-image"
-                                src={group1Images[currentIndexes?.group1]?.url}
-                                alt={`Group 1 - ${currentIndexes?.group1}`}
+                                src={grid1Url}
+                                alt={`Grid 1 - ${currentIndexes?.group1}`}
                                 layout="fill"
                                 className={styles.image_archive}
                                 style={{
@@ -378,35 +472,29 @@ export default function CustomerArchive({ id }) {
                                 }}
                               />
                             ) : (
-                              <>
-                                <ReactPlayer
-                                  ref={playerRef}
-                                  url={
-                                    group1Images[currentIndexes?.group1]?.url
-                                  }
-                                  playing={false}
-                                  muted={false}
-                                  playsinline
-                                  preload="auto"
-                                  className={styles.image_archive}
-                                  controls={true}
-                                  width="100%"
-                                  height="100%"
-                                />
-                              </>
+                              <ReactPlayer
+                                url={grid1Url}
+                                playing={false}
+                                muted={false}
+                                playsinline
+                                preload="auto"
+                                className={styles.image_archive}
+                                controls={true}
+                                width="100%"
+                                height="100%"
+                              />
                             )}
                             <ListActionMedia
                               downloadMedia={() =>
-                                saveMedia(
-                                  "group1-image",
-                                  group1Images[currentIndexes?.group1]?.url
-                                )
+                                saveMedia("group1-image", grid1Url)
                               }
                               fullScreenOne={
                                 isImage ? () => toggleExpand(1) : null
                               }
-                              fullScreenTwo={() =>
-                                setIsFullScreen((prev) => !prev)
+                              fullScreenTwo={
+                                isImage
+                                  ? () => setIsFullScreen((prev) => !prev)
+                                  : null
                               }
                               showIconTakeImageFromVideo={
                                 !isImage
@@ -415,14 +503,14 @@ export default function CustomerArchive({ id }) {
                               }
                               isfullScreen={isFullScreen}
                             />
-                            {showIconTakeImage && (
-                              <div className={styles.wrap_btn_camera}>
+                            <div className={styles.wrap_btn_camera}>
+                              {showIconTakeImage && (
                                 <Button2
                                   onClick={captureScreenshot}
                                   icon={CameraAltIcon}
                                 />
-                              </div>
-                            )}
+                              )}
+                            </div>
                           </Preview>
                         </Grid>
                         <Grid
@@ -438,11 +526,11 @@ export default function CustomerArchive({ id }) {
                             toggleModalBottom={toggleModalBottom}
                             isHide={isHide}
                           >
-                            {isImage2 ? (
+                            {isImageUrl(grid2Url) ? (
                               <Image
                                 id="group2-image"
-                                src={group2Images[currentIndexes?.group2]?.url}
-                                alt={`Group 2 - ${currentIndexes?.group2}`}
+                                src={grid2Url}
+                                alt={`Grid 2 - ${currentIndexes?.group2}`}
                                 layout="fill"
                                 className={styles.image_archive}
                                 style={{
@@ -450,35 +538,29 @@ export default function CustomerArchive({ id }) {
                                 }}
                               />
                             ) : (
-                              <>
-                                <ReactPlayer
-                                  url={
-                                    group2Images[currentIndexes?.group2]?.url
-                                  }
-                                  playing={false}
-                                  muted={false}
-                                  playsinline
-                                  preload="metadata"
-                                  className={styles.image_archive}
-                                  controls={true}
-                                  width="100%"
-                                  height="100%"
-                                  ref={playerRef}
-                                />
-                              </>
+                              <ReactPlayer
+                                url={grid2Url}
+                                playing={false}
+                                muted={false}
+                                playsinline
+                                preload="metadata"
+                                className={styles.image_archive}
+                                controls={true}
+                                width="100%"
+                                height="100%"
+                              />
                             )}
                             <ListActionMedia
                               downloadMedia={() =>
-                                saveMedia(
-                                  "group2-image",
-                                  group1Images[currentIndexes?.group2]?.url
-                                )
+                                saveMedia("group2-image", grid2Url)
                               }
                               fullScreenOne={
                                 isImage2 ? () => toggleExpand(2) : null
                               }
-                              fullScreenTwo={() =>
-                                setIsFullScreen((prev) => !prev)
+                              fullScreenTwo={
+                                isImage2
+                                  ? () => setIsFullScreen((prev) => !prev)
+                                  : null
                               }
                               showIconTakeImageFromVideo={
                                 !isImage2
@@ -487,14 +569,14 @@ export default function CustomerArchive({ id }) {
                               }
                               isfullScreen={isFullScreen}
                             />
-                            {showIconTakeImage && (
-                              <div className={styles.wrap_btn_camera}>
+                            <div className={styles.wrap_btn_camera}>
+                              {showIconTakeImage && (
                                 <Button2
                                   onClick={captureScreenshot}
                                   icon={CameraAltIcon}
                                 />
-                              </div>
-                            )}
+                              )}
+                            </div>
                           </Preview>
                         </Grid>
                       </>
@@ -507,12 +589,8 @@ export default function CustomerArchive({ id }) {
                           isHide={"true"}
                         >
                           <CampareImage
-                            beforeImage={
-                              group1Images[currentIndexes?.group1]?.url
-                            }
-                            afterImage={
-                              group2Images[currentIndexes?.group2]?.url
-                            }
+                            beforeImage={grid1Url}
+                            afterImage={grid2Url}
                             getFilterStyle={getFilterStyle}
                             filters={filters}
                           />
@@ -696,7 +774,10 @@ export default function CustomerArchive({ id }) {
           {filteredUser.length > 0 ? (
             filteredUser.map((item) => (
               <li
-                className={`${styles.user_item}`}
+                className={`${styles.user_item}  ${
+                  userComparison?.customer?.id === item?.customer?.id &&
+                  styles.user_active
+                }`}
                 key={item.id}
                 onClick={() => setUserComparison(item)}
               >
@@ -712,7 +793,16 @@ export default function CustomerArchive({ id }) {
             <p className={styles.not_found_text}>نتیجه ای یافت نشد</p>
           )}
         </div>
-        <Button1 text={"ادامه"}/>
+        <Button1
+          text={"ادامه"}
+          Onclick={() => {
+            setShowModal(false);
+            setUseCustomUrls(true);
+            setDisplayType("کنارهم");
+          }}
+          disable={userComparison ? "" : true}
+          notloading={true}
+        />
       </Modal>
       <ModalBottom isVisible={isVisible} setIsVisible={setIsVisible}>
         <TextComponent

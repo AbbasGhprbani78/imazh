@@ -9,6 +9,7 @@ export default function NormalDropDown({
   items,
   name,
   style2,
+  
 }) {
   const [selectedValue, setSelectedValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
